@@ -1,0 +1,39 @@
+{
+    "name": "erp-sistema-empresarial",
+    "version": "1.0.0",
+    "description": "Sistema ERP completo con backend NestJS y frontend React",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:backend": "cd backend && npm run start:dev",
+        "dev:frontend": "cd frontend && npm run dev",
+        "dev:docker": "docker-compose up",
+        "build": "npm run build:backend && npm run build:frontend",
+        "build:backend": "cd backend && npm run build",
+        "build:frontend": "cd frontend && npm run build",
+        "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+        "db:setup": "cd backend && npx prisma generate && npx prisma db push",
+        "db:seed": "cd backend && npx prisma db seed",
+        "docker:setup": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 setup",
+        "docker:up": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 up",
+        "docker:down": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 down",
+        "docker:restart": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 restart",
+        "docker:logs": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 logs",
+        "docker:status": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 status",
+        "docker:clean": "powershell -ExecutionPolicy Bypass -File ./scripts/docker.ps1 clean",
+        "clean": "concurrently \"cd backend && rm -rf dist node_modules\" \"cd frontend && rm -rf dist node_modules\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "keywords": [
+        "erp",
+        "nestjs",
+        "react",
+        "typescript",
+        "prisma",
+        "postgresql"
+    ],
+    "author": "Antonio",
+    "license": "MIT"
+}

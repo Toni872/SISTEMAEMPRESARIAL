@@ -1,0 +1,1149 @@
+{
+    "info": {
+        "name": "Sistema ERP - Complete API",
+        "description": "Colección completa del Sistema ERP con todos los módulos: Auth, Products, Sales, Purchase, Users, Accounting",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{authToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000/graphql",
+            "type": "string"
+        },
+        {
+            "key": "authToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔐 AUTH",
+            "item": [
+                {
+                    "name": "Login - ADMIN",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.data && jsonData.data.login) {",
+                                    "    pm.collectionVariables.set('authToken', jsonData.data.login.accessToken);",
+                                    "    pm.environment.set('authToken', jsonData.data.login.accessToken);",
+                                    "    console.log('Token guardado:', jsonData.data.login.accessToken);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"admin@erp.com\"\n    password: \"admin123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      firstName\n      lastName\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login - MANAGER",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.data && jsonData.data.login) {",
+                                    "    pm.collectionVariables.set('authToken', jsonData.data.login.accessToken);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"manager@erp.com\"\n    password: \"manager123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login - USER",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.data && jsonData.data.login) {",
+                                    "    pm.collectionVariables.set('authToken', jsonData.data.login.accessToken);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"user@erp.com\"\n    password: \"user123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Register New User",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Register {\n  register(registerInput: {\n    email: \"newuser@erp.com\"\n    password: \"password123\"\n    firstName: \"New\"\n    lastName: \"User\"\n    role: USER\n  }) {\n    accessToken\n    user {\n      id\n      email\n      firstName\n      lastName\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User (Me)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query Me {\n  me {\n    id\n    email\n    firstName\n    lastName\n    role\n    isActive\n    createdAt\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change My Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation ChangePassword {\n  changePassword(changePasswordInput: {\n    oldPassword: \"admin123\"\n    newPassword: \"newadmin123\"\n  }) {\n    id\n    email\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📦 PRODUCTS",
+            "item": [
+                {
+                    "name": "Get All Products",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProducts {\n  products(skip: 0, take: 20, search: \"\", category: \"\") {\n    id\n    name\n    sku\n    description\n    price\n    cost\n    stock\n    minStock\n    category\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Product by ID",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProduct {\n  product(id: 1) {\n    id\n    name\n    sku\n    description\n    price\n    cost\n    stock\n    minStock\n    category\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Product by SKU",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProductBySku {\n  productBySku(sku: \"LAP-ENT-001\") {\n    id\n    name\n    sku\n    price\n    stock\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Low Stock Products",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query LowStockProducts {\n  lowStockProducts {\n    id\n    name\n    sku\n    stock\n    minStock\n    category\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation CreateProduct {\n  createProduct(createProductInput: {\n    name: \"MacBook Pro 16\\\"\"\n    sku: \"LAP-MAC-16\"\n    description: \"MacBook Pro 16 pulgadas con M3 Max\"\n    price: 2999.99\n    cost: 2200.00\n    stock: 15\n    minStock: 5\n    category: \"Laptops\"\n  }) {\n    id\n    name\n    sku\n    price\n    stock\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Product",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation UpdateProduct {\n  updateProduct(updateProductInput: {\n    id: 1\n    price: 1299.99\n    stock: 30\n  }) {\n    id\n    name\n    price\n    stock\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Product (ADMIN ONLY)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation DeleteProduct {\n  removeProduct(id: 9) {\n    id\n    name\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🛒 SALES",
+            "item": [
+                {
+                    "name": "Customers",
+                    "item": [
+                        {
+                            "name": "Get All Customers",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetCustomers {\n  customers(skip: 0, take: 20, search: \"\") {\n    id\n    name\n    email\n    phone\n    address\n    city\n    country\n    isActive\n    createdAt\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Customer by ID",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetCustomer {\n  customer(id: 1) {\n    id\n    name\n    email\n    phone\n    address\n    city\n    country\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Customer",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CreateCustomer {\n  createCustomer(createCustomerInput: {\n    name: \"Empresa Tech Solutions\"\n    email: \"contacto@techsolutions.com\"\n    phone: \"+52 55 1234 5678\"\n    address: \"Av. Reforma 123, Piso 5\"\n    city: \"Ciudad de México\"\n    country: \"México\"\n  }) {\n    id\n    name\n    email\n    phone\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Customer",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation UpdateCustomer {\n  updateCustomer(updateCustomerInput: {\n    id: 1\n    phone: \"+52 55 9876 5432\"\n    email: \"nuevo@techsolutions.com\"\n  }) {\n    id\n    name\n    email\n    phone\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Customer (ADMIN ONLY)",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation DeleteCustomer {\n  removeCustomer(id: 1) {\n    id\n    name\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Sales Orders",
+                    "item": [
+                        {
+                            "name": "Get All Sales Orders",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetSalesOrders {\n  salesOrders(skip: 0, take: 20) {\n    id\n    orderNumber\n    customerName\n    userName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    orderDate\n    deliveryDate\n    notes\n    items {\n      id\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Sales Order by ID",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetSalesOrder {\n  salesOrder(id: 1) {\n    id\n    orderNumber\n    customerName\n    userName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    orderDate\n    deliveryDate\n    notes\n    items {\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Sales Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CreateSalesOrder {\n  createSalesOrder(createSalesOrderInput: {\n    customerId: 1\n    notes: \"Pedido urgente - Entrega express\"\n    deliveryDate: \"2025-10-15\"\n    items: [\n      {\n        productId: 1\n        quantity: 2\n        unitPrice: 1200\n      },\n      {\n        productId: 2\n        quantity: 5\n        unitPrice: 25\n      }\n    ]\n  }) {\n    id\n    orderNumber\n    customerName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    items {\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Sales Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation UpdateSalesOrder {\n  updateSalesOrder(updateSalesOrderInput: {\n    id: 1\n    status: CONFIRMED\n    notes: \"Orden confirmada y lista para envío\"\n  }) {\n    id\n    orderNumber\n    status\n    notes\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Cancel Sales Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CancelSalesOrder {\n  cancelSalesOrder(id: 1) {\n    id\n    orderNumber\n    status\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "🛍️ PURCHASE",
+            "item": [
+                {
+                    "name": "Suppliers",
+                    "item": [
+                        {
+                            "name": "Get All Suppliers",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetSuppliers {\n  suppliers(skip: 0, take: 20, search: \"\") {\n    id\n    name\n    email\n    phone\n    address\n    city\n    country\n    isActive\n    createdAt\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Supplier by ID",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetSupplier {\n  supplier(id: 1) {\n    id\n    name\n    email\n    phone\n    address\n    city\n    country\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Supplier",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CreateSupplier {\n  createSupplier(createSupplierInput: {\n    name: \"Tech Distributors SA de CV\"\n    email: \"ventas@techdist.com\"\n    phone: \"+52 81 8888 9999\"\n    address: \"Parque Industrial Norte, Lote 45\"\n    city: \"Monterrey\"\n    country: \"México\"\n  }) {\n    id\n    name\n    email\n    phone\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Supplier",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation UpdateSupplier {\n  updateSupplier(updateSupplierInput: {\n    id: 1\n    phone: \"+52 81 7777 8888\"\n    email: \"contacto@techdist.com\"\n  }) {\n    id\n    name\n    email\n    phone\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Supplier (ADMIN ONLY)",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation DeleteSupplier {\n  removeSupplier(id: 1) {\n    id\n    name\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Purchase Orders",
+                    "item": [
+                        {
+                            "name": "Get All Purchase Orders",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetPurchaseOrders {\n  purchaseOrders(skip: 0, take: 20) {\n    id\n    orderNumber\n    supplierName\n    userName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    orderDate\n    expectedDate\n    receivedDate\n    notes\n    items {\n      id\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Purchase Order by ID",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "query GetPurchaseOrder {\n  purchaseOrder(id: 1) {\n    id\n    orderNumber\n    supplierName\n    userName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    orderDate\n    expectedDate\n    receivedDate\n    items {\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Purchase Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CreatePurchaseOrder {\n  createPurchaseOrder(createPurchaseOrderInput: {\n    supplierId: 1\n    notes: \"Orden de reposición de inventario\"\n    expectedDeliveryDate: \"2025-10-20\"\n    items: [\n      {\n        productId: 1\n        quantity: 50\n        unitPrice: 900\n      },\n      {\n        productId: 3\n        quantity: 100\n        unitPrice: 15\n      }\n    ]\n  }) {\n    id\n    orderNumber\n    supplierName\n    status\n    subtotal\n    taxAmount\n    totalAmount\n    items {\n      productName\n      quantity\n      unitPrice\n      totalPrice\n    }\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Purchase Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation UpdatePurchaseOrder {\n  updatePurchaseOrder(updatePurchaseOrderInput: {\n    id: 1\n    status: APPROVED\n    notes: \"Orden aprobada - Proceder con envío\"\n  }) {\n    id\n    orderNumber\n    status\n    notes\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Receive Purchase Order (Updates Stock)",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation ReceivePurchaseOrder {\n  receivePurchaseOrder(id: 1) {\n    id\n    orderNumber\n    status\n    receivedDate\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Cancel Purchase Order",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "graphql",
+                                    "graphql": {
+                                        "query": "mutation CancelPurchaseOrder {\n  cancelPurchaseOrder(id: 1) {\n    id\n    orderNumber\n    status\n  }\n}",
+                                        "variables": ""
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "👥 USERS (ADMIN ONLY)",
+            "item": [
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetUsers {\n  users(skip: 0, take: 20) {\n    id\n    email\n    firstName\n    lastName\n    role\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetUser {\n  user(id: 2) {\n    id\n    email\n    firstName\n    lastName\n    role\n    isActive\n    createdAt\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Statistics",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetUserStats {\n  userStats {\n    totalUsers\n    activeUsers\n    adminUsers\n    managerUsers\n    regularUsers\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create User (ADMIN)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation CreateUser {\n  createUser(createUserInput: {\n    email: \"supervisor@erp.com\"\n    password: \"supervisor123\"\n    firstName: \"Juan\"\n    lastName: \"Supervisor\"\n    role: MANAGER\n  }) {\n    id\n    email\n    firstName\n    lastName\n    role\n    isActive\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation UpdateUser {\n  updateUser(updateUserInput: {\n    id: 2\n    firstName: \"Pedro\"\n    lastName: \"Actualizado\"\n    role: USER\n  }) {\n    id\n    email\n    firstName\n    lastName\n    role\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change User Password (ADMIN)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation ChangeUserPassword {\n  changeUserPassword(changeUserPasswordInput: {\n    id: 2\n    newPassword: \"newpassword456\"\n  }) {\n    id\n    email\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Deactivate User",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation DeactivateUser {\n  deactivateUser(id: 5) {\n    id\n    email\n    isActive\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Activate User",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation ActivateUser {\n  activateUser(id: 5) {\n    id\n    email\n    isActive\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation DeleteUser {\n  removeUser(id: 5) {\n    id\n    email\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📊 ACCOUNTING (Reports)",
+            "item": [
+                {
+                    "name": "Financial Summary",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query FinancialSummary {\n  financialSummary(\n    startDate: \"2025-01-01\"\n    endDate: \"2025-12-31\"\n  ) {\n    totalSales\n    totalPurchases\n    netProfit\n    profitMargin\n    totalOrders\n    pendingOrders\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Monthly Sales Report",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query MonthlySales {\n  monthlySales(year: 2025) {\n    month\n    total\n    orderCount\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Top 10 Products by Revenue",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query TopProducts {\n  topProducts(limit: 10) {\n    productId\n    productName\n    totalQuantity\n    totalRevenue\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Inventory Value Report",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query InventoryValue {\n  inventoryValue {\n    totalValue\n    totalProducts\n    lowStockProducts\n    outOfStockProducts\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

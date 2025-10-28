@@ -1,0 +1,33 @@
+# Dockerfile para desarrollo del backend
+FROM node:18-alpine
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    postgresql-client \
+    openssl \
+    openssl-dev
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Instalar dependencias
+RUN npm ci --only=development
+
+# Generar cliente Prisma
+RUN npx prisma generate
+
+# Copiar código fuente
+COPY . .
+
+# Exponer puerto
+EXPOSE 3000 9229
+
+# Comando por defecto
+CMD ["npm", "run", "start:dev"]

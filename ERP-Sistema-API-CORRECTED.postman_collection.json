@@ -1,0 +1,494 @@
+{
+    "info": {
+        "name": "ERP Sistema - API",
+        "description": "Colección completa para el sistema ERP con GraphQL - CAMPOS CORREGIDOS",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "graphqlUrl",
+            "value": "{{baseUrl}}/graphql",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "1. Login Admin",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.login) {",
+                                    "        pm.environment.set(\"token\", jsonData.data.login.accessToken);",
+                                    "        pm.collectionVariables.set(\"token\", jsonData.data.login.accessToken);",
+                                    "        console.log(\"✅ Token guardado:\", jsonData.data.login.accessToken.substring(0, 20) + \"...\");",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"admin@erp.com\"\n    password: \"admin123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n      firstName\n      lastName\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "1B. Login Manager",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.login) {",
+                                    "        pm.environment.set(\"token\", jsonData.data.login.accessToken);",
+                                    "        pm.collectionVariables.set(\"token\", jsonData.data.login.accessToken);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"manager@empresa.com\"\n    password: \"manager123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "1C. Login User",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.login) {",
+                                    "        pm.environment.set(\"token\", jsonData.data.login.accessToken);",
+                                    "        pm.collectionVariables.set(\"token\", jsonData.data.login.accessToken);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Login {\n  login(loginInput: {\n    email: \"user@empresa.com\"\n    password: \"user123\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Get My Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query Me {\n  me {\n    id\n    email\n    role\n    firstName\n    lastName\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Register New User",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.register) {",
+                                    "        console.log(\"✅ Usuario registrado:\", jsonData.data.register.user.email);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation Register {\n  register(registerInput: {\n    email: \"nuevo@empresa.com\"\n    username: \"nuevousuario\"\n    password: \"password123\"\n    firstName: \"Nuevo\"\n    lastName: \"Usuario\"\n  }) {\n    accessToken\n    user {\n      id\n      email\n      role\n      firstName\n      lastName\n    }\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Change Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation ChangePassword {\n  changePassword(changePasswordInput: {\n    oldPassword: \"admin123\"\n    newPassword: \"newPassword123\"\n  })\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Products",
+            "item": [
+                {
+                    "name": "1. Get All Products",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProducts {\n  products {\n    id\n    name\n    sku\n    description\n    price\n    cost\n    stock\n    minStock\n    category\n    createdAt\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Get Product by ID",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProduct($id: Int!) {\n  product(id: $id) {\n    id\n    name\n    sku\n    description\n    price\n    cost\n    stock\n    minStock\n    category\n    createdAt\n  }\n}",
+                                "variables": "{\n  \"id\": 1\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Get Product by SKU",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query GetProductBySKU($sku: String!) {\n  productBySku(sku: $sku) {\n    id\n    name\n    sku\n    price\n    stock\n  }\n}",
+                                "variables": "{\n  \"sku\": \"PROD-001\"\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Low Stock Products",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "query LowStockProducts {\n  lowStockProducts {\n    id\n    name\n    sku\n    stock\n    minStock\n  }\n}",
+                                "variables": ""
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Create Product (ADMIN/MANAGER)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation CreateProduct($input: CreateProductInput!) {\n  createProduct(createProductInput: $input) {\n    id\n    name\n    sku\n    price\n    stock\n    createdAt\n  }\n}",
+                                "variables": "{\n  \"input\": {\n    \"name\": \"Laptop Dell XPS 15\",\n    \"sku\": \"DELL-XPS-15-2024\",\n    \"description\": \"Laptop de alto rendimiento\",\n    \"price\": 1599.99,\n    \"cost\": 1200.00,\n    \"stock\": 10,\n    \"minStock\": 2,\n    \"category\": \"ELECTRONICS\"\n  }\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "6. Update Product (ADMIN/MANAGER)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation UpdateProduct($input: UpdateProductInput!) {\n  updateProduct(updateProductInput: $input) {\n    id\n    name\n    price\n    stock\n    updatedAt\n  }\n}",
+                                "variables": "{\n  \"input\": {\n    \"id\": 1,\n    \"price\": 199.99,\n    \"stock\": 50\n  }\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "7. Update Stock (ADMIN/MANAGER)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation UpdateStock($id: Int!, $quantity: Int!, $operation: String!) {\n  updateProductStock(id: $id, quantity: $quantity, operation: $operation) {\n    id\n    name\n    sku\n    stock\n    updatedAt\n  }\n}",
+                                "variables": "{\n  \"id\": 1,\n  \"quantity\": 10,\n  \"operation\": \"add\"\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "8. Delete Product (ADMIN only)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "graphql",
+                            "graphql": {
+                                "query": "mutation DeleteProduct($id: Int!) {\n  removeProduct(id: $id) {\n    id\n    name\n    sku\n  }\n}",
+                                "variables": "{\n  \"id\": 1\n}"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{graphqlUrl}}",
+                            "host": [
+                                "{{graphqlUrl}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+*.test.js
+*.test.ts
+*.test.tsx
+
+# Production
+/build
+/dist
+/.env.local
+/.env.development.local
+/.env.test.local
+/.env.production.local
+
+# Misc
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Database
+*.sqlite
+*.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary
+*.tmp
+.cache/
+
+# Specific to this project
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
