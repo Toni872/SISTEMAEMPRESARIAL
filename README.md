@@ -36,7 +36,7 @@
 
 </div>
 
-**🔗 Demo en vivo:** [Próximamente en Vercel] 
+**🔗 Demo en vivo:** [https://frontend-aopijxall-toni872s-projects.vercel.app](https://frontend-aopijxall-toni872s-projects.vercel.app) 
 
 > **Nota para recruiters:** Este proyecto demuestra competencia end-to-end en desarrollo full-stack, desde diseño de base de datos con 24+ tablas hasta implementación de UI moderna, integrando IA predictiva, WebSockets en tiempo real y las mejores prácticas de la industria.
 
