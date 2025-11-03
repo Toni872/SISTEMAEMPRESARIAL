@@ -134,12 +134,46 @@ services:
       timeout: 10s
       retries: 3
 
+  # AI Service (Python FastAPI)
+  ai-service:
+    build:
+      context: ./ai_service
+      dockerfile: Dockerfile
+    container_name: erp-ai-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:erp_password@postgres:5432/erp_db
+      REDIS_URL: redis://redis:6379
+      PORT: 8000
+      DEBUG: 'True'
+      LOG_LEVEL: INFO
+    volumes:
+      - ./ai_service:/app
+      - ai_models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - erp-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
   pgadmin_data:
+    driver: local
+  ai_models:
     driver: local
 
 networks:

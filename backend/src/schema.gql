@@ -2,10 +2,48 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AIMetricPoint {
+  accuracy: Float!
+  errorRate: Float!
+  latencyMsP95: Float!
+  latencyMsP99: Float!
+  throughputRps: Float!
+  ts: String!
+}
+
+type AIMetrics {
+  overall: AIMetricsOverall!
+  recentOptimizations: [RecentOptimization!]
+  recentPredictions: [RecentPrediction!]
+  series: [AIMetricPoint!]!
+}
+
+type AIMetricsOverall {
+  errorRate: Float!
+  latencyMsP95: Float!
+  latencyMsP99: Float!
+  throughputRps: Float!
+}
+
+type AIModelInfo {
+  accuracy: Float
+  name: String!
+  status: String!
+  version: String!
+}
+
 type AIModelsMetric {
   active: Int!
   maintenance: Int!
   needsImprovement: Int!
+  training: Int!
+}
+
+type ActiveAIModels {
+  maintenance: Int!
+  models: [AIModelInfo!]
+  operational: Int!
+  total_models: Int!
   training: Int!
 }
 
@@ -147,6 +185,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type DeployModelResult {
+  message: String!
+  success: Boolean!
+}
+
 type FinancialSummary {
   netProfit: Float!
   pendingOrders: Int!
@@ -219,8 +262,10 @@ type Mutation {
   createSalesOrder(createSalesOrderInput: CreateSalesOrderInput!): SalesOrder!
   createSupplier(createSupplierInput: CreateSupplierInput!): Supplier!
   createUser(createUserInput: CreateUserInput!): User!
+  createWebflowOrder(order: WebflowOrderInput!): WebflowOrderResponse!
   deactivateUser(id: Int!): User!
   deleteInvoicePayment(paymentId: Int!): Boolean!
+  deployAIModel(name: String!, version: String!): DeployModelResult!
   login(loginInput: LoginInput!): AuthPayload!
   receivePurchaseOrder(id: Int!): PurchaseOrder!
   recordInvoicePayment(recordPaymentInput: RecordPaymentInput!): InvoicePayment!
@@ -238,6 +283,13 @@ type Mutation {
   updateSalesOrder(updateSalesOrderInput: UpdateSalesOrderInput!): SalesOrder!
   updateSupplier(updateSupplierInput: UpdateSupplierInput!): Supplier!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type OptimizePriceResult {
+  expected_revenue_increase: Float!
+  model_version: String!
+  optimal_price: Float!
+  price_change_percentage: Float!
 }
 
 """Estado de la orden de venta"""
@@ -261,6 +313,15 @@ type PerformancePoint {
   efficiency: Float!
   month: String!
   sales: Float!
+}
+
+type PredictDemandResult {
+  confidence: Float!
+  days: Int!
+  model_version: String!
+  predicted_units: Int!
+  product_id: Int!
+  recommendations: [String!]
 }
 
 type Product {
@@ -319,6 +380,10 @@ enum PurchaseOrderStatus {
 }
 
 type Query {
+  activeAIModels: ActiveAIModels!
+  aiHealth: String!
+  aiMetrics: AIMetrics!
+  aiModelStats: ActiveAIModels!
   customer(id: Int!): Customer!
   customers(search: String, skip: Int! = 0, take: Int! = 10): [Customer!]!
 
@@ -333,9 +398,11 @@ type Query {
   """Obtener estado de los módulos del sistema"""
   moduleStatus: [ModuleStatus!]!
   monthlySales(year: Int!): [MonthlySales!]!
+  optimizePrice(currentPrice: Float!, productId: Float!, stock: Float!): OptimizePriceResult!
 
   """Obtener datos de performance histórica"""
   performanceData(period: String = "year"): [PerformancePoint!]!
+  predictDemand(days: Float! = 30, productId: Float!): PredictDemandResult!
   product(id: Int!): Product!
   productBySku(sku: String!): Product!
   products(category: String, search: String, skip: Int! = 0, take: Int! = 10): [Product!]!
@@ -354,12 +421,31 @@ type Query {
   user(id: Int!): User!
   userStats: UserStats!
   users(isActive: Boolean, role: Role, search: String, skip: Int! = 0, take: Int! = 10): [User!]!
+  webflowOrderStatus(orderNumber: String!): WebflowOrderResponse!
+  webflowProductBySku(sku: String!): WebflowPublicProduct!
+  webflowProducts(skip: Int = 0, take: Int = 100): [WebflowPublicProduct!]!
 }
 
 type ROIMetric {
   operationalSavings: Float!
   percentage: Float!
   revenueIncrease: Float!
+}
+
+type RecentOptimization {
+  deltaPct: Float!
+  id: String!
+  optimalPrice: Float!
+  productId: Int!
+  ts: String!
+}
+
+type RecentPrediction {
+  confidence: Float!
+  id: String!
+  productId: Int!
+  ts: String!
+  units: Int!
 }
 
 input RecordPaymentInput {
@@ -585,4 +671,61 @@ type UserStats {
   managerUsers: Int!
   regularUsers: Int!
   totalUsers: Int!
+}
+
+input WebflowCartItemInput {
+  name: String
+  productId: Float!
+  quantity: Float!
+  sku: String!
+  totalPrice: Float!
+  unitPrice: Float!
+}
+
+input WebflowCustomerInput {
+  company: String
+  email: String!
+  firstName: String
+  lastName: String
+  phone: String
+  taxId: String
+}
+
+input WebflowOrderInput {
+  customer: WebflowCustomerInput!
+  discountAmount: Float = 0
+  items: [WebflowCartItemInput!]!
+  notes: String
+  shippingAddress: WebflowShippingAddressInput
+  source: String = "WEBFLOW"
+  subtotal: Float!
+  taxAmount: Float = 0
+  totalAmount: Float!
+  webflowOrderId: String
+}
+
+type WebflowOrderResponse {
+  estimatedDelivery: DateTime
+  message: String
+  orderNumber: String!
+  status: String!
+  totalAmount: Float!
+}
+
+type WebflowPublicProduct {
+  category: String
+  description: String
+  id: Float!
+  image: String
+  name: String!
+  price: Float!
+  sku: String!
+  stock: Float!
+}
+
+input WebflowShippingAddressInput {
+  address: String!
+  city: String
+  country: String
+  postalCode: String
 }

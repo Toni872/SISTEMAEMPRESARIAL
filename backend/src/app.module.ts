@@ -20,6 +20,8 @@ import { PurchaseModule } from './modules/purchase/purchase.module';
 import { AccountingModule } from './modules/accounting/accounting.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { SetupModule } from './modules/setup/setup.module';
+import { AIModule } from './modules/ai/ai.module';
+import { WebflowModule } from './modules/webflow/webflow.module';
 // import { SoftwareModule } from './modules/software/software.module';
 // import { AnalyticsModule } from './modules/analytics/analytics.module';
 // import { TasksService } from './common/tasks.service';
@@ -76,6 +78,8 @@ import { SetupModule } from './modules/setup/setup.module';
         AccountingModule,
         DashboardModule,
         SetupModule,
+        AIModule,
+        WebflowModule,
         // SoftwareModule,
         // AnalyticsModule,
     ],
