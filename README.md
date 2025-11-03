@@ -676,7 +676,7 @@ Full Stack Developer | Python, TypeScript, React, NestJS
 - 🌐 Portfolio: [Próximamente]
 - 💼 LinkedIn: [linkedin.com/in/antonio-lloret-sánchez](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)
 - 💻 GitHub: [@Toni872](https://github.com/Toni872)
-- 📧 Email: antonio.lloret.sanchez@gmail.com
+- 📧 Email: tonylloret45@gmail.com
 
 ---
 
