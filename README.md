@@ -538,6 +538,8 @@ docker-compose up -d [service_name]
 
 ## 🚧 Roadmap
 
+> 📖 **[Ver Roadmap de Evolución completo](ROADMAP_EVOLUCION.md)** - Guía detallada para escalar tu ERP
+
 ### ✅ Completado
 - [x] Arquitectura base con NestJS y React
 - [x] Sistema de autenticación JWT completo
