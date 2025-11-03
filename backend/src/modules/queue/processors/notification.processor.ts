@@ -15,7 +15,7 @@ export class NotificationProcessor {
       const { type, recipient, subject, message, metadata } = job.data;
 
       if (type === 'email') {
-        await this.sendEmail(recipient, subject, message, metadata);
+        await this.sendEmail(recipient, subject || '', message, metadata);
       } else if (type === 'push') {
         await this.sendPushNotification(recipient, message, metadata);
       }

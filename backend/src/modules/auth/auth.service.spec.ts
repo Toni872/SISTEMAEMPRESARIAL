@@ -7,7 +7,10 @@ import * as bcrypt from 'bcrypt';
 
 // Mock de bcrypt
 jest.mock('bcrypt');
-const mockBcrypt = bcrypt as jest.Mocked<typeof bcrypt>;
+const mockBcrypt = {
+  compare: jest.fn(),
+  hash: jest.fn(),
+} as any;
 
 describe('AuthService', () => {
   let service: AuthService;

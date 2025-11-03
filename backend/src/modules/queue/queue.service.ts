@@ -97,8 +97,8 @@ export class QueueService {
     const queue = this.getQueue(queueName);
     
     await Promise.all([
-      queue.clean(24 * 60 * 60 * 1000, 100, 'completed'), // 24 horas
-      queue.clean(7 * 24 * 60 * 60 * 1000, 1000, 'failed'), // 7 días
+      queue.clean(24 * 60 * 60 * 1000, 'completed'), // 24 horas
+      queue.clean(7 * 24 * 60 * 60 * 1000, 'failed'), // 7 días
     ]);
   }
 
