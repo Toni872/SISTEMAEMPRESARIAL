@@ -23,6 +23,7 @@ import { SetupModule } from './modules/setup/setup.module';
 import { AIModule } from './modules/ai/ai.module';
 import { WebflowModule } from './modules/webflow/webflow.module';
 import { QueueModule } from './modules/queue/queue.module';
+import { IntegrationModule } from './modules/integration/integration.module';
 // import { SoftwareModule } from './modules/software/software.module';
 // import { AnalyticsModule } from './modules/analytics/analytics.module';
 // import { TasksService } from './common/tasks.service';
@@ -82,6 +83,7 @@ import { QueueModule } from './modules/queue/queue.module';
         AIModule,
         WebflowModule,
         QueueModule,
+        IntegrationModule,
         // SoftwareModule,
         // AnalyticsModule,
     ],

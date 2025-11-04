@@ -1,0 +1,65 @@
+Estoy trabajando en un Sistema ERP Empresarial full-stack. Después de varias semanas de desarrollo, quiero compartir dónde estoy y qué estoy construyendo.
+
+Se trata de un ERP que busca cubrir las necesidades principales de gestión empresarial: desde ventas y compras hasta inventario, usuarios, reportes y análisis.
+
+Actualmente tengo planificados 15 módulos principales:
+
+→ Dashboard ejecutivo con métricas en tiempo real
+→ Motor de IA para predicción de demanda y optimización de precios
+→ Gestión completa de ventas y compras
+→ Control de inventario inteligente
+→ Sistema de usuarios con roles granulares (RBAC)
+→ Reportes y analíticas avanzadas
+→ Logística inteligente
+→ Centro de automatización
+→ Integración Webflow para e-commerce
+
+Stack técnico
+
+Backend: NestJS + TypeScript, GraphQL con Apollo Server, Prisma + PostgreSQL, Redis, FastAPI (Python) para IA, Bull queues y WebSockets.
+
+Frontend: React 18 + TypeScript, Material-UI, Zustand, Apollo Client, Recharts y Socket.IO.
+
+DevOps: Docker, Vercel (en desarrollo), Jest y Vitest (en implementación).
+
+Características principales
+
+Inteligencia Artificial:
+→ Modelos para predicción de demanda
+→ Optimización de precios dinámica
+→ Múltiples modelos activos con monitoreo en tiempo real
+
+Rendimiento:
+→ Colas de tareas asíncronas para reportes pesados
+→ Caché distribuido con Redis
+→ Arquitectura modular y código type-safe end-to-end
+
+Calidad: Testing automatizado, código tipado, dockerizado y documentación en progreso.
+
+Estado actual
+
+El proyecto está en construcción activa. Algunas funcionalidades están implementadas, otras en desarrollo. Puedes ver el progreso en:
+
+Demo: https://frontend-aopijxall-toni872s-projects.vercel.app
+GitHub: https://github.com/Toni872/SISTEMAEMPRESARIAL
+
+Aprendizajes hasta ahora
+
+→ Cómo integrar IA en aplicaciones empresariales reales
+→ Diseñar arquitecturas escalables
+→ Priorizar testing y calidad desde el principio
+→ Coordinar despliegues multi-servicio
+→ Elegir la tecnología adecuada para cada problema
+
+Lo que viene
+
+→ Microservicios selectivos (reportes y notificaciones)
+→ Orquestación con Kubernetes cuando crezca
+→ Monitoreo con Prometheus y Grafana
+→ Potencialmente una app móvil con React Native
+
+Este proyecto está siendo una buena forma de demostrar competencias full-stack, desde el diseño de base de datos hasta la experiencia de usuario, aplicando prácticas de producción y pensando en escalabilidad desde el principio.
+
+Si te interesa ver el código o hablar de arquitectura, estoy abierto a feedback, sugerencias y oportunidades de colaboración mientras sigo construyendo esto.
+
+#TechStack #SoftwareEngineering #FullStackDevelopment #TypeScript #React #NestJS #GraphQL #MachineLearning #Docker #DevOps #EnterpriseSoftware #Python #FastAPI

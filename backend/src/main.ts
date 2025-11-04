@@ -25,6 +25,7 @@ async function bootstrap() {
     app.enableCors({
         origin: [
             'http://localhost:5173', // Vite/React frontend
+            'http://localhost:3001', // Backend (Docker port)
             'http://localhost:3000', // Backend (self)
         ],
         credentials: true,

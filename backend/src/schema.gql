@@ -199,6 +199,29 @@ type FinancialSummary {
   totalSales: Float!
 }
 
+type IntegrationInfo {
+  connected: Boolean!
+  name: String!
+  status: IntegrationStatus!
+  type: String!
+  version: String!
+}
+
+type IntegrationStats {
+  failedSyncs: Int!
+  lastSyncDuration: Int
+  successfulSyncs: Int!
+  totalSyncs: Int!
+}
+
+type IntegrationStatus {
+  connected: Boolean!
+  enabled: Boolean!
+  lastError: String
+  lastSyncAt: DateTime
+  stats: IntegrationStats
+}
+
 type InventoryValue {
   lowStockProducts: Int!
   outOfStockProducts: Int!
@@ -255,6 +278,9 @@ type Mutation {
   cancelSalesOrder(id: Int!): SalesOrder!
   changePassword(changePasswordInput: ChangePasswordInput!): Boolean!
   changeUserPassword(changeUserPasswordInput: ChangeUserPasswordInput!): User!
+
+  """Conectar a una integración"""
+  connectIntegration(name: String!): Boolean!
   createCustomer(createCustomerInput: CreateCustomerInput!): Customer!
   createProduct(createProductInput: CreateProductInput!): Product!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrder!
@@ -266,6 +292,9 @@ type Mutation {
   deactivateUser(id: Int!): User!
   deleteInvoicePayment(paymentId: Int!): Boolean!
   deployAIModel(name: String!, version: String!): DeployModelResult!
+
+  """Desconectar de una integración"""
+  disconnectIntegration(name: String!): Boolean!
   login(loginInput: LoginInput!): AuthPayload!
   receivePurchaseOrder(id: Int!): PurchaseOrder!
   recordInvoicePayment(recordPaymentInput: RecordPaymentInput!): InvoicePayment!
@@ -275,6 +304,9 @@ type Mutation {
   removeSupplier(id: Int!): Supplier!
   removeUser(id: Int!): User!
   submitSalesInvoice(id: Int!): SalesInvoice!
+
+  """Sincronizar datos de una integración"""
+  syncIntegration(direction: SyncDirection = FROM_EXTERNAL, fullSync: Boolean = false, integrationName: String!, syncType: SyncType!): SyncResult!
   updateCustomer(updateCustomerInput: UpdateCustomerInput!): Customer!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   updateProductStock(id: Int!, operation: String!, quantity: Int!): Product!
@@ -283,6 +315,9 @@ type Mutation {
   updateSalesOrder(updateSalesOrderInput: UpdateSalesOrderInput!): SalesOrder!
   updateSupplier(updateSupplierInput: UpdateSupplierInput!): Supplier!
   updateUser(updateUserInput: UpdateUserInput!): User!
+
+  """Validar credenciales de una integración"""
+  validateIntegrationCredentials(name: String!): Boolean!
 }
 
 type OptimizePriceResult {
@@ -390,6 +425,12 @@ type Query {
   """Obtener métricas principales del dashboard ejecutivo"""
   dashboardMetrics: DashboardMetrics!
   financialSummary(endDate: DateTime, startDate: DateTime): FinancialSummary!
+
+  """Obtener estado de una integración específica"""
+  integrationStatus(name: String!): IntegrationStatus!
+
+  """Obtener lista de todas las integraciones disponibles"""
+  integrations: [IntegrationInfo!]!
   inventoryValue: InventoryValue!
   invoicePayments(invoiceId: Int!): [InvoicePayment!]!
   lowStockProducts: [Product!]!
@@ -566,6 +607,40 @@ type Supplier {
   name: String!
   phone: String
   updatedAt: DateTime!
+}
+
+"""Dirección de sincronización"""
+enum SyncDirection {
+  BIDIRECTIONAL
+  FROM_EXTERNAL
+  TO_EXTERNAL
+}
+
+type SyncError {
+  code: String
+  message: String!
+  recordId: String
+}
+
+type SyncResult {
+  completedAt: DateTime!
+  duration: Int!
+  errors: [SyncError!]
+  message: String!
+  recordsCreated: Int!
+  recordsFailed: Int!
+  recordsProcessed: Int!
+  recordsUpdated: Int!
+  success: Boolean!
+}
+
+"""Tipo de sincronización"""
+enum SyncType {
+  CUSTOMERS
+  INVENTORY
+  ORDERS
+  PRICING
+  PRODUCTS
 }
 
 type TopProduct {
