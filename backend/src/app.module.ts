@@ -10,6 +10,8 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 // Common modules
 import { PrismaModule } from './common/prisma.module';
 import { HealthController } from './common/health.controller';
+import { SecurityModule } from './common/security/security.module';
+import { MonitoringModule } from './common/monitoring/monitoring.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 // Business modules
@@ -68,6 +70,8 @@ import { IntegrationModule } from './modules/integration/integration.module';
 
         // Common modules
         PrismaModule,
+        SecurityModule,
+        MonitoringModule,
 
         // Auth module (must be before business modules)
         AuthModule,

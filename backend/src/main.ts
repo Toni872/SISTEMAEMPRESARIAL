@@ -21,16 +21,32 @@ async function bootstrap() {
         }),
     );
 
-    // CORS - Enable for local development and frontend
-    app.enableCors({
-        origin: [
+    // CORS - Configuración mejorada de seguridad
+    const allowedOrigins = process.env.CORS_ORIGIN 
+        ? process.env.CORS_ORIGIN.split(',') 
+        : [
             'http://localhost:5173', // Vite/React frontend
             'http://localhost:3001', // Backend (Docker port)
             'http://localhost:3000', // Backend (self)
-        ],
+          ];
+
+    app.enableCors({
+        origin: (origin, callback) => {
+            // Permitir requests sin origin (mobile apps, curl, etc)
+            if (!origin) return callback(null, true);
+            
+            // Permitir origins configurados o dominios vercel.app
+            if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+        exposedHeaders: ['X-Request-ID'],
+        maxAge: 86400, // 24 hours
     });
 
     // Global validation pipe
