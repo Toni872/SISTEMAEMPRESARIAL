@@ -711,5 +711,3 @@ Construido con ❤️ utilizando las mejores herramientas open-source:
 Made with ❤️ by Antonio Lloret Sánchez
 
 </div>
-#   G i t H u b   A c t i o n s   T e s t  
- 
