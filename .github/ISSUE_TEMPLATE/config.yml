@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Discusiones
+    url: https://github.com/Toni872/SISTEMAEMPRESARIAL/discussions
+    about: Preguntas, ideas y discusiones generales
+  - name: 🔒 Reporte de Seguridad
+    url: https://github.com/Toni872/SISTEMAEMPRESARIAL/security
+    about: Reportar vulnerabilidades de seguridad de forma privada
+

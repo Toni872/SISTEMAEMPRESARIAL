@@ -1,0 +1,50 @@
+name: 📚 Documentation
+description: Mejoras o correcciones en la documentación
+title: "[DOCS] "
+labels: ["documentation", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por ayudar a mejorar nuestra documentación.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Tipo de Cambio en Documentación
+      description: ¿Qué tipo de cambio necesitas?
+      options:
+        - 📝 Nueva documentación
+        - 🔧 Corrección/Actualización
+        - 🌍 Traducción
+        - 📊 Ejemplos de código
+        - 🎨 Mejora de formato
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: Describe qué documentación necesita mejorarse
+      placeholder: La documentación de X no explica...
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Ubicación
+      description: ¿Dónde está la documentación?
+      placeholder: |
+        - Archivo: `docs/README.md`
+        - Sección: "Instalación"
+        - Línea: 45
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Sugerencia
+      description: Si tienes una sugerencia específica, compártela
+      placeholder: Creo que debería decir...
+

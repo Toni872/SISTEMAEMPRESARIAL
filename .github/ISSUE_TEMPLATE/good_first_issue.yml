@@ -1,0 +1,106 @@
+name: 🌟 Good First Issue
+description: Crear un issue apropiado para nuevos contribuidores
+title: "[GOOD FIRST ISSUE] "
+labels: ["good first issue", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Este template es para crear issues apropiados para **nuevos contribuidores**.
+        Si eres nuevo y buscas contribuir, ¡revisa los issues existentes con el label "good first issue"!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción de la Tarea
+      description: Una descripción clara y concisa de qué se necesita hacer
+      placeholder: Necesitamos...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos Sugeridos
+      description: Pasos específicos que el contribuidor debería seguir
+      placeholder: |
+        1. Abrir el archivo X
+        2. Modificar la función Y
+        3. Añadir tests
+        4. Crear PR
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Archivos a Modificar
+      description: Lista de archivos que probablemente necesiten modificarse
+      placeholder: |
+        - `src/components/Example.tsx`
+        - `backend/src/modules/example/example.service.ts`
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Dificultad Estimada
+      description: ¿Qué tan difícil es esta tarea?
+      options:
+        - ⭐ Muy Fácil - 15-30 minutos
+        - ⭐⭐ Fácil - 1-2 horas
+        - ⭐⭐⭐ Moderado - 2-4 horas
+    validations:
+      required: true
+
+  - type: dropdown
+    id: skills
+    attributes:
+      label: Habilidades Requeridas
+      description: ¿Qué habilidades se necesitan?
+      options:
+        - React/TypeScript
+        - NestJS/TypeScript
+        - GraphQL
+        - CSS/TailwindCSS
+        - Prisma/PostgreSQL
+        - Documentación
+        - Tests
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Recursos/Referencias
+      description: Links a documentación o ejemplos que puedan ayudar
+      placeholder: |
+        - Documentación de React: https://...
+        - Ejemplo similar en el código: `src/...`
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de Aceptación
+      description: ¿Cómo sabremos que la tarea está completa?
+      placeholder: |
+        - [ ] El componente se renderiza correctamente
+        - [ ] Los tests pasan
+        - [ ] La documentación está actualizada
+    validations:
+      required: true
+
+  - type: textarea
+    id: help
+    attributes:
+      label: Ayuda Disponible
+      description: ¿Cómo puede el contribuidor obtener ayuda?
+      value: |
+        Si tienes dudas:
+        - Comenta en este issue
+        - Revisa la documentación en `/docs`
+        - Únete a las discusiones de GitHub
+    validations:
+      required: false
+

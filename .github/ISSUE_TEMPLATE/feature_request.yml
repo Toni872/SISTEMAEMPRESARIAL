@@ -1,0 +1,94 @@
+name: ✨ Feature Request
+description: Sugerir una nueva funcionalidad o mejora
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por sugerir una nueva funcionalidad. Por favor, completa la información a continuación.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: ¿Qué problema resuelve esta funcionalidad?
+      description: Una descripción clara del problema que quieres resolver
+      placeholder: Actualmente es difícil/imposible hacer X porque...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución Propuesta
+      description: Describe la solución que te gustaría ver
+      placeholder: Me gustaría poder...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Describe otras alternativas que hayas considerado
+      placeholder: También pensé en...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Componente Afectado
+      description: ¿Qué parte del sistema se vería afectada?
+      options:
+        - Frontend
+        - Backend (API)
+        - Backend (GraphQL)
+        - Base de Datos
+        - Autenticación
+        - Dashboard
+        - Ventas
+        - Compras
+        - Productos
+        - Motor IA
+        - Integraciones
+        - Documentación
+        - Infraestructura
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridad
+      description: ¿Qué tan importante es esta funcionalidad?
+      options:
+        - 🔴 Alta - Bloqueante o muy importante
+        - 🟡 Media - Mejoraría significativamente el sistema
+        - 🟢 Baja - Sería agradable tenerlo
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: Contribución
+      description: ¿Estarías dispuesto a ayudar con esta funcionalidad?
+      options:
+        - label: Estoy dispuesto a trabajar en esta funcionalidad
+        - label: Necesitaría ayuda/guía para implementarlo
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Diseños
+      description: Si tienes mockups o diseños, compártelos aquí
+      placeholder: Arrastra y suelta imágenes aquí
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Contexto Adicional
+      description: Añade cualquier otra información relevante
+      placeholder: ¿Algo más que debamos saber?
+
