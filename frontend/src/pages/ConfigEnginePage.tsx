@@ -52,7 +52,7 @@ export default function ConfigEnginePage() {
                                                 <FormControl fullWidth size="small">
                                                     <InputLabel>{setting.name}</InputLabel>
                                                     <Select value={setting.value} label={setting.name}>
-                                                        {(setting.options || []).map((opt, i) => (
+                                                        {((setting as any).options || []).map((opt: string, i: number) => (
                                                             <MenuItem key={i} value={opt}>{opt}</MenuItem>
                                                         ))}
                                                     </Select>
