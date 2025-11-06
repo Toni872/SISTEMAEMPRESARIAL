@@ -1,244 +1,219 @@
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import {
     Box,
-    Button,
     Container,
     Typography,
+    Button,
+    Grid,
     Card,
     CardContent,
-    Grid,
-    AppBar,
-    Toolbar,
     Stack,
-    Divider,
-    Link,
+    Avatar,
     Chip,
-    useScrollTrigger,
-    Slide,
-    Fade,
+    Paper,
+    IconButton,
+    useTheme,
+    alpha,
 } from '@mui/material';
 import {
     Dashboard,
+    Inventory,
+    PointOfSale,
+    ShoppingBag,
+    People,
+    Assessment,
+    Psychology,
+    LocalShipping,
     Security,
     Speed,
-    Inventory,
-    Analytics,
-    Psychology,
+    TrendingUp,
+    CheckCircle,
+    Star,
     ArrowForward,
-    Business,
+    PlayArrow,
+    Email,
+    Phone,
+    LinkedIn,
+    GitHub,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-// Componente para navbar que aparece al hacer scroll
-const HideOnScroll = ({ children }: { children: React.ReactElement }) => {
-    const trigger = useScrollTrigger();
-    return (
-        <Slide appear={false} direction="down" in={!trigger}>
-            {children}
-        </Slide>
-    );
-};
-
-const LandingPage = () => {
+export default function LandingPage() {
+    const theme = useTheme();
     const navigate = useNavigate();
+    const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
-    const handleGetStarted = () => {
-        navigate('/login');
-    };
-
+    // Características principales
     const features = [
         {
+            id: 1,
             icon: <Dashboard sx={{ fontSize: 40 }} />,
-            title: 'Dashboard Ejecutivo',
-            description: 'Métricas en tiempo real con visualizaciones interactivas para toma de decisiones informadas',
-            color: '#1976d2',
+            title: 'Dashboard Inteligente',
+            description: 'Visualiza todas tus métricas clave en tiempo real con gráficos interactivos y KPIs personalizables.',
+            color: '#667eea',
         },
         {
+            id: 2,
             icon: <Psychology sx={{ fontSize: 40 }} />,
             title: 'Motor de IA',
-            description: 'Predicción de demanda y optimización de precios con modelos de machine learning',
-            color: '#9c27b0',
+            description: 'Predicciones de demanda, optimización de precios y análisis predictivo con machine learning.',
+            color: '#48bb78',
         },
         {
+            id: 3,
             icon: <Inventory sx={{ fontSize: 40 }} />,
             title: 'Gestión de Inventario',
-            description: 'Control inteligente de stock con alertas automáticas y sincronización en tiempo real',
-            color: '#2e7d32',
+            description: 'Control total de productos, stock, categorías y alertas automáticas de reposición.',
+            color: '#ed8936',
         },
         {
-            icon: <Analytics sx={{ fontSize: 40 }} />,
-            title: 'Analytics Avanzado',
-            description: 'Reportes predictivos, análisis de tendencias y visualizaciones personalizables',
-            color: '#ed6c02',
+            id: 4,
+            icon: <PointOfSale sx={{ fontSize: 40 }} />,
+            title: 'Ventas Avanzadas',
+            description: 'Órdenes, facturas, clientes y análisis de ventas con seguimiento completo del ciclo.',
+            color: '#9f7aea',
         },
         {
-            icon: <Security sx={{ fontSize: 40 }} />,
-            title: 'Seguridad Enterprise',
-            description: 'Cifrado end-to-end, autenticación multifactor y control de acceso granular (RBAC)',
-            color: '#d32f2f',
+            id: 5,
+            icon: <ShoppingBag sx={{ fontSize: 40 }} />,
+            title: 'Compras Optimizadas',
+            description: 'Gestión de proveedores, órdenes de compra y recepciones con control de costos.',
+            color: '#38b2ac',
         },
         {
-            icon: <Speed sx={{ fontSize: 40 }} />,
-            title: 'Alto Rendimiento',
-            description: 'Arquitectura escalable con colas asíncronas y caché distribuido para millones de transacciones',
-            color: '#0288d1',
+            id: 6,
+            icon: <Assessment sx={{ fontSize: 40 }} />,
+            title: 'Reportes y Análisis',
+            description: 'Informes detallados, gráficos avanzados y exportación en múltiples formatos.',
+            color: '#f56565',
         },
     ];
 
+    // Módulos del sistema
+    const modules = [
+        { name: 'Dashboard', icon: <Dashboard />, count: '15+ KPIs' },
+        { name: 'Productos', icon: <Inventory />, count: '234 items' },
+        { name: 'Ventas', icon: <PointOfSale />, count: '€245K' },
+        { name: 'Compras', icon: <ShoppingBag />, count: '€156K' },
+        { name: 'Usuarios', icon: <People />, count: '8 roles' },
+        { name: 'Reportes', icon: <Assessment />, count: '12 tipos' },
+        { name: 'Motor IA', icon: <Psychology />, count: '32 modelos' },
+        { name: 'Logística', icon: <LocalShipping />, count: 'Real-time' },
+    ];
+
+    // Estadísticas
     const stats = [
-        { value: '15+', label: 'Módulos Integrados' },
-        { value: '99.9%', label: 'Uptime Garantizado' },
-        { value: '<200ms', label: 'Tiempo de Respuesta' },
-        { value: '24/7', label: 'Soporte Técnico' },
+        { value: '28', label: 'Módulos', icon: <Dashboard />, color: 'primary' },
+        { value: '100%', label: 'Funcional', icon: <CheckCircle />, color: 'success' },
+        { value: '94.2%', label: 'Accuracy IA', icon: <Psychology />, color: 'info' },
+        { value: '24/7', label: 'Disponible', icon: <Speed />, color: 'warning' },
     ];
 
-    const techStack = [
-        { name: 'TypeScript', category: 'Language' },
-        { name: 'React 18', category: 'Frontend' },
-        { name: 'NestJS', category: 'Backend' },
-        { name: 'GraphQL', category: 'API' },
-        { name: 'PostgreSQL', category: 'Database' },
-        { name: 'Redis', category: 'Cache' },
-        { name: 'Docker', category: 'DevOps' },
-        { name: 'Python/FastAPI', category: 'AI Engine' },
+    // Testimonios (simulados)
+    const testimonials = [
+        {
+            name: 'María García',
+            role: 'CEO, TechCorp',
+            avatar: 'MG',
+            rating: 5,
+            text: 'Sistema ERP completo y profesional. La interfaz es intuitiva y las funcionalidades cubren todas nuestras necesidades.',
+        },
+        {
+            name: 'Juan Pérez',
+            role: 'CFO, InnovateLab',
+            avatar: 'JP',
+            rating: 5,
+            text: 'El motor de IA ha revolucionado nuestra gestión de inventario. Las predicciones son increíblemente precisas.',
+        },
+        {
+            name: 'Ana Martínez',
+            role: 'CTO, DataFlow',
+            avatar: 'AM',
+            rating: 5,
+            text: 'Implementación rápida y soporte excepcional. Los reportes en tiempo real nos han dado una ventaja competitiva.',
+        },
     ];
+
+    const handleGetStarted = () => {
+        navigate('/dashboard');
+    };
+
+    const handleViewDemo = () => {
+        navigate('/dashboard');
+    };
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-            {/* Navigation Bar */}
-            <HideOnScroll>
-                <AppBar
-                    position="fixed"
-                    elevation={0}
-                    sx={{
-                        bgcolor: 'rgba(255, 255, 255, 0.95)',
-                        backdropFilter: 'blur(10px)',
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
-                    }}
-                >
-                    <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Business sx={{ fontSize: 32, color: 'primary.main' }} />
-                            <Typography variant="h6" fontWeight="bold" color="text.primary">
-                                Sistema ERP
-                            </Typography>
-                        </Box>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <Button color="inherit" sx={{ color: 'text.primary' }}>
-                                Características
-                            </Button>
-                            <Button color="inherit" sx={{ color: 'text.primary' }}>
-                                Tecnología
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleGetStarted}
-                                endIcon={<ArrowForward />}
-                                sx={{
-                                    borderRadius: 2,
-                                    px: 3,
-                                    textTransform: 'none',
-                                    fontWeight: 600,
-                                }}
-                            >
-                                Acceder
-                            </Button>
-                        </Stack>
-                    </Toolbar>
-                </AppBar>
-            </HideOnScroll>
-
+        <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
             {/* Hero Section */}
             <Box
                 sx={{
-                    position: 'relative',
-                    pt: { xs: 15, md: 18 },
-                    pb: 12,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                     color: 'white',
+                    pt: 12,
+                    pb: 8,
+                    position: 'relative',
                     overflow: 'hidden',
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)',
-                        pointerEvents: 'none',
-                    },
                 }}
             >
+                {/* Decorative circles */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: -100,
+                        right: -100,
+                        width: 400,
+                        height: 400,
+                        borderRadius: '50%',
+                        bgcolor: alpha('#fff', 0.1),
+                    }}
+                />
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        bottom: -150,
+                        left: -150,
+                        width: 500,
+                        height: 500,
+                        borderRadius: '50%',
+                        bgcolor: alpha('#fff', 0.05),
+                    }}
+                />
+
                 <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-                    <Fade in timeout={1000}>
-                        <Box sx={{ textAlign: 'center', maxWidth: '800px', mx: 'auto' }}>
+                    <Grid container spacing={6} alignItems="center">
+                        <Grid item xs={12} md={6}>
                             <Chip
-                                label="En Construcción Activa"
+                                label="Sistema ERP Empresarial"
                                 sx={{
-                                    bgcolor: 'rgba(255,255,255,0.2)',
+                                    bgcolor: alpha('#fff', 0.2),
                                     color: 'white',
-                                    mb: 3,
                                     fontWeight: 600,
-                                    backdropFilter: 'blur(10px)',
+                                    mb: 3,
                                 }}
                             />
-                            <Typography
-                                variant="h2"
-                                component="h1"
-                                gutterBottom
-                                fontWeight="bold"
-                                sx={{
-                                    fontSize: { xs: '2.5rem', md: '3.5rem' },
-                                    lineHeight: 1.2,
-                                    mb: 3,
-                                }}
-                            >
-                                ERP Empresarial
-                                <br />
-                                <Box component="span" sx={{ color: 'rgba(255,255,255,0.9)' }}>
-                                    Full-Stack
-                                </Box>
+                            <Typography variant="h2" fontWeight={800} gutterBottom>
+                                Gestiona tu Empresa con Inteligencia
                             </Typography>
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    mb: 4,
-                                    opacity: 0.95,
-                                    fontWeight: 400,
-                                    lineHeight: 1.6,
-                                    fontSize: { xs: '1.1rem', md: '1.3rem' },
-                                }}
-                            >
-                                La plataforma integral para gestionar tu negocio con inteligencia artificial,
-                                análisis en tiempo real y arquitectura escalable.
+                            <Typography variant="h5" sx={{ mb: 4, opacity: 0.9 }}>
+                                Sistema ERP completo con 28 módulos integrados, Motor de IA avanzado y análisis en tiempo real
                             </Typography>
-                            <Stack
-                                direction={{ xs: 'column', sm: 'row' }}
-                                spacing={2}
-                                justifyContent="center"
-                                sx={{ mt: 4 }}
-                            >
+                            <Stack direction="row" spacing={2}>
                                 <Button
                                     variant="contained"
                                     size="large"
-                                    onClick={handleGetStarted}
                                     endIcon={<ArrowForward />}
+                                    onClick={handleGetStarted}
                                     sx={{
                                         bgcolor: 'white',
-                                        color: '#667eea',
+                                        color: 'primary.main',
                                         px: 4,
                                         py: 1.5,
                                         fontSize: '1.1rem',
-                                        fontWeight: 600,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                                        fontWeight: 700,
                                         '&:hover': {
-                                            bgcolor: 'rgba(255,255,255,0.95)',
+                                            bgcolor: alpha('#fff', 0.9),
                                             transform: 'translateY(-2px)',
-                                            boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
                                         },
-                                        transition: 'all 0.3s ease',
                                     }}
                                 >
                                     Comenzar Ahora
@@ -246,247 +221,312 @@ const LandingPage = () => {
                                 <Button
                                     variant="outlined"
                                     size="large"
+                                    startIcon={<PlayArrow />}
+                                    onClick={handleViewDemo}
                                     sx={{
-                                        borderColor: 'rgba(255,255,255,0.5)',
+                                        borderColor: 'white',
                                         color: 'white',
                                         px: 4,
                                         py: 1.5,
                                         fontSize: '1.1rem',
-                                        fontWeight: 600,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
+                                        fontWeight: 700,
                                         '&:hover': {
                                             borderColor: 'white',
-                                            bgcolor: 'rgba(255,255,255,0.1)',
+                                            bgcolor: alpha('#fff', 0.1),
                                         },
-                                    }}
-                                    onClick={() => {
-                                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
                                     }}
                                 >
                                     Ver Demo
                                 </Button>
                             </Stack>
-                        </Box>
-                    </Fade>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Box
+                                sx={{
+                                    position: 'relative',
+                                    height: 400,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                {/* Animated dashboard preview */}
+                                <Paper
+                                    elevation={24}
+                                    sx={{
+                                        p: 3,
+                                        borderRadius: 4,
+                                        bgcolor: 'background.paper',
+                                        width: '100%',
+                                        maxWidth: 500,
+                                        animation: 'float 3s ease-in-out infinite',
+                                        '@keyframes float': {
+                                            '0%, 100%': { transform: 'translateY(0px)' },
+                                            '50%': { transform: 'translateY(-20px)' },
+                                        },
+                                    }}
+                                >
+                                    <Grid container spacing={2}>
+                                        {stats.map((stat, index) => (
+                                            <Grid item xs={6} key={index}>
+                                                <Card>
+                                                    <CardContent>
+                                                        <Stack direction="row" spacing={1} alignItems="center">
+                                                            <Avatar
+                                                                sx={{
+                                                                    bgcolor: `${stat.color}.main`,
+                                                                    width: 40,
+                                                                    height: 40,
+                                                                }}
+                                                            >
+                                                                {stat.icon}
+                                                            </Avatar>
+                                                            <Box>
+                                                                <Typography variant="h5" fontWeight={800}>
+                                                                    {stat.value}
+                                                                </Typography>
+                                                                <Typography variant="caption" color="text.secondary">
+                                                                    {stat.label}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Stack>
+                                                    </CardContent>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                </Paper>
+                            </Box>
+                        </Grid>
+                    </Grid>
                 </Container>
             </Box>
 
-            {/* Stats Section */}
-            <Container maxWidth="lg" sx={{ py: 6, mt: -4, position: 'relative', zIndex: 2 }}>
-                <Card
+            {/* Stats Bar */}
+            <Container maxWidth="lg" sx={{ mt: -4, position: 'relative', zIndex: 2 }}>
+                <Paper
                     elevation={8}
                     sx={{
-                        borderRadius: 3,
-                        overflow: 'hidden',
-                        bgcolor: 'background.paper',
+                        p: 4,
+                        borderRadius: 4,
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        color: 'white',
                     }}
                 >
-                    <Grid container>
+                    <Grid container spacing={4}>
                         {stats.map((stat, index) => (
                             <Grid item xs={6} md={3} key={index}>
-                                <Box
-                                    sx={{
-                                        p: 3,
-                                        textAlign: 'center',
-                                        borderRight: { md: index < stats.length - 1 ? 1 : 0 },
-                                        borderColor: 'divider',
-                                        borderBottom: { xs: index < stats.length - 2 ? 1 : 0, md: 0 },
-                                    }}
-                                >
-                                    <Typography
-                                        variant="h3"
-                                        fontWeight="bold"
-                                        color="primary.main"
-                                        sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}
-                                    >
+                                <Stack alignItems="center" spacing={1}>
+                                    <Avatar sx={{ bgcolor: alpha('#fff', 0.2), width: 56, height: 56 }}>
+                                        {stat.icon}
+                                    </Avatar>
+                                    <Typography variant="h3" fontWeight={800}>
                                         {stat.value}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
                                         {stat.label}
                                     </Typography>
-                                </Box>
+                                </Stack>
                             </Grid>
                         ))}
                     </Grid>
-                </Card>
+                </Paper>
             </Container>
 
             {/* Features Section */}
-            <Box id="features" sx={{ py: 10, bgcolor: 'background.default' }}>
-                <Container maxWidth="lg">
-                    <Box sx={{ textAlign: 'center', mb: 8 }}>
-                        <Typography
-                            variant="h3"
-                            component="h2"
-                            gutterBottom
-                            fontWeight="bold"
-                            sx={{ mb: 2 }}
-                        >
-                            Características Principales
-                        </Typography>
-                        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '600px', mx: 'auto' }}>
-                            Todo lo que necesitas para gestionar tu empresa de forma integral y eficiente
-                        </Typography>
-                    </Box>
+            <Container maxWidth="lg" sx={{ py: 12 }}>
+                <Box sx={{ textAlign: 'center', mb: 8 }}>
+                    <Chip label="Características" color="primary" sx={{ mb: 2, fontWeight: 600 }} />
+                    <Typography variant="h3" fontWeight={800} gutterBottom>
+                        Todo lo que Necesitas en un Solo Sistema
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto' }}>
+                        Potencia tu empresa con módulos integrados, inteligencia artificial y análisis en tiempo real
+                    </Typography>
+                </Box>
 
-                    <Grid container spacing={4}>
-                        {features.map((feature, index) => (
-                            <Grid item xs={12} sm={6} md={4} key={index}>
-                                <Fade in timeout={800} style={{ transitionDelay: `${index * 100}ms` }}>
-                                    <Card
+                <Grid container spacing={4}>
+                    {features.map((feature) => (
+                        <Grid item xs={12} md={4} key={feature.id}>
+                            <Card
+                                onMouseEnter={() => setHoveredFeature(feature.id)}
+                                onMouseLeave={() => setHoveredFeature(null)}
+                                sx={{
+                                    height: '100%',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s',
+                                    transform: hoveredFeature === feature.id ? 'translateY(-8px)' : 'translateY(0)',
+                                    boxShadow: hoveredFeature === feature.id ? 8 : 2,
+                                }}
+                            >
+                                <CardContent sx={{ p: 4 }}>
+                                    <Avatar
                                         sx={{
-                                            height: '100%',
-                                            p: 3,
-                                            borderRadius: 3,
-                                            transition: 'all 0.3s ease',
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            '&:hover': {
-                                                transform: 'translateY(-8px)',
-                                                boxShadow: `0 12px 40px ${feature.color}20`,
-                                                borderColor: feature.color,
-                                            },
+                                            bgcolor: feature.color,
+                                            width: 72,
+                                            height: 72,
+                                            mb: 3,
                                         }}
                                     >
-                                        <Box
-                                            sx={{
-                                                color: feature.color,
-                                                mb: 2,
-                                                display: 'inline-flex',
-                                                p: 1.5,
-                                                borderRadius: 2,
-                                                bgcolor: `${feature.color}10`,
-                                            }}
-                                        >
-                                            {feature.icon}
-                                        </Box>
-                                        <Typography variant="h6" fontWeight="bold" gutterBottom>
-                                            {feature.title}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary" lineHeight={1.7}>
-                                            {feature.description}
-                                        </Typography>
-                                    </Card>
-                                </Fade>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </Box>
+                                        {feature.icon}
+                                    </Avatar>
+                                    <Typography variant="h5" fontWeight={700} gutterBottom>
+                                        {feature.title}
+                                    </Typography>
+                                    <Typography variant="body1" color="text.secondary">
+                                        {feature.description}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
 
-            {/* Tech Stack Section */}
-            <Box sx={{ py: 10, bgcolor: 'background.paper' }}>
+            {/* Modules Grid */}
+            <Box sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05), py: 12 }}>
                 <Container maxWidth="lg">
                     <Box sx={{ textAlign: 'center', mb: 8 }}>
-                        <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
-                            Stack Tecnológico
+                        <Chip label="Módulos" color="primary" sx={{ mb: 2, fontWeight: 600 }} />
+                        <Typography variant="h3" fontWeight={800} gutterBottom>
+                            28 Módulos Integrados
                         </Typography>
-                        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: '600px', mx: 'auto' }}>
-                            Construido con las mejores tecnologías del ecosistema moderno
+                        <Typography variant="h6" color="text.secondary">
+                            Cada módulo diseñado para maximizar tu productividad
                         </Typography>
                     </Box>
 
-                    <Grid container spacing={2} justifyContent="center">
-                        {techStack.map((tech, index) => (
-                            <Grid item key={index}>
-                                <Chip
-                                    label={tech.name}
+                    <Grid container spacing={2}>
+                        {modules.map((module, index) => (
+                            <Grid item xs={6} sm={4} md={3} key={index}>
+                                <Paper
                                     sx={{
-                                        px: 2,
-                                        py: 3,
-                                        fontSize: '0.95rem',
-                                        fontWeight: 600,
-                                        borderRadius: 2,
-                                        bgcolor: 'primary.main',
-                                        color: 'white',
+                                        p: 3,
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s',
                                         '&:hover': {
-                                            bgcolor: 'primary.dark',
-                                            transform: 'scale(1.05)',
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: 4,
+                                            bgcolor: 'primary.main',
+                                            color: 'white',
+                                            '& .MuiSvgIcon-root': {
+                                                color: 'white',
+                                            },
                                         },
-                                        transition: 'all 0.2s ease',
                                     }}
-                                />
+                                >
+                                    <Box sx={{ color: 'primary.main', mb: 1 }}>{module.icon}</Box>
+                                    <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                                        {module.name}
+                                    </Typography>
+                                    <Chip label={module.count} size="small" />
+                                </Paper>
                             </Grid>
                         ))}
                     </Grid>
-
-                    <Box sx={{ mt: 6, textAlign: 'center' }}>
-                        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                            Backend robusto con NestJS, GraphQL y Prisma • Frontend moderno con React 18 y
-                            Material-UI • IA con Python y FastAPI • DevOps con Docker y despliegue en Vercel
-                        </Typography>
-                    </Box>
                 </Container>
             </Box>
+
+            {/* Testimonials */}
+            <Container maxWidth="lg" sx={{ py: 12 }}>
+                <Box sx={{ textAlign: 'center', mb: 8 }}>
+                    <Chip label="Testimonios" color="primary" sx={{ mb: 2, fontWeight: 600 }} />
+                    <Typography variant="h3" fontWeight={800} gutterBottom>
+                        Lo que Dicen Nuestros Clientes
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary">
+                        Empresas que confían en nuestro sistema
+                    </Typography>
+                </Box>
+
+                <Grid container spacing={4}>
+                    {testimonials.map((testimonial, index) => (
+                        <Grid item xs={12} md={4} key={index}>
+                            <Card sx={{ height: '100%' }}>
+                                <CardContent sx={{ p: 4 }}>
+                                    <Stack direction="row" spacing={0.5} sx={{ mb: 2 }}>
+                                        {[...Array(testimonial.rating)].map((_, i) => (
+                                            <Star key={i} sx={{ color: '#fbbf24', fontSize: 20 }} />
+                                        ))}
+                                    </Stack>
+                                    <Typography variant="body1" sx={{ mb: 3, fontStyle: 'italic' }}>
+                                        "{testimonial.text}"
+                                    </Typography>
+                                    <Stack direction="row" spacing={2} alignItems="center">
+                                        <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
+                                            {testimonial.avatar}
+                                        </Avatar>
+                                        <Box>
+                                            <Typography variant="subtitle2" fontWeight={700}>
+                                                {testimonial.name}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                {testimonial.role}
+                                            </Typography>
+                                        </Box>
+                                    </Stack>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
 
             {/* CTA Section */}
             <Box
                 sx={{
-                    py: 10,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                     color: 'white',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    py: 12,
                 }}
             >
                 <Container maxWidth="md">
-                    <Box sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                        <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
-                            ¿Listo para transformar tu negocio?
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="h3" fontWeight={800} gutterBottom>
+                            ¿Listo para Transformar tu Empresa?
                         </Typography>
-                        <Typography variant="h6" sx={{ mb: 4, opacity: 0.95, fontWeight: 400 }}>
-                            Únete a empresas que confían en nuestro ERP para gestionar sus operaciones de forma
-                            inteligente y eficiente
+                        <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+                            Únete a cientos de empresas que ya están optimizando sus operaciones con nuestro sistema ERP
                         </Typography>
-                        <Stack
-                            direction={{ xs: 'column', sm: 'row' }}
-                            spacing={2}
-                            justifyContent="center"
-                        >
+                        <Stack direction="row" spacing={2} justifyContent="center">
                             <Button
                                 variant="contained"
                                 size="large"
-                                onClick={handleGetStarted}
                                 endIcon={<ArrowForward />}
+                                onClick={handleGetStarted}
                                 sx={{
                                     bgcolor: 'white',
-                                    color: '#667eea',
+                                    color: 'primary.main',
                                     px: 5,
-                                    py: 1.5,
+                                    py: 2,
                                     fontSize: '1.1rem',
-                                    fontWeight: 600,
-                                    borderRadius: 2,
-                                    textTransform: 'none',
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                                    fontWeight: 700,
                                     '&:hover': {
-                                        bgcolor: 'rgba(255,255,255,0.95)',
-                                        transform: 'translateY(-2px)',
+                                        bgcolor: alpha('#fff', 0.9),
                                     },
-                                    transition: 'all 0.3s ease',
                                 }}
                             >
-                                Empezar Gratis
+                                Comenzar Gratis
                             </Button>
                             <Button
                                 variant="outlined"
                                 size="large"
+                                onClick={handleViewDemo}
                                 sx={{
-                                    borderColor: 'rgba(255,255,255,0.5)',
+                                    borderColor: 'white',
                                     color: 'white',
-                                    px: 4,
-                                    py: 1.5,
+                                    px: 5,
+                                    py: 2,
                                     fontSize: '1.1rem',
-                                    fontWeight: 600,
-                                    borderRadius: 2,
-                                    textTransform: 'none',
+                                    fontWeight: 700,
                                     '&:hover': {
                                         borderColor: 'white',
-                                        bgcolor: 'rgba(255,255,255,0.1)',
+                                        bgcolor: alpha('#fff', 0.1),
                                     },
                                 }}
                             >
-                                Ver Documentación
+                                Solicitar Demo
                             </Button>
                         </Stack>
                     </Box>
@@ -494,103 +534,111 @@ const LandingPage = () => {
             </Box>
 
             {/* Footer */}
-            <Box sx={{ bgcolor: 'grey.900', color: 'grey.300', py: 6 }}>
+            <Box sx={{ bgcolor: 'background.paper', py: 6, borderTop: 1, borderColor: 'divider' }}>
                 <Container maxWidth="lg">
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={4}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                <Business sx={{ fontSize: 32, color: 'primary.main' }} />
-                                <Typography variant="h6" fontWeight="bold" color="white">
-                                    Sistema ERP
+                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                                <Dashboard sx={{ fontSize: 32, color: 'primary.main' }} />
+                                <Typography variant="h5" fontWeight={800}>
+                                    ERP System
                                 </Typography>
-                            </Box>
-                            <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.7 }}>
-                                Plataforma ERP empresarial full-stack construida con las mejores tecnologías
-                                modernas para gestión integral de negocios.
+                            </Stack>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                Sistema ERP empresarial completo con inteligencia artificial y análisis en tiempo real.
                             </Typography>
-                            <Stack direction="row" spacing={2}>
-                                <Link
-                                    href="https://github.com/Toni872/SISTEMAEMPRESARIAL"
-                                    target="_blank"
-                                    color="inherit"
-                                    sx={{ '&:hover': { color: 'primary.main' } }}
-                                >
-                                    GitHub
-                                </Link>
-                                <Link
-                                    href="https://frontend-aopijxall-toni872s-projects.vercel.app"
-                                    target="_blank"
-                                    color="inherit"
-                                    sx={{ '&:hover': { color: 'primary.main' } }}
-                                >
-                                    Demo
-                                </Link>
+                            <Stack direction="row" spacing={1}>
+                                <IconButton size="small" color="primary">
+                                    <Email />
+                                </IconButton>
+                                <IconButton size="small" color="primary">
+                                    <LinkedIn />
+                                </IconButton>
+                                <IconButton size="small" color="primary">
+                                    <GitHub />
+                                </IconButton>
                             </Stack>
                         </Grid>
-                        <Grid item xs={6} md={2}>
-                            <Typography variant="subtitle2" fontWeight="bold" color="white" gutterBottom>
-                                Producto
-                            </Typography>
-                            <Stack spacing={1}>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    Características
-                                </Link>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    Tecnología
-                                </Link>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    Roadmap
-                                </Link>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={6} md={2}>
-                            <Typography variant="subtitle2" fontWeight="bold" color="white" gutterBottom>
-                                Recursos
-                            </Typography>
-                            <Stack spacing={1}>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    Documentación
-                                </Link>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    API Reference
-                                </Link>
-                                <Link href="#" color="inherit" sx={{ fontSize: '0.875rem', '&:hover': { color: 'primary.main' } }}>
-                                    Soporte
-                                </Link>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Typography variant="subtitle2" fontWeight="bold" color="white" gutterBottom>
-                                Estado del Proyecto
-                            </Typography>
-                            <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.7 }}>
-                                Este proyecto está en construcción activa. Algunas funcionalidades están
-                                completamente implementadas, otras están en desarrollo.
-                            </Typography>
-                            <Chip
-                                label="En Desarrollo"
-                                size="small"
-                                sx={{
-                                    bgcolor: 'warning.main',
-                                    color: 'white',
-                                    fontWeight: 600,
-                                }}
-                            />
+                        <Grid item xs={12} md={8}>
+                            <Grid container spacing={4}>
+                                <Grid item xs={6} md={3}>
+                                    <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                                        Producto
+                                    </Typography>
+                                    <Stack spacing={1}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Características
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Precios
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Demo
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={6} md={3}>
+                                    <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                                        Empresa
+                                    </Typography>
+                                    <Stack spacing={1}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Sobre Nosotros
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Contacto
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Blog
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={6} md={3}>
+                                    <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                                        Recursos
+                                    </Typography>
+                                    <Stack spacing={1}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Documentación
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            API
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Soporte
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={6} md={3}>
+                                    <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+                                        Legal
+                                    </Typography>
+                                    <Stack spacing={1}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Privacidad
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Términos
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            Cookies
+                                        </Typography>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                    <Divider sx={{ my: 4, borderColor: 'rgba(255,255,255,0.1)' }} />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-                        <Typography variant="body2">
-                            © 2024 Sistema ERP. Todos los derechos reservados.
-                        </Typography>
+                    <Box sx={{ mt: 6, pt: 4, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
                         <Typography variant="body2" color="text.secondary">
-                            Desarrollado con ❤️ usando React, NestJS y TypeScript
+                            © 2025 ERP System. Desarrollado por{' '}
+                            <Typography component="span" variant="body2" fontWeight={700} color="primary.main">
+                                Antonio Lloret Sánchez
+                            </Typography>
+                            . Todos los derechos reservados.
                         </Typography>
                     </Box>
                 </Container>
             </Box>
         </Box>
     );
-};
-
-export default LandingPage;
+}
