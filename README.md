@@ -673,12 +673,12 @@ Este proyecto es parte de mi portfolio profesional. El código está disponible 
 ## 👨‍💻 Desarrollador
 
 **Antonio Lloret Sánchez**  
-Full Stack Developer | Python, TypeScript, React, NestJS
+Full Stack Developer | React • NestJS • TypeScript • GraphQL
 
-- 🌐 Portfolio: [Próximamente]
-- 💼 LinkedIn: [linkedin.com/in/antonio-lloret-sánchez](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)
+- 🌐 Portfolio: [Sistema ERP Empresarial](https://github.com/Toni872/SISTEMAEMPRESARIAL)
+- 💼 LinkedIn: [linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)
 - 💻 GitHub: [@Toni872](https://github.com/Toni872)
-- 📧 Email: tonylloret45@gmail.com
+- 📧 Email: antohachi@gmail.com
 
 ---
 
@@ -699,6 +699,10 @@ Construido con ❤️ utilizando las mejores herramientas open-source:
 ¿Preguntas sobre el proyecto? ¿Interesado en colaborar?
 
 **¡Contáctame!** Estoy abierto a oportunidades de trabajo remoto full-stack.
+
+📧 **Email:** antohachi@gmail.com  
+💼 **LinkedIn:** [www.linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)  
+💻 **GitHub:** [github.com/Toni872](https://github.com/Toni872)
 
 ---
 
