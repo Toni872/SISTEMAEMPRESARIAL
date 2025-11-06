@@ -1,0 +1,186 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable */
+
+/* Landing Page Animations */
+@keyframes blob {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+.animate-fade-in {
+    animation: fade-in 1s ease-out;
+}
+
+@layer base {
+    * {
+        @apply box-border;
+    }
+
+    html,
+    body,
+    #root {
+        @apply h-full;
+    }
+
+    body {
+        @apply m-0 font-sans;
+        @apply bg-gradient-to-br from-gray-50 via-white to-gray-50;
+        @apply text-gray-900 antialiased;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    code {
+        @apply font-mono;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+    }
+}
+
+@layer components {
+
+    /* Apple-style glass morphism effect */
+    .glass {
+        @apply bg-white/80 backdrop-blur-xl border border-gray-200/50;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    }
+
+    .glass-dark {
+        @apply bg-gray-900/80 backdrop-blur-xl border border-gray-700/50;
+    }
+
+    /* Smooth card hover effect */
+    .card-hover {
+        @apply transition-all duration-300 ease-out;
+        @apply hover:shadow-xl hover:-translate-y-1;
+        @apply hover:border-gray-300;
+    }
+
+    /* Apple-style button */
+    .btn-apple {
+        @apply px-6 py-3 rounded-xl font-medium;
+        @apply transition-all duration-200 ease-out;
+        @apply active:scale-95;
+        @apply shadow-sm;
+    }
+
+    .btn-apple-primary {
+        @apply bg-primary-600 text-white;
+        @apply hover:bg-primary-700;
+        @apply hover:shadow-lg;
+    }
+
+    .btn-apple-secondary {
+        @apply bg-gray-100 text-gray-900;
+        @apply hover:bg-gray-200;
+    }
+
+    /* Input field styling */
+    .input-apple {
+        @apply w-full px-4 py-3 rounded-xl;
+        @apply border border-gray-300 bg-white;
+        @apply placeholder:text-gray-400;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+        @apply transition-all duration-200;
+        @apply hover:border-gray-400;
+    }
+
+    /* Smooth fade-in animation */
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Page transition */
+    .page-enter {
+        animation: slideIn 0.3s ease-out;
+    }
+}
+
+@layer utilities {
+
+    /* Gradient backgrounds */
+    .bg-gradient-apple {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-gradient-soft {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    /* Text gradient */
+    .text-gradient {
+        @apply bg-clip-text text-transparent;
+        @apply bg-gradient-to-r from-primary-600 to-blue-600;
+    }
+
+    /* Smooth scroll */
+    .smooth-scroll {
+        scroll-behavior: smooth;
+    }
+
+    /* Hide scrollbar but maintain functionality */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        -webkit-scrollbar-width: none;
+        scrollbar-width: none;
+    }
+
+    /* Custom scrollbar */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        @apply bg-gray-100 rounded-full;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        @apply bg-gray-400 rounded-full;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-500;
+    }
+}
