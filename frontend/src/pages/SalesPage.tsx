@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import {
     Container,
     Box,
@@ -14,7 +13,7 @@ import {
     Stack,
     IconButton,
     Tooltip,
-    Chip,
+    Avatar,
 } from '@mui/material';
 import {
     PointOfSale,
@@ -22,16 +21,13 @@ import {
     People,
     TrendingUp,
     AddCircle,
-    ShoppingCart,
     Refresh,
-    Download,
-    Assessment,
-    Dashboard,
+    AttachMoney,
+    ShoppingCart,
 } from '@mui/icons-material';
 import SalesOrdersTab from '../components/sales/SalesOrdersTab';
 import SalesInvoicesTab from '../components/sales/SalesInvoicesTab';
 import CustomersTab from '../components/sales/CustomersTab';
-import { GET_FINANCIAL_SUMMARY } from '../lib/graphql/queries';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -50,13 +46,21 @@ function TabPanel(props: TabPanelProps) {
 
 export default function SalesPage() {
     const [tabValue, setTabValue] = useState(0);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
+    // Datos demo - Resumen financiero de ventas
+    const salesMetrics = {
+        totalSales: 245680.50,
+        salesOrders: 89,
+        invoiced: 198450.30,
+        pending: 47230.20,
+        customers: 156,
+        avgOrderValue: 2760.23,
     };
 
-    // Fetch real financial data
-    const { data: financialData, loading: financialLoading } = useQuery(GET_FINANCIAL_SUMMARY);
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1);
+    };
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('es-ES', {
@@ -83,13 +87,10 @@ export default function SalesPage() {
                     </Stack>
                     <Stack direction="row" spacing={1}>
                         <Tooltip title="Actualizar datos">
-                            <IconButton>
+                            <IconButton onClick={handleRefresh} color="primary">
                                 <Refresh />
                             </IconButton>
                         </Tooltip>
-                        <Button variant="outlined" startIcon={<Download />}>
-                            Exportar
-                        </Button>
                         <Button variant="contained" startIcon={<AddCircle />}>
                             Nueva Venta
                         </Button>
@@ -97,110 +98,129 @@ export default function SalesPage() {
                 </Stack>
             </Box>
 
-            {/* KPIs Overview */}
-            {!financialLoading && financialData && (
-                <Grid container spacing={3} sx={{ mb: 3 }}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Ventas Totales
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="primary.main">
-                                            {formatCurrency(financialData.financialSummary.totalSales)}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'primary.light', borderRadius: 2, p: 2 }}>
-                                        <ShoppingCart sx={{ fontSize: 32, color: 'primary.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +12.5% vs mes anterior
+            {/* KPIs Principales */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Ventas Totales
                                     </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Total Órdenes
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700}>
-                                            {financialData.financialSummary.totalOrders}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'success.light', borderRadius: 2, p: 2 }}>
-                                        <PointOfSale sx={{ fontSize: 32, color: 'success.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +8.2% vs mes anterior
+                                    <Typography variant="h4" fontWeight={800} color="success.main">
+                                        {formatCurrency(salesMetrics.totalSales)}
                                     </Typography>
+                                    <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 0.5 }}>
+                                        <TrendingUp fontSize="small" color="success" />
+                                        <Typography variant="caption" color="success.main">
+                                            +18.3% vs mes anterior
+                                        </Typography>
+                                    </Box>
                                 </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Facturas Pendientes
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="warning.main">
-                                            {financialData.financialSummary.pendingOrders}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'warning.light', borderRadius: 2, p: 2 }}>
-                                        <Receipt sx={{ fontSize: 32, color: 'warning.main' }} />
-                                    </Box>
-                                </Stack>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Clientes Activos
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="info.main">
-                                            156
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'info.light', borderRadius: 2, p: 2 }}>
-                                        <People sx={{ fontSize: 32, color: 'info.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +15.8% vs mes anterior
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                                <Avatar sx={{ bgcolor: 'success.main', width: 56, height: 56 }}>
+                                    <AttachMoney sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
                 </Grid>
-            )}
 
-            <Paper elevation={2} sx={{ mt: 3, borderRadius: 3 }}>
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Órdenes de Venta
+                                    </Typography>
+                                    <Typography variant="h4" fontWeight={800}>
+                                        {salesMetrics.salesOrders}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Valor promedio: {formatCurrency(salesMetrics.avgOrderValue)}
+                                    </Typography>
+                                </Box>
+                                <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+                                    <ShoppingCart sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Clientes Activos
+                                    </Typography>
+                                    <Typography variant="h4" fontWeight={800} color="info.main">
+                                        {salesMetrics.customers}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Base de clientes
+                                    </Typography>
+                                </Box>
+                                <Avatar sx={{ bgcolor: 'info.main', width: 56, height: 56 }}>
+                                    <People sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            {/* Estado de Facturación */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                                <Receipt color="success" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Facturado
+                                </Typography>
+                            </Stack>
+                            <Typography variant="h3" fontWeight={800} color="success.main">
+                                {formatCurrency(salesMetrics.invoiced)}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                {((salesMetrics.invoiced / salesMetrics.totalSales) * 100).toFixed(1)}% del total
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                                <Receipt color="warning" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Pendiente de Facturar
+                                </Typography>
+                            </Stack>
+                            <Typography variant="h3" fontWeight={800} color="warning.main">
+                                {formatCurrency(salesMetrics.pending)}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                {((salesMetrics.pending / salesMetrics.totalSales) * 100).toFixed(1)}% del total
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            {/* Tabs */}
+            <Paper sx={{ borderRadius: 3 }}>
                 <Tabs
                     value={tabValue}
-                    onChange={handleTabChange}
+                    onChange={(_, v) => setTabValue(v)}
+                    variant="scrollable"
+                    scrollButtons="auto"
                     sx={{
                         borderBottom: 1,
                         borderColor: 'divider',
@@ -211,11 +231,7 @@ export default function SalesPage() {
                         },
                     }}
                 >
-                    <Tab
-                        icon={<ShoppingCart />}
-                        iconPosition="start"
-                        label="Órdenes de Venta"
-                    />
+                    <Tab icon={<ShoppingCart />} iconPosition="start" label="Órdenes de Venta" />
                     <Tab icon={<Receipt />} iconPosition="start" label="Facturas" />
                     <Tab icon={<People />} iconPosition="start" label="Clientes" />
                 </Tabs>

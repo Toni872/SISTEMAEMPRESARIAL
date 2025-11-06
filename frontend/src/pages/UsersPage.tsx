@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
 import {
     Container,
     Box,
@@ -17,13 +16,7 @@ import {
     Avatar,
     TextField,
     Grid,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    MenuItem,
     InputAdornment,
-    CircularProgress,
     Stack,
     Tooltip,
     Card,
@@ -31,7 +24,7 @@ import {
     Select,
     FormControl,
     InputLabel,
-    LinearProgress,
+    MenuItem,
 } from '@mui/material';
 import {
     Add,
@@ -43,54 +36,52 @@ import {
     ManageAccounts,
     AccountCircle,
     Refresh,
-    Download,
     Block,
     CheckCircle,
-    FilterList,
     People,
     Security,
     Accessibility,
-    Visibility,
 } from '@mui/icons-material';
-import { Alert } from '@mui/material';
 import { useAuthStore } from '../store/auth.store';
-import { GET_USERS, REMOVE_USER, UPDATE_USER } from '../lib/graphql/queries';
 
 export default function UsersPage() {
     const { user: currentUser } = useAuthStore();
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openEdit, setOpenEdit] = useState(false);
-    const [openDelete, setOpenDelete] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState<string>('all');
     const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    // MODO DEMO: Usuarios de ejemplo
-    const demoUsers = [
+    // Datos demo - Usuarios del sistema
+    const users = [
         {
             id: 1,
             firstName: 'Admin',
             lastName: 'Sistema',
             email: 'admin@erp.com',
             role: 'ADMIN',
-            isActive: true
+            isActive: true,
+            lastLogin: '2025-11-06 14:30',
+            createdAt: '2024-01-15',
         },
         {
             id: 2,
             firstName: 'María',
             lastName: 'García',
-            email: 'manager@erp.com',
+            email: 'maria.garcia@erp.com',
             role: 'MANAGER',
-            isActive: true
+            isActive: true,
+            lastLogin: '2025-11-06 12:15',
+            createdAt: '2024-02-20',
         },
         {
             id: 3,
             firstName: 'Juan',
             lastName: 'Pérez',
-            email: 'user@erp.com',
+            email: 'juan.perez@erp.com',
             role: 'USER',
-            isActive: true
+            isActive: true,
+            lastLogin: '2025-11-06 10:45',
+            createdAt: '2024-03-10',
         },
         {
             id: 4,
@@ -98,7 +89,9 @@ export default function UsersPage() {
             lastName: 'Martínez',
             email: 'ana.martinez@erp.com',
             role: 'USER',
-            isActive: true
+            isActive: true,
+            lastLogin: '2025-11-05 16:20',
+            createdAt: '2024-04-05',
         },
         {
             id: 5,
@@ -106,115 +99,109 @@ export default function UsersPage() {
             lastName: 'López',
             email: 'carlos.lopez@erp.com',
             role: 'READONLY',
-            isActive: false
-        }
+            isActive: false,
+            lastLogin: '2025-10-28 09:30',
+            createdAt: '2024-05-12',
+        },
+        {
+            id: 6,
+            firstName: 'Laura',
+            lastName: 'Fernández',
+            email: 'laura.fernandez@erp.com',
+            role: 'MANAGER',
+            isActive: true,
+            lastLogin: '2025-11-06 11:00',
+            createdAt: '2024-06-18',
+        },
+        {
+            id: 7,
+            firstName: 'Pedro',
+            lastName: 'Sánchez',
+            email: 'pedro.sanchez@erp.com',
+            role: 'USER',
+            isActive: true,
+            lastLogin: '2025-11-06 13:45',
+            createdAt: '2024-07-22',
+        },
+        {
+            id: 8,
+            firstName: 'Isabel',
+            lastName: 'Rodríguez',
+            email: 'isabel.rodriguez@erp.com',
+            role: 'USER',
+            isActive: false,
+            lastLogin: '2025-10-15 14:20',
+            createdAt: '2024-08-30',
+        },
     ];
 
-    const { data, loading, error, refetch } = useQuery(GET_USERS, {
-        variables: { skip: 0, take: 50, search: searchTerm || undefined },
-        errorPolicy: 'all', // No romper UI si hay errores
-    });
-
-    const [deleteUser] = useMutation(REMOVE_USER);
-    const [updateUser] = useMutation(UPDATE_USER);
-
-    const users = error ? demoUsers : (data?.users || []);
-
-    const handleDeleteUser = async (userId: number) => {
-        try {
-            await deleteUser({ variables: { id: userId } });
-            refetch();
-            setOpenDelete(false);
-        } catch (err) {
-            console.error('Error deleting user:', err);
-        }
+    // Métricas
+    const userMetrics = {
+        total: users.length,
+        active: users.filter(u => u.isActive).length,
+        inactive: users.filter(u => !u.isActive).length,
+        admins: users.filter(u => u.role === 'ADMIN').length,
+        managers: users.filter(u => u.role === 'MANAGER').length,
+        regularUsers: users.filter(u => u.role === 'USER').length,
+        readonly: users.filter(u => u.role === 'READONLY').length,
     };
 
-    const handleToggleStatus = async (usr: any) => {
-        try {
-            await updateUser({
-                variables: {
-                    updateUserInput: {
-                        id: usr.id,
-                        isActive: !usr.isActive,
-                    },
-                },
-            });
-            refetch();
-        } catch (err) {
-            console.error('Error updating user:', err);
-        }
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1);
     };
 
     const getInitials = (firstName: string, lastName: string) => {
         return `${firstName[0]}${lastName[0]}`.toUpperCase();
     };
 
-    const getRoleColor = (role: string) => {
-        const colors: Record<string, 'error' | 'warning' | 'info' | 'success'> = {
-            ADMIN: 'error',
-            MANAGER: 'warning',
-            USER: 'info',
-            READONLY: 'success',
-        };
-        return colors[role] || 'default';
-    };
-
-    const getRoleIcon = (role: string): React.ReactElement => {
-        const icons: Record<string, React.ReactElement> = {
-            ADMIN: <AdminPanelSettings fontSize="small" />,
-            MANAGER: <ManageAccounts fontSize="small" />,
-            USER: <AccountCircle fontSize="small" />,
-            READONLY: <Accessibility fontSize="small" />,
-        };
-        return icons[role] || <AccountCircle fontSize="small" />;
-    };
-
     const getRoleLabel = (role: string) => {
-        const labels: Record<string, string> = {
+        const roleLabels: Record<string, string> = {
             ADMIN: 'Administrador',
             MANAGER: 'Gerente',
             USER: 'Usuario',
             READONLY: 'Solo Lectura',
         };
-        return labels[role] || role;
+        return roleLabels[role] || role;
     };
 
-    // Filter users
-    const filteredUsers = users.filter((usr: any) => {
-        const matchesSearch = searchTerm === '' || 
-            usr.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            `${usr.firstName} ${usr.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = roleFilter === 'all' || usr.role === roleFilter;
-        const matchesStatus = statusFilter === 'all' || 
-            (statusFilter === 'active' && usr.isActive) ||
-            (statusFilter === 'inactive' && !usr.isActive);
+    const getRoleColor = (role: string) => {
+        const roleColors: Record<string, any> = {
+            ADMIN: 'error',
+            MANAGER: 'warning',
+            USER: 'primary',
+            READONLY: 'default',
+        };
+        return roleColors[role] || 'default';
+    };
+
+    const getRoleIcon = (role: string) => {
+        switch (role) {
+            case 'ADMIN':
+                return <AdminPanelSettings />;
+            case 'MANAGER':
+                return <ManageAccounts />;
+            case 'USER':
+                return <AccountCircle />;
+            case 'READONLY':
+                return <Accessibility />;
+            default:
+                return <AccountCircle />;
+        }
+    };
+
+    // Filtrado
+    const filteredUsers = users.filter(user => {
+        const matchesSearch =
+            user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+        const matchesStatus =
+            statusFilter === 'all' ||
+            (statusFilter === 'active' && user.isActive) ||
+            (statusFilter === 'inactive' && !user.isActive);
         return matchesSearch && matchesRole && matchesStatus;
     });
-
-    // Calculate stats
-    const stats = {
-        total: users.length,
-        active: users.filter((u: any) => u.isActive).length,
-        inactive: users.filter((u: any) => u.isActive === false).length,
-        admin: users.filter((u: any) => u.role === 'ADMIN').length,
-        manager: users.filter((u: any) => u.role === 'MANAGER').length,
-        user: users.filter((u: any) => u.role === 'USER').length,
-        readonly: users.filter((u: any) => u.role === 'READONLY').length,
-        activePercentage: users.length > 0 ? (users.filter((u: any) => u.isActive).length / users.length) * 100 : 0,
-    };
-
-    if (loading) {
-        return (
-            <Container maxWidth="xl">
-                <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-                    <CircularProgress />
-                </Box>
-            </Container>
-        );
-    }
-
-    // No mostrar error si hay datos demo disponibles
 
     return (
         <Container maxWidth="xl" className="page-enter">
@@ -234,100 +221,105 @@ export default function UsersPage() {
                     </Stack>
                     <Stack direction="row" spacing={1}>
                         <Tooltip title="Actualizar datos">
-                            <IconButton onClick={() => refetch()}>
+                            <IconButton onClick={handleRefresh} color="primary">
                                 <Refresh />
                             </IconButton>
                         </Tooltip>
-                        <Button variant="outlined" startIcon={<Download />}>
-                            Exportar
-                        </Button>
-                        <Button variant="contained" startIcon={<Add />} onClick={() => setOpenCreate(true)}>
+                        <Button variant="contained" startIcon={<PersonAdd />}>
                             Nuevo Usuario
                         </Button>
                     </Stack>
                 </Stack>
             </Box>
 
-
-            {/* KPIs Overview */}
+            {/* KPIs Principales */}
             <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
+                <Grid item xs={12} md={3}>
+                    <Card className="card-hover">
                         <CardContent>
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="body2" color="text.secondary">
                                         Total Usuarios
                                     </Typography>
-                                    <Typography variant="h4" fontWeight={700}>
-                                        {stats.total}
+                                    <Typography variant="h4" fontWeight={800}>
+                                        {userMetrics.total}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Registrados en el sistema
                                     </Typography>
                                 </Box>
-                                <Avatar sx={{ bgcolor: 'primary.main' }}>
-                                    <People />
+                                <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+                                    <People sx={{ fontSize: 32 }} />
                                 </Avatar>
                             </Stack>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
+
+                <Grid item xs={12} md={3}>
+                    <Card className="card-hover">
                         <CardContent>
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="body2" color="text.secondary">
                                         Usuarios Activos
                                     </Typography>
-                                    <Typography variant="h4" fontWeight={700} color="success.main">
-                                        {stats.active}
+                                    <Typography variant="h4" fontWeight={800} color="success.main">
+                                        {userMetrics.active}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {((userMetrics.active / userMetrics.total) * 100).toFixed(0)}% del total
                                     </Typography>
                                 </Box>
-                                <Avatar sx={{ bgcolor: 'success.main' }}>
-                                    <CheckCircle />
+                                <Avatar sx={{ bgcolor: 'success.main', width: 56, height: 56 }}>
+                                    <CheckCircle sx={{ fontSize: 32 }} />
                                 </Avatar>
                             </Stack>
-                            <LinearProgress 
-                                variant="determinate" 
-                                value={stats.activePercentage} 
-                                sx={{ mt: 1 }}
-                                color="success"
-                            />
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
+
+                <Grid item xs={12} md={3}>
+                    <Card className="card-hover">
                         <CardContent>
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="body2" color="text.secondary">
                                         Administradores
                                     </Typography>
-                                    <Typography variant="h4" fontWeight={700} color="error.main">
-                                        {stats.admin}
+                                    <Typography variant="h4" fontWeight={800} color="error.main">
+                                        {userMetrics.admins}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Acceso completo
                                     </Typography>
                                 </Box>
-                                <Avatar sx={{ bgcolor: 'error.main' }}>
-                                    <Security />
+                                <Avatar sx={{ bgcolor: 'error.main', width: 56, height: 56 }}>
+                                    <Security sx={{ fontSize: 32 }} />
                                 </Avatar>
                             </Stack>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
+
+                <Grid item xs={12} md={3}>
+                    <Card className="card-hover">
                         <CardContent>
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Box>
                                     <Typography variant="body2" color="text.secondary">
-                                        Usuarios Inactivos
+                                        Gerentes
                                     </Typography>
-                                    <Typography variant="h4" fontWeight={700} color="warning.main">
-                                        {stats.inactive}
+                                    <Typography variant="h4" fontWeight={800} color="warning.main">
+                                        {userMetrics.managers}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Gestión avanzada
                                     </Typography>
                                 </Box>
-                                <Avatar sx={{ bgcolor: 'warning.main' }}>
-                                    <Block />
+                                <Avatar sx={{ bgcolor: 'warning.main', width: 56, height: 56 }}>
+                                    <ManageAccounts sx={{ fontSize: 32 }} />
                                 </Avatar>
                             </Stack>
                         </CardContent>
@@ -335,24 +327,32 @@ export default function UsersPage() {
                 </Grid>
             </Grid>
 
-            {/* Search and Filters */}
-            <Paper elevation={0} sx={{ p: 2, mb: 3, border: 1, borderColor: 'divider' }}>
-                <Grid container spacing={2}>
+            {/* Filtros y Búsqueda */}
+            <Paper sx={{ p: 2, mb: 3, borderRadius: 3 }}>
+                <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={4}>
                         <TextField
                             fullWidth
-                            placeholder="Buscar usuarios..."
+                            placeholder="Buscar por nombre o email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             InputProps={{
-                                startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
+                                ),
                             }}
                         />
                     </Grid>
                     <Grid item xs={12} md={3}>
                         <FormControl fullWidth>
                             <InputLabel>Rol</InputLabel>
-                            <Select value={roleFilter} label="Rol" onChange={(e) => setRoleFilter(e.target.value)}>
+                            <Select
+                                value={roleFilter}
+                                label="Rol"
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                            >
                                 <MenuItem value="all">Todos los roles</MenuItem>
                                 <MenuItem value="ADMIN">Administrador</MenuItem>
                                 <MenuItem value="MANAGER">Gerente</MenuItem>
@@ -364,7 +364,11 @@ export default function UsersPage() {
                     <Grid item xs={12} md={3}>
                         <FormControl fullWidth>
                             <InputLabel>Estado</InputLabel>
-                            <Select value={statusFilter} label="Estado" onChange={(e) => setStatusFilter(e.target.value)}>
+                            <Select
+                                value={statusFilter}
+                                label="Estado"
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                            >
                                 <MenuItem value="all">Todos</MenuItem>
                                 <MenuItem value="active">Activos</MenuItem>
                                 <MenuItem value="inactive">Inactivos</MenuItem>
@@ -372,239 +376,95 @@ export default function UsersPage() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            startIcon={<FilterList />}
-                            onClick={() => {
-                                setRoleFilter('all');
-                                setStatusFilter('all');
-                                setSearchTerm('');
-                            }}
-                        >
-                            Limpiar
-                        </Button>
+                        <Typography variant="body2" color="text.secondary" align="center">
+                            {filteredUsers.length} resultado{filteredUsers.length !== 1 ? 's' : ''}
+                        </Typography>
                     </Grid>
                 </Grid>
             </Paper>
 
-            <TableContainer component={Paper} elevation={0} sx={{ border: 1, borderColor: 'divider' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: 'background.default' }}>
-                            <TableCell><strong>Usuario</strong></TableCell>
-                            <TableCell><strong>Email</strong></TableCell>
-                            <TableCell><strong>Rol</strong></TableCell>
-                            <TableCell><strong>Estado</strong></TableCell>
-                            <TableCell align="center"><strong>Acciones</strong></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredUsers.length === 0 && (
+            {/* Tabla de Usuarios */}
+            <Paper sx={{ borderRadius: 3 }}>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
                             <TableRow>
-                                <TableCell colSpan={5} align="center" sx={{ py: 5 }}>
-                                    <Typography color="text.secondary">
-                                        {searchTerm || roleFilter !== 'all' || statusFilter !== 'all' ? 'No hay usuarios que coincidan con los filtros' : 'No hay usuarios disponibles'}
-                                    </Typography>
-                                </TableCell>
+                                <TableCell><strong>Usuario</strong></TableCell>
+                                <TableCell><strong>Email</strong></TableCell>
+                                <TableCell><strong>Rol</strong></TableCell>
+                                <TableCell><strong>Estado</strong></TableCell>
+                                <TableCell><strong>Último Acceso</strong></TableCell>
+                                <TableCell><strong>Fecha Registro</strong></TableCell>
+                                <TableCell align="center"><strong>Acciones</strong></TableCell>
                             </TableRow>
-                        )}
-                        {filteredUsers.map((usr: any) => (
-                            <TableRow key={usr.id} hover>
-                                <TableCell>
-                                    <Box display="flex" alignItems="center" gap={2}>
-                                        <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }}>
-                                            {getInitials(usr.firstName || 'U', usr.lastName || 'S')}
-                                        </Avatar>
-                                        <Box>
-                                            <Typography variant="body2" fontWeight={600}>
-                                                {usr.firstName} {usr.lastName}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="body2">{usr.email}</Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip
-                                        icon={getRoleIcon(usr.role)}
-                                        label={getRoleLabel(usr.role)}
-                                        color={getRoleColor(usr.role)}
-                                        size="small"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <Chip
-                                        icon={usr.isActive ? <CheckCircle fontSize="small" /> : <Block fontSize="small" />}
-                                        label={usr.isActive ? 'Activo' : 'Inactivo'}
-                                        color={usr.isActive ? 'success' : 'error'}
-                                        size="small"
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                    <Stack direction="row" spacing={1} justifyContent="center">
-                                        <Tooltip title="Ver detalles">
-                                            <IconButton 
-                                                size="small" 
-                                                color="primary"
-                                                onClick={() => {
-                                                    setSelectedUser(usr);
-                                                    setOpenEdit(true);
-                                                }}
-                                            >
-                                                <Visibility fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Editar">
-                                            <IconButton 
-                                                size="small" 
-                                                color="warning"
-                                                onClick={() => {
-                                                    setSelectedUser(usr);
-                                                    setOpenEdit(true);
-                                                }}
-                                            >
-                                                <Edit fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        {usr.id !== currentUser?.id && (
-                                            <Tooltip title="Activar/Desactivar">
-                                                <IconButton
-                                                    size="small"
-                                                    color={usr.isActive ? 'error' : 'success'}
-                                                    onClick={() => handleToggleStatus(usr)}
-                                                >
-                                                    {usr.isActive ? <Block fontSize="small" /> : <CheckCircle fontSize="small" />}
+                        </TableHead>
+                        <TableBody>
+                            {filteredUsers.map((user) => (
+                                <TableRow key={user.id} hover>
+                                    <TableCell>
+                                        <Stack direction="row" alignItems="center" spacing={2}>
+                                            <Avatar sx={{ bgcolor: getRoleColor(user.role) + '.main' }}>
+                                                {getInitials(user.firstName, user.lastName)}
+                                            </Avatar>
+                                            <Box>
+                                                <Typography variant="body2" fontWeight={600}>
+                                                    {user.firstName} {user.lastName}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    ID: {user.id}
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body2">{user.email}</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            icon={getRoleIcon(user.role)}
+                                            label={getRoleLabel(user.role)}
+                                            color={getRoleColor(user.role)}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            icon={user.isActive ? <CheckCircle /> : <Block />}
+                                            label={user.isActive ? 'Activo' : 'Inactivo'}
+                                            color={user.isActive ? 'success' : 'default'}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {user.lastLogin}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {user.createdAt}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Stack direction="row" spacing={1} justifyContent="center">
+                                            <Tooltip title="Editar usuario">
+                                                <IconButton size="small" color="primary">
+                                                    <Edit fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
-                                        )}
-                                        {usr.id !== currentUser?.id && usr.role !== 'ADMIN' && (
-                                            <Tooltip title="Eliminar">
-                                                <IconButton
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={() => {
-                                                        setSelectedUser(usr);
-                                                        setOpenDelete(true);
-                                                    }}
-                                                >
+                                            <Tooltip title="Eliminar usuario">
+                                                <IconButton size="small" color="error">
                                                     <Delete fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
-                                        )}
-                                    </Stack>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            {/* Create User Dialog */}
-            <Dialog open={openCreate} onClose={() => setOpenCreate(false)} maxWidth="sm" fullWidth>
-                <DialogTitle>Nuevo Usuario</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ mt: 2 }}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="Nombre" required />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="Apellido" required />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField fullWidth label="Email" type="email" required />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField fullWidth label="Contraseña" type="password" required />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Rol"
-                                    select
-                                    required
-                                    defaultValue="USER"
-                                >
-                                    <MenuItem value="ADMIN">Administrador</MenuItem>
-                                    <MenuItem value="MANAGER">Gerente</MenuItem>
-                                    <MenuItem value="USER">Usuario</MenuItem>
-                                    <MenuItem value="READONLY">Solo Lectura</MenuItem>
-                                </TextField>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenCreate(false)}>Cancelar</Button>
-                    <Button variant="contained" onClick={() => setOpenCreate(false)}>
-                        Crear Usuario
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Edit User Dialog */}
-            <Dialog open={openEdit} onClose={() => setOpenEdit(false)} maxWidth="sm" fullWidth>
-                <DialogTitle>Editar Usuario</DialogTitle>
-                <DialogContent>
-                    {selectedUser && (
-                        <Box sx={{ mt: 2 }}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="Nombre" defaultValue={selectedUser.firstName} />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField fullWidth label="Apellido" defaultValue={selectedUser.lastName} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField fullWidth label="Email" type="email" defaultValue={selectedUser.email} />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        label="Rol"
-                                        select
-                                        defaultValue={selectedUser.role}
-                                    >
-                                        <MenuItem value="ADMIN">Administrador</MenuItem>
-                                        <MenuItem value="MANAGER">Gerente</MenuItem>
-                                        <MenuItem value="USER">Usuario</MenuItem>
-                                        <MenuItem value="READONLY">Solo Lectura</MenuItem>
-                                    </TextField>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenEdit(false)}>Cancelar</Button>
-                    <Button variant="contained" onClick={() => setOpenEdit(false)}>
-                        Guardar Cambios
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* Delete Confirmation Dialog */}
-            <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
-                <DialogTitle>Confirmar Eliminación</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        ¿Estás seguro de que deseas eliminar a {selectedUser?.firstName} {selectedUser?.lastName}?
-                        Esta acción no se puede deshacer.
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDelete(false)}>Cancelar</Button>
-                    <Button 
-                        variant="contained" 
-                        color="error"
-                        onClick={() => handleDeleteUser(selectedUser?.id)}
-                    >
-                        Eliminar
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
         </Container>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import {
     Container,
     Box,
@@ -14,21 +13,20 @@ import {
     Stack,
     IconButton,
     Tooltip,
+    Avatar,
 } from '@mui/material';
 import {
-    Inventory,
+    ShoppingBag,
     Receipt,
-    LocalShipping,
-    Store,
-    TrendingUp,
+    Business,
+    TrendingDown,
     AddCircle,
     Refresh,
-    Download,
+    AttachMoney,
+    LocalShipping,
 } from '@mui/icons-material';
 import PurchaseOrdersTab from '../components/purchases/PurchaseOrdersTab';
-import PurchaseInvoicesTab from '../components/purchases/PurchaseInvoicesTab';
 import SuppliersTab from '../components/purchases/SuppliersTab';
-import { GET_FINANCIAL_SUMMARY } from '../lib/graphql/queries';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -47,13 +45,21 @@ function TabPanel(props: TabPanelProps) {
 
 export default function PurchasesPage() {
     const [tabValue, setTabValue] = useState(0);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
+    // Datos demo - Resumen financiero de compras
+    const purchaseMetrics = {
+        totalPurchases: 156420.30,
+        purchaseOrders: 67,
+        received: 134200.50,
+        pending: 22219.80,
+        suppliers: 45,
+        avgOrderValue: 2334.63,
     };
 
-    // Fetch real financial data
-    const { data: financialData, loading: financialLoading } = useQuery(GET_FINANCIAL_SUMMARY);
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1);
+    };
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('es-ES', {
@@ -68,25 +74,22 @@ export default function PurchasesPage() {
             <Box sx={{ mb: 3 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Stack direction="row" alignItems="center" spacing={2}>
-                        <Inventory sx={{ fontSize: 40, color: 'secondary.main' }} />
+                        <ShoppingBag sx={{ fontSize: 40, color: 'primary.main' }} />
                         <Box>
                             <Typography variant="h4" fontWeight={700}>
                                 Módulo de Compras
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                Gestión de órdenes de compra, facturas y proveedores
+                                Gestión de órdenes de compra, recepciones y proveedores
                             </Typography>
                         </Box>
                     </Stack>
                     <Stack direction="row" spacing={1}>
                         <Tooltip title="Actualizar datos">
-                            <IconButton>
+                            <IconButton onClick={handleRefresh} color="primary">
                                 <Refresh />
                             </IconButton>
                         </Tooltip>
-                        <Button variant="outlined" startIcon={<Download />}>
-                            Exportar
-                        </Button>
                         <Button variant="contained" startIcon={<AddCircle />}>
                             Nueva Compra
                         </Button>
@@ -94,110 +97,129 @@ export default function PurchasesPage() {
                 </Stack>
             </Box>
 
-            {/* KPIs Overview */}
-            {!financialLoading && financialData && (
-                <Grid container spacing={3} sx={{ mb: 3 }}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Compras Totales
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="secondary.main">
-                                            {formatCurrency(financialData.financialSummary.totalPurchases)}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'secondary.light', borderRadius: 2, p: 2 }}>
-                                        <LocalShipping sx={{ fontSize: 32, color: 'secondary.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +8.4% vs mes anterior
+            {/* KPIs Principales */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Compras Totales
                                     </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Total Órdenes
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700}>
-                                            {financialData.financialSummary.totalPurchaseOrders}
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'success.light', borderRadius: 2, p: 2 }}>
-                                        <Inventory sx={{ fontSize: 32, color: 'success.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +5.2% vs mes anterior
+                                    <Typography variant="h4" fontWeight={800} color="error.main">
+                                        {formatCurrency(purchaseMetrics.totalPurchases)}
                                     </Typography>
+                                    <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 0.5 }}>
+                                        <TrendingDown fontSize="small" color="success" />
+                                        <Typography variant="caption" color="success.main">
+                                            -5.2% vs mes anterior
+                                        </Typography>
+                                    </Box>
                                 </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Facturas Pendientes
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="warning.main">
-                                            12
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'warning.light', borderRadius: 2, p: 2 }}>
-                                        <Receipt sx={{ fontSize: 32, color: 'warning.main' }} />
-                                    </Box>
-                                </Stack>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                    <Box>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Proveedores Activos
-                                        </Typography>
-                                        <Typography variant="h4" fontWeight={700} color="info.main">
-                                            42
-                                        </Typography>
-                                    </Box>
-                                    <Box sx={{ bgcolor: 'info.light', borderRadius: 2, p: 2 }}>
-                                        <Store sx={{ fontSize: 32, color: 'info.main' }} />
-                                    </Box>
-                                </Stack>
-                                <Box display="flex" alignItems="center" gap={0.5} sx={{ mt: 1 }}>
-                                    <TrendingUp fontSize="small" color="success" />
-                                    <Typography variant="caption" color="success.main">
-                                        +12.1% vs mes anterior
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                                <Avatar sx={{ bgcolor: 'error.main', width: 56, height: 56 }}>
+                                    <AttachMoney sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
                 </Grid>
-            )}
 
-            <Paper elevation={2} sx={{ mt: 3, borderRadius: 3 }}>
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Órdenes de Compra
+                                    </Typography>
+                                    <Typography variant="h4" fontWeight={800}>
+                                        {purchaseMetrics.purchaseOrders}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Valor promedio: {formatCurrency(purchaseMetrics.avgOrderValue)}
+                                    </Typography>
+                                </Box>
+                                <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+                                    <LocalShipping sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <Card className="card-hover">
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Proveedores Activos
+                                    </Typography>
+                                    <Typography variant="h4" fontWeight={800} color="info.main">
+                                        {purchaseMetrics.suppliers}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Red de proveedores
+                                    </Typography>
+                                </Box>
+                                <Avatar sx={{ bgcolor: 'info.main', width: 56, height: 56 }}>
+                                    <Business sx={{ fontSize: 32 }} />
+                                </Avatar>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            {/* Estado de Recepciones */}
+            <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                                <Receipt color="success" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Recibido
+                                </Typography>
+                            </Stack>
+                            <Typography variant="h3" fontWeight={800} color="success.main">
+                                {formatCurrency(purchaseMetrics.received)}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                {((purchaseMetrics.received / purchaseMetrics.totalPurchases) * 100).toFixed(1)}% del total
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                                <Receipt color="warning" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Pendiente de Recibir
+                                </Typography>
+                            </Stack>
+                            <Typography variant="h3" fontWeight={800} color="warning.main">
+                                {formatCurrency(purchaseMetrics.pending)}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                                {((purchaseMetrics.pending / purchaseMetrics.totalPurchases) * 100).toFixed(1)}% del total
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            {/* Tabs */}
+            <Paper sx={{ borderRadius: 3 }}>
                 <Tabs
                     value={tabValue}
-                    onChange={handleTabChange}
+                    onChange={(_, v) => setTabValue(v)}
+                    variant="scrollable"
+                    scrollButtons="auto"
                     sx={{
                         borderBottom: 1,
                         borderColor: 'divider',
@@ -208,21 +230,8 @@ export default function PurchasesPage() {
                         },
                     }}
                 >
-                    <Tab
-                        icon={<LocalShipping />}
-                        iconPosition="start"
-                        label="Órdenes de Compra"
-                    />
-                    <Tab
-                        icon={<Receipt />}
-                        iconPosition="start"
-                        label="Facturas de Compra"
-                    />
-                    <Tab
-                        icon={<Store />}
-                        iconPosition="start"
-                        label="Proveedores"
-                    />
+                    <Tab icon={<LocalShipping />} iconPosition="start" label="Órdenes de Compra" />
+                    <Tab icon={<Business />} iconPosition="start" label="Proveedores" />
                 </Tabs>
 
                 <TabPanel value={tabValue} index={0}>
@@ -230,10 +239,6 @@ export default function PurchasesPage() {
                 </TabPanel>
 
                 <TabPanel value={tabValue} index={1}>
-                    <PurchaseInvoicesTab />
-                </TabPanel>
-
-                <TabPanel value={tabValue} index={2}>
                     <SuppliersTab />
                 </TabPanel>
             </Paper>
