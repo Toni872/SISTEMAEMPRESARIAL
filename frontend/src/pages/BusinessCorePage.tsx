@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import {
     Container,
     Box,
@@ -52,7 +51,6 @@ import {
     Assessment,
     AutoAwesome,
 } from '@mui/icons-material';
-import { GET_FINANCIAL_SUMMARY } from '../lib/graphql/queries';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -75,15 +73,6 @@ export default function BusinessCorePage() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [openCreate, setOpenCreate] = useState(false);
     const [openView, setOpenView] = useState(false);
-
-    const { data: financialData, loading: financialLoading } = useQuery(GET_FINANCIAL_SUMMARY);
-
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('es-ES', {
-            style: 'currency',
-            currency: 'EUR',
-        }).format(value);
-    };
 
     // Mock data for business processes
     const processes = [

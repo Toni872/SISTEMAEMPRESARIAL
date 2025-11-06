@@ -1,12 +1,9 @@
-import { useQuery } from '@apollo/client';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
   Typography,
   Box,
-  CircularProgress,
-  Alert,
-  AlertTitle,
   Paper,
   Grid,
   Chip,
@@ -37,7 +34,6 @@ import {
   Autorenew,
   Timeline,
   CheckCircle,
-  Error,
   Schedule,
   Info,
   Download,
@@ -45,17 +41,7 @@ import {
   Analytics,
 } from '@mui/icons-material';
 import { useAuthStore } from '../store/auth.store';
-import type { Product } from '../types';
 import { LineChart, Line, BarChart as RechartsBarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
-import {
-  GET_FINANCIAL_SUMMARY,
-  GET_INVENTORY_VALUE,
-  GET_LOW_STOCK_PRODUCTS,
-  GET_MONTHLY_SALES,
-  GET_TOP_PRODUCTS,
-  GET_DASHBOARD_METRICS,
-  GET_PERFORMANCE_DATA,
-} from '../lib/graphql/queries';
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('es-ES', {
@@ -148,58 +134,103 @@ function StatCard({ title, value, icon, color, subtitle, trend, action }: StatCa
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const { data: financialData, loading: financialLoading, error: financialError, refetch: refetchFinancial } =
-    useQuery(GET_FINANCIAL_SUMMARY, {
-      skip: user?.role === 'USER' || user?.role === 'READONLY',
-      errorPolicy: 'all',
-    });
-
-  const { data: inventoryData, loading: inventoryLoading, refetch: refetchInventory } = useQuery(
-    GET_INVENTORY_VALUE,
-    { errorPolicy: 'all' }
-  );
-
-  const { data: lowStockData, loading: lowStockLoading } = useQuery(
-    GET_LOW_STOCK_PRODUCTS,
-    { errorPolicy: 'all' }
-  );
-
-  const { data: monthlySalesData, loading: monthlySalesLoading } = useQuery(
-    GET_MONTHLY_SALES,
-    {
-      variables: { year: new Date().getFullYear() },
-      skip: user?.role === 'USER' || user?.role === 'READONLY',
-      errorPolicy: 'all',
+  // Datos demo - Resumen financiero
+  const financialData = {
+    financialSummary: {
+      totalSales: 245680.50,
+      totalPurchases: 156420.30,
+      netProfit: 89260.20,
+      profitMargin: 36.3,
+      totalOrders: 156,
+      salesOrdersCount: 89,
     }
-  );
+  };
 
-  const { data: topProductsData, loading: topProductsLoading } = useQuery(
-    GET_TOP_PRODUCTS,
-    {
-      variables: { limit: 5 },
-      skip: user?.role === 'USER' || user?.role === 'READONLY',
-      errorPolicy: 'all',
+  // Datos demo - Valor de inventario
+  const inventoryData = {
+    inventoryValue: {
+      totalValue: 456789.25,
+      totalProducts: 234,
+      lowStockProducts: 12,
+      outOfStockProducts: 3,
     }
-  );
+  };
 
-  const { data: dashboardMetrics, loading: dashboardMetricsLoading } = useQuery(
-    GET_DASHBOARD_METRICS
-  );
+  // Datos demo - Productos con stock bajo
+  const lowStockData = {
+    lowStockProducts: [
+      { id: 1, name: 'Laptop HP ProBook', sku: 'LAP-HP-001', stock: 3, minStock: 10 },
+      { id: 2, name: 'Mouse Logitech MX', sku: 'MOU-LOG-002', stock: 5, minStock: 15 },
+      { id: 3, name: 'Teclado Mecánico', sku: 'KEY-MEC-003', stock: 2, minStock: 8 },
+      { id: 4, name: 'Monitor Dell 27"', sku: 'MON-DEL-004', stock: 4, minStock: 12 },
+    ]
+  };
 
-  const { data: performanceData, loading: performanceLoading } = useQuery(
-    GET_PERFORMANCE_DATA,
-    {
-      variables: { period: 'year' },
-      skip: user?.role === 'USER' || user?.role === 'READONLY',
+  // Datos demo - Ventas mensuales
+  const monthlySalesData = {
+    monthlySales: [
+      { month: 'Ene', total: 18500 },
+      { month: 'Feb', total: 22300 },
+      { month: 'Mar', total: 19800 },
+      { month: 'Abr', total: 25600 },
+      { month: 'May', total: 28900 },
+      { month: 'Jun', total: 31200 },
+      { month: 'Jul', total: 27800 },
+      { month: 'Ago', total: 29500 },
+      { month: 'Sep', total: 33100 },
+      { month: 'Oct', total: 35400 },
+      { month: 'Nov', total: 38200 },
+      { month: 'Dic', total: 42500 },
+    ]
+  };
+
+  // Datos demo - Top productos
+  const topProductsData = {
+    topProducts: [
+      { productId: 1, productName: 'Laptop Dell XPS 15', totalQuantity: 45, totalRevenue: 67500 },
+      { productId: 2, productName: 'iPhone 14 Pro', totalQuantity: 78, totalRevenue: 85800 },
+      { productId: 3, productName: 'Samsung Galaxy S23', totalQuantity: 62, totalRevenue: 55800 },
+      { productId: 4, productName: 'MacBook Pro M2', totalQuantity: 38, totalRevenue: 76000 },
+      { productId: 5, productName: 'iPad Air', totalQuantity: 54, totalRevenue: 32400 },
+    ]
+  };
+
+  // Datos demo - Métricas del dashboard
+  const dashboardMetrics = {
+    dashboardMetrics: {
+      operationalEfficiency: 94.5,
+      operationalEfficiencyTrend: 5.2,
+      processAutomation: 87.3,
+      processAutomationTrend: 8.1,
+      aiModels: {
+        active: 32,
+        training: 5,
+      },
+      roi: {
+        percentage: 42.8,
+        operationalSavings: 125000,
+      }
     }
-  );
+  };
+
+  // Datos demo - Datos de rendimiento
+  const performanceData = {
+    performanceData: [
+      { month: 'Ene', efficiency: 88, automation: 82, sales: 75 },
+      { month: 'Feb', efficiency: 90, automation: 84, sales: 78 },
+      { month: 'Mar', efficiency: 89, automation: 85, sales: 76 },
+      { month: 'Abr', efficiency: 91, automation: 86, sales: 80 },
+      { month: 'May', efficiency: 93, automation: 87, sales: 82 },
+      { month: 'Jun', efficiency: 94, automation: 88, sales: 85 },
+    ]
+  };
 
   const canViewFinancials = user?.role === 'ADMIN' || user?.role === 'MANAGER';
 
   const handleRefresh = () => {
-    refetchFinancial();
-    refetchInventory();
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleClearCache = () => {
@@ -208,22 +239,6 @@ export default function DashboardPage() {
       window.location.href = '/login';
     }
   };
-
-  // Mostrar loading solo para datos críticos
-  if (inventoryLoading || lowStockLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '60vh',
-        }}
-      >
-        <CircularProgress size={60} />
-      </Box>
-    );
-  }
 
   return (
     <Box>
@@ -264,22 +279,6 @@ export default function DashboardPage() {
           </Stack>
         </Stack>
       </Box>
-
-            {/* Ocultar errores de red - modo visual sin backend */}
-      {financialError && import.meta.env.DEV && financialError.networkError && (
-        <Alert 
-          severity="info" 
-          sx={{ mb: 3 }}
-          action={
-            <Button color="inherit" size="small" onClick={() => refetchFinancial()}>
-              Reintentar
-            </Button>
-          }
-        >
-          <AlertTitle>Modo Visual</AlertTitle>
-          El backend no está disponible. Mostrando datos de ejemplo.
-        </Alert>
-      )}
 
       {/* KPIs Principales */}
       <Grid container spacing={3}>
