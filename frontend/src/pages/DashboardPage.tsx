@@ -18,6 +18,7 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
+  Alert,
 } from '@mui/material';
 import {
   TrendingUp,
@@ -578,7 +579,7 @@ export default function DashboardPage() {
               </Button>
             </Box>
             <Grid container spacing={2}>
-              {lowStockData.lowStockProducts.map((product: Product) => (
+              {lowStockData.lowStockProducts.map((product: any) => (
                 <Grid item xs={12} sm={6} md={4} key={product.id}>
                   <Card variant="outlined">
                     <CardContent>
