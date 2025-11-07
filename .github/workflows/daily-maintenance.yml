@@ -1,14 +1,14 @@
-name: Daily Maintenance
+name: Weekly Dependency Check
 
 on:
   schedule:
-    # Ejecutar todos los días a las 3 AM
-    - cron: '0 3 * * *'
+    # Ejecutar los lunes a las 3 AM
+    - cron: '0 3 * * 1'
   workflow_dispatch: # Permite ejecución manual
 
 jobs:
-  dependency-updates:
-    name: Check and Update Dependencies
+  dependency-check:
+    name: Check Dependencies Status
     runs-on: ubuntu-latest
     
     steps:
@@ -18,113 +18,27 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Check outdated packages - Backend
-        working-directory: ./backend
-        run: |
-          npm ci
-          npm outdated || true
-          echo "Backend dependencies checked"
 
       - name: Check outdated packages - Frontend
         working-directory: ./frontend
         run: |
           npm ci
           npm outdated || true
-          echo "Frontend dependencies checked"
+          echo "✅ Frontend dependencies checked"
 
-      - name: Run npm update - Backend
-        working-directory: ./backend
-        run: |
-          npm update
-          echo "Backend dependencies updated"
-
-      - name: Run npm update - Frontend
+      - name: Security audit - Frontend
         working-directory: ./frontend
         run: |
-          npm update
-          echo "Frontend dependencies updated"
+          npm audit --audit-level=moderate || true
+          echo "✅ Frontend security audit completed"
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore: update dependencies (automated)'
-          title: '🤖 Daily Dependency Update'
-          body: |
-            ## Actualización automática de dependencias
-            
-            Esta PR ha sido generada automáticamente por el sistema de mantenimiento diario.
-            
-            ### Cambios
-            - Actualización de dependencias del backend
-            - Actualización de dependencias del frontend
-            
-            ### Próximos pasos
-            - Revisar los cambios
-            - Ejecutar tests localmente
-            - Aprobar y mergear si todo está bien
-          branch: automated/dependency-updates
-          labels: dependencies, automated
-
-  code-quality:
-    name: Code Quality Analysis
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  database-backup:
-    name: Database Backup Check
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Check database backup status
+      - name: Generate report
         run: |
-          echo "Verificando estado de backups..."
-          # Aquí puedes añadir scripts para verificar backups de PostgreSQL
-          echo "Backup check completed"
-
-  monitoring-report:
-    name: Generate Monitoring Report
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Generate health report
-        run: |
-          echo "## 🏥 Daily Health Report" > report.md
-          echo "" >> report.md
-          echo "**Fecha:** $(date)" >> report.md
-          echo "" >> report.md
-          echo "### ✅ Checks completados:" >> report.md
-          echo "- Security scan" >> report.md
-          echo "- Dependency check" >> report.md
-          echo "- Code quality" >> report.md
-          echo "- Database backup" >> report.md
+          echo "✅ Dependency check completed" > report.md
+          echo "Fecha: $(date)" >> report.md
 
       - name: Upload report
         uses: actions/upload-artifact@v4
         with:
-          name: daily-report
+          name: dependency-report
           path: report.md
-

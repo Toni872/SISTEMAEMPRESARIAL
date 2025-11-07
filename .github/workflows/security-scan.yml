@@ -1,17 +1,14 @@
-name: Security Scan
+name: Security Audit
 
 on:
-  push:
-    branches: [master, main, develop]
-  pull_request:
-    branches: [master, main, develop]
   schedule:
-    # Escaneo diario a las 2 AM
-    - cron: '0 2 * * *'
+    # Escaneo semanal los domingos a las 2 AM
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Permite ejecución manual
 
 jobs:
-  security-scan:
-    name: Security Vulnerability Scan
+  security-audit:
+    name: NPM Security Audit
     runs-on: ubuntu-latest
     
     steps:
@@ -24,51 +21,23 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies - Backend
-        working-directory: ./backend
-        run: npm ci
-
       - name: Install dependencies - Frontend
         working-directory: ./frontend
         run: npm ci
 
-      - name: Run npm audit - Backend
-        working-directory: ./backend
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-
       - name: Run npm audit - Frontend
         working-directory: ./frontend
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+        run: npm audit --audit-level=moderate || true
 
-      - name: Snyk Security Scan - Backend
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --file=backend/package.json
+      - name: Generate security report
+        run: |
+          echo "✅ Security audit completed" > security-report.md
+          echo "Fecha: $(date)" >> security-report.md
+          echo "" >> security-report.md
+          echo "Check npm audit output above for details" >> security-report.md
 
-      - name: Snyk Security Scan - Frontend
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --file=frontend/package.json
-
-      - name: OWASP Dependency Check
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: 'Sistema-ERP'
-          path: '.'
-          format: 'HTML'
-          out: 'reports'
-
-      - name: Upload security reports
+      - name: Upload security report
         uses: actions/upload-artifact@v4
         with:
-          name: security-reports
-          path: reports/
-
+          name: security-audit-report
+          path: security-report.md

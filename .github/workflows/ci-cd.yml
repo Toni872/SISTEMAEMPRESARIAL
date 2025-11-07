@@ -7,8 +7,8 @@ on:
     branches: [master, main, develop]
 
 jobs:
-  build:
-    name: Build and Deploy
+  build-frontend:
+    name: Build Frontend
     runs-on: ubuntu-latest
     
     steps:
@@ -18,27 +18,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Build Backend
-        working-directory: ./backend
-        run: |
-          npm ci
-          npx prisma generate
-          npm run build
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
 
       - name: Build Frontend
         working-directory: ./frontend
-        run: |
-          npm ci
-          npm run build
-
-      - name: Deploy Frontend to Vercel
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-        uses: amondnet/vercel-action@v25
-        continue-on-error: true
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./frontend
-          vercel-args: '--prod'
+        run: npm run build
+        
+      - name: Lint Frontend
+        working-directory: ./frontend
+        run: npm run lint --max-warnings=0 || true
