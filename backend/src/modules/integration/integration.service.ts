@@ -1,7 +1,10 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { IntegrationRegistry } from './integration-registry.service';
 import { SyncType, SyncDirection } from './adapters/base/sync-result.interface';
-import type { SyncOptions, IIntegrationAdapter } from './adapters/base/integration.adapter.interface';
+import type {
+  SyncOptions,
+  IIntegrationAdapter,
+} from './adapters/base/integration.adapter.interface';
 import type { SyncResult } from './adapters/base/sync-result.interface';
 
 /**
@@ -42,16 +45,12 @@ export class IntegrationService {
   ): Promise<SyncResult> {
     const adapter = this.getAdapter(integrationName);
 
-    this.logger.log(
-      `Iniciando sincronización: ${integrationName} - ${syncType} - ${direction}`,
-    );
+    this.logger.log(`Iniciando sincronización: ${integrationName} - ${syncType} - ${direction}`);
 
     try {
       // Validar que el adaptador está conectado
       if (!adapter.isConnected()) {
-        this.logger.warn(
-          `Adaptador ${integrationName} no está conectado. Intentando conectar...`,
-        );
+        this.logger.warn(`Adaptador ${integrationName} no está conectado. Intentando conectar...`);
         await adapter.connect();
       }
 
@@ -164,7 +163,7 @@ export class IntegrationService {
   async getAllStatuses() {
     const adapters = this.registry.getAll();
     const statuses = await Promise.all(
-      adapters.map(async (adapter) => ({
+      adapters.map(async adapter => ({
         name: adapter.getName(),
         type: adapter.getType(),
         version: adapter.getVersion(),
@@ -180,11 +179,7 @@ export class IntegrationService {
    * @param url URL del webhook
    * @param events Eventos a suscribir
    */
-  async registerWebhook(
-    integrationName: string,
-    url: string,
-    events: string[],
-  ): Promise<string> {
+  async registerWebhook(integrationName: string, url: string, events: string[]): Promise<string> {
     const adapter = this.getAdapter(integrationName);
 
     this.logger.log(
@@ -222,15 +217,11 @@ export class IntegrationService {
    * @param payload Payload del webhook
    * @param signature Firma del webhook
    */
-  async handleWebhook(
-    integrationName: string,
-    payload: any,
-    signature?: string,
-  ): Promise<void> {
+  async handleWebhook(integrationName: string, payload: any, signature?: string): Promise<void> {
     const adapter = this.getAdapter(integrationName);
 
     this.logger.log(`Procesando webhook de ${integrationName}`);
-    
+
     try {
       await adapter.handleWebhook(payload, signature);
       this.logger.log(`Webhook de ${integrationName} procesado exitosamente`);
@@ -270,5 +261,3 @@ export class IntegrationService {
     };
   }
 }
-
-

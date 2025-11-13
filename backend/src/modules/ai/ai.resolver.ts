@@ -2,7 +2,13 @@ import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { AIService } from './ai.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ActiveAIModels, OptimizePriceResult, PredictDemandResult, AIMetrics, DeployModelResult } from './ai.types';
+import {
+  ActiveAIModels,
+  OptimizePriceResult,
+  PredictDemandResult,
+  AIMetrics,
+  DeployModelResult,
+} from './ai.types';
 
 @Resolver()
 @UseGuards(JwtAuthGuard)
@@ -58,6 +64,3 @@ export class AIResolver {
     };
   }
 }
-
-
-

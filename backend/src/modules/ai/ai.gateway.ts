@@ -24,14 +24,18 @@ export class AIGateway implements OnGatewayInit {
       };
       this.server.emit('ai:metrics', payload);
       // Persistir métrica
-      this.prisma.aIMetric.create({ data: {
-        ts: new Date(payload.ts),
-        accuracy: payload.accuracy,
-        latencyMsP95: payload.latencyMsP95,
-        latencyMsP99: payload.latencyMsP99,
-        throughputRps: payload.throughputRps,
-        errorRate: payload.errorRate,
-      }}).catch(() => {});
+      this.prisma.aIMetric
+        .create({
+          data: {
+            ts: new Date(payload.ts),
+            accuracy: payload.accuracy,
+            latencyMsP95: payload.latencyMsP95,
+            latencyMsP99: payload.latencyMsP99,
+            throughputRps: payload.throughputRps,
+            errorRate: payload.errorRate,
+          },
+        })
+        .catch(() => {});
       if (Math.random() < 0.25) {
         const alert = {
           level: 'info',
@@ -40,15 +44,17 @@ export class AIGateway implements OnGatewayInit {
           ts: now,
         };
         this.server.emit('ai:alert', alert);
-        this.prisma.aIAlert.create({ data: {
-          level: alert.level,
-          title: alert.title,
-          message: alert.message,
-          ts: new Date(alert.ts),
-        }}).catch(() => {});
+        this.prisma.aIAlert
+          .create({
+            data: {
+              level: alert.level,
+              title: alert.title,
+              message: alert.message,
+              ts: new Date(alert.ts),
+            },
+          })
+          .catch(() => {});
       }
     }, 5000);
   }
 }
-
-

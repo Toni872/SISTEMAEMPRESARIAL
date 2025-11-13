@@ -50,12 +50,10 @@ describe('AuthController (e2e)', () => {
 
     // Este test requiere que el usuario admin exista en la BD
     it('should return 200 with valid credentials', async () => {
-      const response = await request(app.getHttpServer())
-        .post('/api/auth/login')
-        .send({
-          email: 'admin@erp.com',
-          password: 'admin123',
-        });
+      const response = await request(app.getHttpServer()).post('/api/auth/login').send({
+        email: 'admin@erp.com',
+        password: 'admin123',
+      });
 
       // Este test puede fallar si la BD no tiene datos de seed
       // Es una prueba real contra una BD limpia
@@ -91,7 +89,7 @@ describe('AuthController (e2e)', () => {
           `,
         })
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           const { data, errors } = res.body;
           // Puede tener errores si no hay datos de seed
           if (!errors && data) {
@@ -118,11 +116,10 @@ describe('AuthController (e2e)', () => {
           `,
         })
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body.data).toBeNull();
           expect(res.body.errors).toBeDefined();
         });
     });
   });
 });
-

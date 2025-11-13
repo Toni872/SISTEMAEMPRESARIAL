@@ -4,8 +4,8 @@ import { PurchaseOrdersResolver, SuppliersResolver } from './purchase.resolver';
 import { PrismaModule } from '../../common/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    providers: [PurchaseService, PurchaseOrdersResolver, SuppliersResolver],
-    exports: [PurchaseService],
+  imports: [PrismaModule],
+  providers: [PurchaseService, PurchaseOrdersResolver, SuppliersResolver],
+  exports: [PurchaseService],
 })
-export class PurchaseModule { }
+export class PurchaseModule {}

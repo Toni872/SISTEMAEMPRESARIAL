@@ -18,7 +18,7 @@ export class ReportProcessor {
       await this.simulateReportGeneration(type, reportId, data);
 
       this.logger.log(`Report ${reportId} generated successfully`);
-      
+
       // Aquí puedes agregar lógica real para generar PDF/Excel
       // Ejemplo con librerías como:
       // - pdfmake para PDF
@@ -38,7 +38,7 @@ export class ReportProcessor {
   ): Promise<void> {
     // Simular procesamiento que toma 1-3 segundos
     const delay = Math.floor(Math.random() * 2000) + 1000;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise(resolve => setTimeout(resolve, delay));
 
     // Aquí iría la lógica real:
     // if (type === 'pdf') {
@@ -46,7 +46,7 @@ export class ReportProcessor {
     // } else if (type === 'excel') {
     //   await this.generateExcel(reportId, data);
     // }
-    
+
     this.logger.debug(`Simulated ${type} generation for report ${reportId}`);
   }
 
@@ -54,9 +54,8 @@ export class ReportProcessor {
   // private async generatePDF(reportId: string, data: any) {
   //   // Implementar con pdfmake
   // }
-  
+
   // private async generateExcel(reportId: string, data: any) {
   //   // Implementar con exceljs
   // }
 }
-

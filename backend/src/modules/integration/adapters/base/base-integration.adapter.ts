@@ -22,7 +22,10 @@ export abstract class BaseIntegrationAdapter implements IIntegrationAdapter {
     failedSyncs: 0,
   };
 
-  constructor(protected readonly name: string, protected readonly version: string) {
+  constructor(
+    protected readonly name: string,
+    protected readonly version: string,
+  ) {
     this.logger = new Logger(`${name}Adapter`);
   }
 
@@ -123,10 +126,7 @@ export abstract class BaseIntegrationAdapter implements IIntegrationAdapter {
   /**
    * Método helper para ejecutar sincronizaciones con manejo de errores
    */
-  protected async executeSync<T>(
-    syncFn: () => Promise<T>,
-    syncType: string,
-  ): Promise<T> {
+  protected async executeSync<T>(syncFn: () => Promise<T>, syncType: string): Promise<T> {
     const startTime = Date.now();
     this.syncStats.totalSyncs++;
 
@@ -139,9 +139,7 @@ export abstract class BaseIntegrationAdapter implements IIntegrationAdapter {
       this.lastSyncAt = new Date();
       this.lastError = undefined;
 
-      this.logger.log(
-        `Sincronización completada: ${syncType} en ${duration}ms`,
-      );
+      this.logger.log(`Sincronización completada: ${syncType} en ${duration}ms`);
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -194,7 +192,7 @@ export abstract class BaseIntegrationAdapter implements IIntegrationAdapter {
       recordsCreated: 0,
       recordsUpdated: 0,
       recordsFailed: errors?.length || 0,
-      errors: errors?.map((e) => ({
+      errors: errors?.map(e => ({
         recordId: e.recordId,
         message: e.message,
       })),
@@ -204,5 +202,3 @@ export abstract class BaseIntegrationAdapter implements IIntegrationAdapter {
     };
   }
 }
-
-

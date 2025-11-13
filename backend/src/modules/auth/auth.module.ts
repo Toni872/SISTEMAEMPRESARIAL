@@ -9,20 +9,22 @@ import { RolesGuard } from './roles.guard';
 import { PrismaService } from '../../common/prisma.service';
 
 @Module({
-    imports: [
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET') || 'your-super-secret-jwt-key-change-this-in-production',
-                signOptions: {
-                    expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
-                },
-            }),
-            inject: [ConfigService],
-        }),
-    ],
-    providers: [AuthService, AuthResolver, JwtStrategy, RolesGuard, PrismaService],
-    exports: [AuthService, JwtStrategy, RolesGuard, PassportModule],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret:
+          configService.get<string>('JWT_SECRET') ||
+          'your-super-secret-jwt-key-change-this-in-production',
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '7d',
+        },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [AuthService, AuthResolver, JwtStrategy, RolesGuard, PrismaService],
+  exports: [AuthService, JwtStrategy, RolesGuard, PassportModule],
 })
-export class AuthModule { }
+export class AuthModule {}

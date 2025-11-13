@@ -3,12 +3,11 @@
 > Sistema integral de gestión empresarial con arquitectura moderna full-stack, diseñado para optimizar operaciones y decisiones de negocio en tiempo real con IA integrada.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![GraphQL](https://img.shields.io/badge/-GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white)](https://graphql.org/)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 
 ---
 
@@ -36,7 +35,7 @@
 
 </div>
 
-**🔗 Demo en vivo:** [https://frontend-aopijxall-toni872s-projects.vercel.app](https://frontend-aopijxall-toni872s-projects.vercel.app) 
+**🔗 Demo en vivo:** [https://frontend-next-m6ceik81r-toni872s-projects.vercel.app](https://frontend-next-m6ceik81r-toni872s-projects.vercel.app)
 
 > **Nota para recruiters:** Este proyecto demuestra competencia end-to-end en desarrollo full-stack, desde diseño de base de datos con 24+ tablas hasta implementación de UI moderna, integrando IA predictiva, WebSockets en tiempo real y las mejores prácticas de la industria.
 
@@ -50,13 +49,14 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 
 ### ✨ Características Principales
 
-#### 🎨 Frontend Premium
-- **Landing Page Moderna:** Diseño profesional con Material-UI v5 y gradientes visuales
+#### 🎨 Frontend Premium (Next.js 14)
+- **Landing Page Moderna:** Diseño profesional inspirado en Holded con gradientes purple-blue
 - **Dashboard Ejecutivo:** Visualización de KPIs en tiempo real con gráficos interactivos usando Recharts
-- **15 Módulos Integrados:** Ventas, Compras, Inventario, Usuarios, Reportes, IA, Logística, Automatización, Mobile, Webflow y más
-- **Experiencia de Usuario:** Interfaz intuitiva, responsive y optimizada para desktop/tablet
-- **Estado Global:** Gestión eficiente con Zustand para performance óptima
-- **Animaciones Fluidas:** Transiciones suaves y micro-interacciones
+- **24 Módulos Integrados:** Dashboard, Productos, Ventas, Compras, Usuarios, Reportes, IA, Logística, Automatización, Mobile, y 15 módulos ejecutivos más
+- **Experiencia de Usuario:** Interfaz intuitiva, responsive y optimizada con shadcn/ui + Tailwind CSS v4
+- **Estado Global:** Gestión eficiente con Zustand y TanStack Query para performance óptima
+- **Animaciones Fluidas:** Transiciones suaves con Framer Motion y micro-interacciones
+- **Tema Oscuro:** Diseño moderno con modo oscuro permanente optimizado
 
 #### 🤖 Motor de IA Integrado
 - **Predicción de Demanda:** Modelos ML para predecir necesidades de stock
@@ -153,20 +153,19 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 
 ## 🛠️ Stack Tecnológico
 
-### Frontend
+### Frontend (Next.js 14)
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
-| **React 18** | Framework UI | 18.2 |
+| **Next.js 14** | Framework SSR/SSG | 16.0 |
+| **React 18** | UI Library | 18.2 |
 | **TypeScript** | Type safety | 5.3 |
-| **Material-UI** | Component library | v5.18 |
-| **Apollo Client** | GraphQL client | 3.8 |
-| **Zustand** | State management | 5.0 |
-| **Vite** | Build tool | 5.0 |
-| **React Router** | Routing | 6.21 |
+| **shadcn/ui** | Component library | Latest |
+| **Tailwind CSS** | Styling | v4 |
+| **Framer Motion** | Animations | 12.23 |
+| **TanStack Query** | Server state | 5.90 |
+| **Zustand** | Client state | 5.0 |
 | **Recharts** | Data visualization | 2.10 |
-| **Socket.IO Client** | WebSocket | 4.8 |
-| **React Hook Form** | Forms | 7.49 |
-| **Zod** | Validation | 3.22 |
+| **Lucide Icons** | Icons | Latest |
 
 ### Backend
 | Tecnología | Uso | Versión |
@@ -195,10 +194,9 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 |------------|-----|
 | **Docker** | Containerization |
 | **Docker Compose** | Orchestration |
+| **Vercel** | Frontend hosting |
 | **PostgreSQL** | Database |
 | **Redis** | Cache/Sessions |
-| **pgAdmin** | DB Management |
-| **Nginx** | Reverse proxy (prod) |
 | **Git** | Version control |
 
 ---
@@ -206,11 +204,52 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
-- Docker y Docker Compose instalados ([Docker Desktop](https://www.docker.com/products/docker-desktop))
+- Node.js 18+ y npm
+- Docker y Docker Compose (opcional)
 - Git
-- Puerto 5173 (frontend), 3001 (backend) y 8000 (IA) disponibles
+- Puerto 3001 (frontend-next) y 3000 (backend) disponibles
 
-### Inicio Rápido (Recomendado)
+### Inicio Rápido
+
+#### Frontend (Next.js)
+```bash
+# 1. Navegar al directorio frontend-next
+cd frontend-next
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Ejecutar en desarrollo
+npm run dev
+
+# 4. Abrir en el navegador
+# http://localhost:3001
+```
+
+#### Backend (NestJS)
+```bash
+# 1. Navegar al directorio backend
+cd backend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales
+
+# 4. Configurar base de datos
+npx prisma generate
+npx prisma migrate dev
+
+# 5. Ejecutar en desarrollo
+npm run start:dev
+
+# 6. Acceder a GraphQL Playground
+# http://localhost:3000/graphql
+```
+
+### Con Docker (Recomendado)
 
 ```bash
 # 1. Clonar el repositorio
@@ -228,9 +267,9 @@ docker-compose ps
 ```
 
 **URLs:**
-- 🌐 **Frontend:** http://localhost:5173
-- 🔧 **Backend API:** http://localhost:3001
-- 📊 **GraphQL Playground:** http://localhost:3001/graphql
+- 🌐 **Frontend:** http://localhost:3001
+- 🔧 **Backend API:** http://localhost:3000
+- 📊 **GraphQL Playground:** http://localhost:3000/graphql
 - 🤖 **AI Service:** http://localhost:8000
 - 📚 **pgAdmin:** http://localhost:8080
 - 💾 **Redis:** localhost:6379
@@ -257,34 +296,30 @@ Password: admin123
 ```
 SISTEMAEMPRESARIAL/
 │
-├── frontend/                    # Aplicación React
+├── frontend-next/              # Aplicación Next.js 14
 │   ├── src/
-│   │   ├── pages/              # 15 páginas principales
-│   │   │   ├── LandingPage.tsx
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── DashboardPage.tsx
-│   │   │   ├── ProductsPage.tsx
-│   │   │   ├── SalesPage.tsx
-│   │   │   ├── PurchasesPage.tsx
-│   │   │   ├── UsersPage.tsx
-│   │   │   ├── ReportsPage.tsx
-│   │   │   ├── AiEnginePage.tsx      # Motor de IA
-│   │   │   ├── LogisticsPage.tsx     # Logística
-│   │   │   ├── AutomationCenterPage.tsx
-│   │   │   ├── MobileOpsPage.tsx
-│   │   │   └── BusinessCorePage.tsx
-│   │   ├── components/         # Componentes reutilizables
-│   │   │   ├── dashboard/
-│   │   │   ├── products/
-│   │   │   ├── sales/
-│   │   │   ├── purchases/
-│   │   │   ├── users/
-│   │   │   └── reports/
-│   │   ├── store/              # Estado global con Zustand
-│   │   ├── lib/                # Configuraciones y utilidades
-│   │   │   ├── apollo-client.ts
-│   │   │   └── graphql/
-│   │   └── types/              # Tipos TypeScript
+│   │   ├── app/
+│   │   │   ├── (dashboard)/    # Rutas protegidas
+│   │   │   │   ├── dashboard/
+│   │   │   │   ├── products/
+│   │   │   │   ├── sales/
+│   │   │   │   ├── purchases/
+│   │   │   │   ├── users/
+│   │   │   │   ├── reports/
+│   │   │   │   └── [18 módulos ejecutivos]/
+│   │   │   ├── landing/        # Landing page
+│   │   │   ├── login/          # Autenticación
+│   │   │   ├── register/
+│   │   │   └── layout.tsx      # Layout principal
+│   │   ├── components/
+│   │   │   ├── ui/             # Componentes shadcn/ui
+│   │   │   ├── sidebar.tsx    # Navegación lateral
+│   │   │   ├── navbar.tsx     # Barra superior
+│   │   │   └── auth-guard.tsx # Protección de rutas
+│   │   └── lib/
+│   │       ├── auth-store.ts   # Estado de autenticación
+│   │       ├── mock-data.ts    # Datos de prueba
+│   │       └── utils.ts        # Utilidades
 │   ├── public/                 # Assets estáticos
 │   └── package.json
 │
@@ -347,7 +382,7 @@ JWT_EXPIRATION="1d"
 
 # App
 NODE_ENV="development"
-PORT=3001
+PORT=3000
 LOG_LEVEL="info"
 
 # Throttling
@@ -355,7 +390,7 @@ THROTTLE_TTL=60
 THROTTLE_LIMIT=100
 
 # Frontend URL (para CORS)
-FRONTEND_URL="http://localhost:5173"
+FRONTEND_URL="http://localhost:3001"
 
 # AI Service
 AI_SERVICE_URL="http://ai-service:8000"
@@ -482,7 +517,15 @@ query PendingInvoices {
 
 ## 🧪 Testing y Desarrollo
 
-### Desarrollo Local (sin Docker)
+### Desarrollo Local
+
+**Frontend:**
+```bash
+cd frontend-next
+npm install
+npm run dev
+# http://localhost:3001
+```
 
 **Backend:**
 ```bash
@@ -490,13 +533,7 @@ cd backend
 npm install
 npx prisma generate
 npm run start:dev
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
+# http://localhost:3000/graphql
 ```
 
 **AI Service:**
@@ -538,26 +575,25 @@ docker-compose up -d [service_name]
 
 ## 🚧 Roadmap
 
-> 📖 **[Ver Roadmap de Evolución completo](ROADMAP_EVOLUCION.md)** - Guía detallada para escalar tu ERP
-
 ### ✅ Completado
-- [x] Arquitectura base con NestJS y React
+- [x] Arquitectura base con NestJS y Next.js 14
 - [x] Sistema de autenticación JWT completo
 - [x] CRUD completo para todos los módulos (24+ tablas)
 - [x] Dashboard con métricas en tiempo real
-- [x] Diseño responsive con Material-UI
+- [x] Diseño responsive con shadcn/ui + Tailwind CSS v4
 - [x] Dockerización completa
-- [x] 15 módulos funcionales implementados
+- [x] 24 módulos funcionales implementados (6 core + 18 ejecutivos)
 - [x] Motor de IA con predicción y optimización
 - [x] WebSockets para streaming en tiempo real
 - [x] Integración Webflow para e-commerce
 - [x] Sistema de roles granular (RBAC)
-- [x] Logística y automatización
+- [x] Landing page profesional
+- [x] Deploy en Vercel
 
 ### 🔄 En Progreso
-- [ ] Deploy en producción (Vercel + Railway)
 - [ ] Tests unitarios y E2E
 - [ ] Documentación de API completa con Swagger
+- [ ] Integración completa frontend-backend
 
 ### 📋 Próximas Features
 - [ ] Exportar reportes a PDF/Excel
@@ -566,13 +602,25 @@ docker-compose up -d [service_name]
 - [ ] App móvil (React Native)
 - [ ] Integración con APIs externas (contabilidad, facturación)
 - [ ] Multi-idioma (i18n)
-- [ ] Dark mode toggle
 - [ ] Reportes personalizados con builder
 - [ ] Integración con WhatsApp Business API
 
 ---
 
 ## 🎓 Aprendizajes y Decisiones Técnicas
+
+### ¿Por qué Next.js 14?
+- **SSR/SSG:** Mejor SEO y performance inicial
+- **App Router:** Arquitectura moderna y escalable
+- **Server Components:** Menor bundle size y mejor UX
+- **Optimizaciones:** Image optimization, code splitting automático
+- **Vercel:** Deploy sin configuración adicional
+
+### ¿Por qué shadcn/ui?
+- **Copiable:** Control total del código fuente
+- **Customizable:** Fácil personalización sin dependencias
+- **Accesible:** Basado en Radix UI (WCAG 2.1)
+- **Moderno:** Diseño actualizado y profesional
 
 ### ¿Por qué GraphQL?
 - **Flexibilidad:** El frontend solicita solo los datos necesarios
@@ -595,25 +643,6 @@ docker-compose up -d [service_name]
 - **Performance:** Query engine optimizado
 - **Facilidad:** Menos boilerplate que otros ORMs
 
-### ¿Por qué Material-UI?
-- **Componentes:** Enterprise-ready out of the box
-- **Customización:** Theming extenso y flexible
-- **Accesibilidad:** WCAG compliance integrado
-- **Comunidad:** Activa y bien documentada
-- **Ecosystem:** X-packages para DataGrid, DatePickers, etc.
-
-### ¿Por qué Vite?
-- **Velocidad:** HMR instantáneo en desarrollo
-- **Bundle:** Optimizado para producción
-- **Ecosystem:** Excelente integración con React y TypeScript
-- **DX:** Configuración minimalista
-
-### ¿Por qué WebSockets?
-- **Tiempo real:** Streaming de métricas sin polling
-- **Eficiencia:** Menor carga de servidor que polling constante
-- **UX:** Actualizaciones instantáneas para el usuario
-- **Escalabilidad:** Socket.IO maneja reconexión automática
-
 ---
 
 ## 🐛 Troubleshooting
@@ -621,8 +650,8 @@ docker-compose up -d [service_name]
 ### Error: Puerto ya en uso
 ```bash
 # Cambiar puertos en docker-compose.yml
-# Frontend: "5173:5173" → "5174:5173"
-# Backend: "3001:3001" → "3002:3001"
+# Frontend: "3001:3001" → "3002:3001"
+# Backend: "3000:3000" → "3001:3000"
 ```
 
 ### Error: Base de datos no conecta
@@ -659,7 +688,7 @@ docker-compose restart ai-service
 ```bash
 # Limpiar caché del navegador (Ctrl + Shift + R)
 # Verificar que el build fue exitoso
-docker-compose logs frontend
+npm run build
 ```
 
 ---
@@ -673,7 +702,7 @@ Este proyecto es parte de mi portfolio profesional. El código está disponible 
 ## 👨‍💻 Desarrollador
 
 **Antonio Lloret Sánchez**  
-Full Stack Developer | React • NestJS • TypeScript • GraphQL
+Full Stack Developer | React • Next.js • NestJS • TypeScript • GraphQL
 
 - 🌐 Portfolio: [Sistema ERP Empresarial](https://github.com/Toni872/SISTEMAEMPRESARIAL)
 - 💼 LinkedIn: [linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)
@@ -686,9 +715,10 @@ Full Stack Developer | React • NestJS • TypeScript • GraphQL
 
 Construido con ❤️ utilizando las mejores herramientas open-source:
 - React Team por el increíble framework
+- Next.js Team por SSR y optimizaciones
 - Nest Team por la arquitectura robusta
 - Prisma por simplificar el acceso a datos
-- Material-UI por los componentes hermosos
+- shadcn por los componentes hermosos
 - FastAPI por facilitar APIs Python
 - PostgreSQL por ser la BD más confiable
 

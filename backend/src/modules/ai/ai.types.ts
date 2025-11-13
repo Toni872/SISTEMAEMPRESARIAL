@@ -144,5 +144,3 @@ export class DeployModelResult {
   @Field()
   message!: string;
 }
-
-

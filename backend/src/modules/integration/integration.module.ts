@@ -8,7 +8,7 @@ import { DemoAdapter } from './adapters/demo/demo.adapter';
 /**
  * Módulo principal de integraciones
  * Gestiona todas las integraciones con sistemas externos
- * 
+ *
  * Para agregar una nueva integración:
  * 1. Crear el adaptador en adapters/[nombre]/
  * 2. Importar el adaptador aquí como provider
@@ -23,16 +23,13 @@ import { DemoAdapter } from './adapters/demo/demo.adapter';
     DemoAdapter, // Adaptador de demostración
     // Agregar más adaptadores aquí cuando se implementen
   ],
-  exports: [
-    IntegrationService,
-    IntegrationRegistry,
-  ],
+  exports: [IntegrationService, IntegrationRegistry],
 })
 export class IntegrationModule implements OnModuleInit {
   constructor(
     private readonly registry: IntegrationRegistry,
     private readonly demoAdapter: DemoAdapter,
-  ) { }
+  ) {}
 
   /**
    * Inicializar módulo y registrar todos los adaptadores disponibles

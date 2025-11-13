@@ -3,8 +3,7 @@ import { MonitoringService } from './monitoring.service';
 
 @Global()
 @Module({
-    providers: [MonitoringService],
-    exports: [MonitoringService],
+  providers: [MonitoringService],
+  exports: [MonitoringService],
 })
 export class MonitoringModule {}
-

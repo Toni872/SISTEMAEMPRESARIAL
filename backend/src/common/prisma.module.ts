@@ -5,7 +5,7 @@ import { HealthService } from './health.service';
 
 @Global()
 @Module({
-    providers: [PrismaService, LoggerService, HealthService],
-    exports: [PrismaService, LoggerService, HealthService],
+  providers: [PrismaService, LoggerService, HealthService],
+  exports: [PrismaService, LoggerService, HealthService],
 })
-export class PrismaModule { }
+export class PrismaModule {}

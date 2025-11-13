@@ -162,5 +162,3 @@ export interface IntegrationStatus {
     lastSyncDuration?: number;
   };
 }
-
-

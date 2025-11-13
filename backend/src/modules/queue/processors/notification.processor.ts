@@ -36,10 +36,10 @@ export class NotificationProcessor {
   ): Promise<void> {
     // Simular envío de email
     const delay = Math.floor(Math.random() * 1000) + 500;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise(resolve => setTimeout(resolve, delay));
 
     this.logger.debug(`Simulated email to ${to}: ${subject}`);
-    
+
     // Aquí implementarías con librerías como:
     // - @nestjs-modules/mailer
     // - nodemailer
@@ -54,14 +54,13 @@ export class NotificationProcessor {
   ): Promise<void> {
     // Simular notificación push
     const delay = Math.floor(Math.random() * 500) + 200;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise(resolve => setTimeout(resolve, delay));
 
     this.logger.debug(`Simulated push notification to ${recipient}`);
-    
+
     // Aquí implementarías con librerías como:
     // - firebase-admin para FCM
     // - pusher
     // - WebSockets
   }
 }
-

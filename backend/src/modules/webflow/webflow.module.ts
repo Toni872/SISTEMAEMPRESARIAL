@@ -5,10 +5,9 @@ import { WebflowResolver } from './webflow.resolver';
 import { PrismaModule } from '../../common/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    providers: [WebflowService, WebflowResolver],
-    controllers: [WebflowController],
-    exports: [WebflowService],
+  imports: [PrismaModule],
+  providers: [WebflowService, WebflowResolver],
+  controllers: [WebflowController],
+  exports: [WebflowService],
 })
-export class WebflowModule { }
-
+export class WebflowModule {}

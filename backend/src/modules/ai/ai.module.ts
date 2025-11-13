@@ -21,6 +21,3 @@ import { AIGateway } from './ai.gateway';
   exports: [AIService],
 })
 export class AIModule {}
-
-
-

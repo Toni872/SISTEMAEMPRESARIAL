@@ -16,7 +16,7 @@ export class IntegrationRegistry {
    */
   register(adapter: IIntegrationAdapter): void {
     const name = adapter.getName();
-    
+
     if (this.adapters.has(name)) {
       this.logger.warn(`Adaptador '${name}' ya está registrado. Se sobrescribirá.`);
     }
@@ -46,7 +46,7 @@ export class IntegrationRegistry {
    */
   get(name: string): IIntegrationAdapter {
     const adapter = this.adapters.get(name);
-    
+
     if (!adapter) {
       throw new NotFoundException(`Adaptador '${name}' no encontrado`);
     }
@@ -94,7 +94,7 @@ export class IntegrationRegistry {
    * @returns Array de adaptadores del tipo especificado
    */
   getByType(type: string): IIntegrationAdapter[] {
-    return this.getAll().filter((adapter) => adapter.getType() === type);
+    return this.getAll().filter(adapter => adapter.getType() === type);
   }
 
   /**
@@ -123,7 +123,7 @@ export class IntegrationRegistry {
     version: string;
     connected: boolean;
   }> {
-    return this.getAll().map((adapter) => ({
+    return this.getAll().map(adapter => ({
       name: adapter.getName(),
       type: adapter.getType(),
       version: adapter.getVersion(),
@@ -131,5 +131,3 @@ export class IntegrationRegistry {
     }));
   }
 }
-
-

@@ -113,5 +113,3 @@ export enum SyncDirection {
    */
   BIDIRECTIONAL = 'bidirectional',
 }
-
-

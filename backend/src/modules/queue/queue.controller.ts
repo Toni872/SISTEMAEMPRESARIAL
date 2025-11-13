@@ -38,7 +38,9 @@ export class QueueController {
 
   @Post('exports')
   @ApiOperation({ summary: 'Queue an export job' })
-  async queueExport(@Body() job: { type: 'excel' | 'csv'; filename: string; data: any; userId: number }) {
+  async queueExport(
+    @Body() job: { type: 'excel' | 'csv'; filename: string; data: any; userId: number },
+  ) {
     const queuedJob = await this.queueService.addExportJob(job);
     return {
       message: 'Export job queued successfully',
@@ -55,4 +57,3 @@ export class QueueController {
     };
   }
 }
-

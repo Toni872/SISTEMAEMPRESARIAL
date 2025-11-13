@@ -3,8 +3,7 @@ import { SecurityService } from './security.service';
 
 @Global()
 @Module({
-    providers: [SecurityService],
-    exports: [SecurityService],
+  providers: [SecurityService],
+  exports: [SecurityService],
 })
 export class SecurityModule {}
-

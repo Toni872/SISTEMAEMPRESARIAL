@@ -18,15 +18,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
       }),
       inject: [ConfigService],
     }),
-    BullModule.registerQueue(
-      { name: 'reports' },
-      { name: 'notifications' },
-      { name: 'exports' },
-    ),
+    BullModule.registerQueue({ name: 'reports' }, { name: 'notifications' }, { name: 'exports' }),
   ],
   controllers: [QueueController],
   providers: [ReportProcessor, NotificationProcessor, QueueService],
   exports: [BullModule, QueueService],
 })
 export class QueueModule {}
-

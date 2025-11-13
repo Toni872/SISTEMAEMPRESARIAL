@@ -11,7 +11,8 @@ export class AIService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.aiServiceUrl = this.configService.get<string>('AI_SERVICE_URL') || 'http://ai-service:8000';
+    this.aiServiceUrl =
+      this.configService.get<string>('AI_SERVICE_URL') || 'http://ai-service:8000';
   }
 
   /**
@@ -20,13 +21,10 @@ export class AIService {
   async predictDemand(productId: number, days: number = 30): Promise<any> {
     try {
       const response: any = await firstValueFrom(
-        this.httpService.post(
-          `${this.aiServiceUrl}/api/predict/demand`,
-          {
-            product_id: productId,
-            days,
-          },
-        ),
+        this.httpService.post(`${this.aiServiceUrl}/api/predict/demand`, {
+          product_id: productId,
+          days,
+        }),
       );
       return response.data;
     } catch (error) {
@@ -38,21 +36,14 @@ export class AIService {
   /**
    * Optimizar precio de un producto
    */
-  async optimizePrice(
-    productId: number,
-    currentPrice: number,
-    stock: number,
-  ): Promise<any> {
+  async optimizePrice(productId: number, currentPrice: number, stock: number): Promise<any> {
     try {
       const response: any = await firstValueFrom(
-        this.httpService.post(
-          `${this.aiServiceUrl}/api/optimize/price`,
-          {
-            product_id: productId,
-            current_price: currentPrice,
-            stock,
-          },
-        ),
+        this.httpService.post(`${this.aiServiceUrl}/api/optimize/price`, {
+          product_id: productId,
+          current_price: currentPrice,
+          stock,
+        }),
       );
       return response.data;
     } catch (error) {
@@ -113,11 +104,29 @@ export class AIService {
         series: points,
         recent: {
           predictions: [
-            { id: 'pd-001', productId: 1, units: 150, confidence: 0.85, ts: new Date(now - 600_000).toISOString() },
-            { id: 'pd-002', productId: 2, units: 78, confidence: 0.81, ts: new Date(now - 1_800_000).toISOString() },
+            {
+              id: 'pd-001',
+              productId: 1,
+              units: 150,
+              confidence: 0.85,
+              ts: new Date(now - 600_000).toISOString(),
+            },
+            {
+              id: 'pd-002',
+              productId: 2,
+              units: 78,
+              confidence: 0.81,
+              ts: new Date(now - 1_800_000).toISOString(),
+            },
           ],
           optimizations: [
-            { id: 'op-001', productId: 1, optimalPrice: 315.5, deltaPct: 5.2, ts: new Date(now - 900_000).toISOString() },
+            {
+              id: 'op-001',
+              productId: 1,
+              optimalPrice: 315.5,
+              deltaPct: 5.2,
+              ts: new Date(now - 900_000).toISOString(),
+            },
           ],
         },
       };
@@ -163,6 +172,3 @@ export class AIService {
     }
   }
 }
-
-
-

@@ -56,12 +56,7 @@ export class QueueService {
   /**
    * Agregar job de exportación
    */
-  async addExportJob(job: {
-    type: 'excel' | 'csv';
-    filename: string;
-    data: any;
-    userId: number;
-  }) {
+  async addExportJob(job: { type: 'excel' | 'csv'; filename: string; data: any; userId: number }) {
     return this.exportsQueue.add('export-data', job, {
       attempts: 2,
     });
@@ -84,7 +79,8 @@ export class QueueService {
       total: {
         waiting: reportsStatus.waiting + notificationsStatus.waiting + exportsStatus.waiting,
         active: reportsStatus.active + notificationsStatus.active + exportsStatus.active,
-        completed: reportsStatus.completed + notificationsStatus.completed + exportsStatus.completed,
+        completed:
+          reportsStatus.completed + notificationsStatus.completed + exportsStatus.completed,
         failed: reportsStatus.failed + notificationsStatus.failed + exportsStatus.failed,
       },
     };
@@ -95,7 +91,7 @@ export class QueueService {
    */
   async cleanQueue(queueName: 'reports' | 'notifications' | 'exports') {
     const queue = this.getQueue(queueName);
-    
+
     await Promise.all([
       queue.clean(24 * 60 * 60 * 1000, 'completed'), // 24 horas
       queue.clean(7 * 24 * 60 * 60 * 1000, 'failed'), // 7 días
@@ -113,4 +109,3 @@ export class QueueService {
     }
   }
 }
-

@@ -5,8 +5,8 @@ import { SalesInvoicesResolver } from './sales-invoices.resolver';
 import { PrismaModule } from '../../common/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    providers: [SalesService, SalesOrdersResolver, CustomersResolver, SalesInvoicesResolver],
-    exports: [SalesService],
+  imports: [PrismaModule],
+  providers: [SalesService, SalesOrdersResolver, CustomersResolver, SalesInvoicesResolver],
+  exports: [SalesService],
 })
-export class SalesModule { }
+export class SalesModule {}

@@ -4,8 +4,8 @@ import { AccountingResolver } from './accounting.resolver';
 import { PrismaModule } from '../../common/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    providers: [AccountingService, AccountingResolver],
-    exports: [AccountingService],
+  imports: [PrismaModule],
+  providers: [AccountingService, AccountingResolver],
+  exports: [AccountingService],
 })
-export class AccountingModule { }
+export class AccountingModule {}

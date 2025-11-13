@@ -14,6 +14,7 @@ import { HealthController } from './common/health.controller';
 import { SecurityModule } from './common/security/security.module';
 import { MonitoringModule } from './common/monitoring/monitoring.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AppController } from './app.controller';
 
 // Business modules
 import { UsersModule } from './modules/users/users.module';
@@ -32,78 +33,76 @@ import { IntegrationModule } from './modules/integration/integration.module';
 // import { TasksService } from './common/tasks.service';
 
 @Module({
-    imports: [
-        // Configuration
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: '.env',
-        }),
+  imports: [
+    // Configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
 
-        // Rate limiting
-        ThrottlerModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => [
-                {
-                    ttl: config.get<number>('THROTTLE_TTL', 60) * 1000,
-                    limit: config.get<number>('THROTTLE_LIMIT', 10),
-                },
-            ],
-        }),
-
-        // Scheduled tasks
-        // ScheduleModule.forRoot(),
-
-        // GraphQL
-        GraphQLModule.forRootAsync<ApolloDriverConfig>({
-            driver: ApolloDriver,
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-                sortSchema: true,
-                playground: true,
-                introspection: true,
-                context: ({ req, res }: { req: any; res: any }) => ({ req, res }),
-                csrfPrevention: false,
-            }),
-        }),
-
-        // Common modules
-        PrismaModule,
-        SecurityModule,
-        MonitoringModule,
-
-        // Auth module (must be before business modules)
-        AuthModule,
-
-        // Business modules
-        UsersModule,
-        ProductsModule,
-        SalesModule,
-        PurchaseModule,
-        AccountingModule,
-        DashboardModule,
-        SetupModule,
-        AIModule,
-        WebflowModule,
-        QueueModule,
-        IntegrationModule,
-        // SoftwareModule,
-        // AnalyticsModule,
-    ],
-    controllers: [HealthController],
-    providers: [
+    // Rate limiting
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
         {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
+          ttl: config.get<number>('THROTTLE_TTL', 60) * 1000,
+          limit: config.get<number>('THROTTLE_LIMIT', 10),
         },
-    ],
+      ],
+    }),
+
+    // Scheduled tasks
+    // ScheduleModule.forRoot(),
+
+    // GraphQL
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        playground: true,
+        introspection: true,
+        context: ({ req, res }: { req: any; res: any }) => ({ req, res }),
+        csrfPrevention: false,
+      }),
+    }),
+
+    // Common modules
+    PrismaModule,
+    SecurityModule,
+    MonitoringModule,
+
+    // Auth module (must be before business modules)
+    AuthModule,
+
+    // Business modules
+    UsersModule,
+    ProductsModule,
+    SalesModule,
+    PurchaseModule,
+    AccountingModule,
+    DashboardModule,
+    SetupModule,
+    AIModule,
+    WebflowModule,
+    QueueModule,
+    IntegrationModule,
+    // SoftwareModule,
+    // AnalyticsModule,
+  ],
+  controllers: [AppController, HealthController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(RequestIdMiddleware)
-            .forRoutes('*');
-    }
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
+  }
 }
