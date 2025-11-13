@@ -16,22 +16,28 @@
 <div align="center">
 
 ### 🏠 Landing Page - Página de Inicio Profesional
-![Landing Page](./screenshots/landing.jxr)
+
+![Landing Page](./screenshots/landing.png)
 
 ### 📊 Dashboard Principal - Métricas en Tiempo Real
-![Dashboard](./screenshots/dashboard.jxr)
+
+![Dashboard](./screenshots/dashboard.png)
 
 ### 💼 Módulo de Ventas - Gestión Completa de Órdenes
-![Ventas](./screenshots/sales.jxr)
+
+![Ventas](./screenshots/sales.png)
 
 ### 📦 Control de Inventario - Productos y Stock
-![Productos](./screenshots/products.jxr)
+
+![Productos](./screenshots/products.png)
 
 ### 🤖 Motor de IA - Predictive Analytics
-![IA Engine](./screenshots/ai-engine.jxr)
+
+![IA Engine](./screenshots/ai-engine.png)
 
 ### 🔐 Login - Autenticación Segura
-![Login](./screenshots/login.jxr)
+
+![Login](./screenshots/login.png)
 
 </div>
 
@@ -50,6 +56,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ### ✨ Características Principales
 
 #### 🎨 Frontend Premium (Next.js 14)
+
 - **Landing Page Moderna:** Diseño profesional inspirado en Holded con gradientes purple-blue y animaciones fluidas
 - **Dashboard Ejecutivo:** Visualización de KPIs en tiempo real con gráficos interactivos usando Recharts
 - **24 Módulos Integrados:** Dashboard, Productos, Ventas, Compras, Usuarios, Reportes, IA, Logística, Automatización, Mobile, y 15 módulos ejecutivos más
@@ -59,6 +66,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 - **Tema Oscuro:** Diseño moderno con modo oscuro permanente optimizado
 
 #### 🤖 Motor de IA Integrado
+
 - **Predicción de Demanda:** Modelos ML para predecir necesidades de stock
 - **Optimización de Precios:** Algoritmos de pricing dinámico basados en datos históricos
 - **Métricas en Tiempo Real:** WebSockets para streaming de métricas de IA
@@ -66,6 +74,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 - **Integración Python:** Servicio FastAPI dedicado para modelos avanzados
 
 #### 🔧 Backend Robusto
+
 - **API GraphQL:** Consultas flexibles y eficientes con Apollo Server
 - **Arquitectura Modular:** 10+ módulos organizados por dominio de negocio
 - **Autenticación Segura:** JWT con refresh tokens y control granular de roles (ADMIN, MANAGER, USER, READONLY)
@@ -78,6 +87,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ## 🛠️ Stack Tecnológico
 
 ### Frontend (Next.js 14)
+
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
 | **Next.js** | Framework SSR/SSG | 16.0 |
@@ -92,6 +102,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 | **Lucide Icons** | Icons | Latest |
 
 ### Backend
+
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
 | **NestJS** | Framework backend | 10.3 |
@@ -105,6 +116,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 | **Winston** | Logging | 3.18 |
 
 ### IA y Machine Learning
+
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
 | **Python** | ML Framework | 3.11 |
@@ -114,6 +126,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 | **scikit-learn** | Machine Learning | Latest |
 
 ### DevOps & Infrastructure
+
 | Tecnología | Uso |
 |------------|-----|
 | **Docker** | Containerization |
@@ -128,6 +141,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
+
 - Node.js 18+ y npm
 - Docker y Docker Compose (opcional)
 - Git
@@ -136,6 +150,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ### Inicio Rápido
 
 #### Frontend (Next.js)
+
 ```bash
 # 1. Navegar al directorio frontend-next
 cd frontend-next
@@ -151,6 +166,7 @@ npm run dev
 ```
 
 #### Backend (NestJS)
+
 ```bash
 # 1. Navegar al directorio backend
 cd backend
@@ -191,11 +207,12 @@ docker-compose ps
 ```
 
 **URLs:**
-- 🌐 **Frontend:** http://localhost:3001
-- 🔧 **Backend API:** http://localhost:3000
-- 📊 **GraphQL Playground:** http://localhost:3000/graphql
-- 🤖 **AI Service:** http://localhost:8000
-- 📚 **pgAdmin:** http://localhost:8080
+
+- 🌐 **Frontend:** <http://localhost:3001>
+- 🔧 **Backend API:** <http://localhost:3000>
+- 📊 **GraphQL Playground:** <http://localhost:3000/graphql>
+- 🤖 **AI Service:** <http://localhost:8000>
+- 📚 **pgAdmin:** <http://localhost:8080>
 - 💾 **Redis:** localhost:6379
 
 ### Credenciales de Acceso
@@ -206,6 +223,7 @@ Password: admin123
 ```
 
 **Roles disponibles:**
+
 - **ADMIN:** Acceso completo + gestión de usuarios
 - **MANAGER:** Acceso a reportes y analíticas
 - **USER:** Operaciones básicas
@@ -325,6 +343,7 @@ AI_SERVICE_URL="http://ai-service:8000"
 ## 📊 Módulos del Sistema
 
 ### Módulos Core
+
 - **Dashboard:** Métricas en tiempo real, gráficos interactivos y actividad reciente
 - **Productos:** Gestión completa de inventario con control de stock y categorías
 - **Ventas:** Órdenes de venta, facturación y gestión de clientes
@@ -333,6 +352,7 @@ AI_SERVICE_URL="http://ai-service:8000"
 - **Reportes:** Analytics avanzado con gráficos y exportación de datos
 
 ### Módulos Ejecutivos (18 módulos)
+
 - **Motor de IA:** Predicción de demanda, optimización de precios y análisis predictivo
 - **Logística Inteligente:** Gestión de rutas, entregas y optimización con IA
 - **Business Core:** Núcleo de negocio con procesos centralizados
@@ -359,6 +379,7 @@ AI_SERVICE_URL="http://ai-service:8000"
 ### Desarrollo Local
 
 **Frontend:**
+
 ```bash
 cd frontend-next
 npm install
@@ -367,6 +388,7 @@ npm run dev
 ```
 
 **Backend:**
+
 ```bash
 cd backend
 npm install
@@ -376,6 +398,7 @@ npm run start:dev
 ```
 
 **AI Service:**
+
 ```bash
 cd ai_service
 pip install -r requirements.txt
@@ -411,6 +434,7 @@ docker-compose up -d
 ## 🚧 Roadmap
 
 ### ✅ Completado
+
 - [x] Arquitectura base con NestJS y Next.js 14
 - [x] Sistema de autenticación JWT completo
 - [x] CRUD completo para todos los módulos (24+ tablas)
@@ -426,11 +450,13 @@ docker-compose up -d
 - [x] Deploy en Vercel
 
 ### 🔄 En Progreso
+
 - [ ] Tests unitarios y E2E
 - [ ] Documentación de API completa con Swagger
 - [ ] Integración completa frontend-backend
 
 ### 📋 Próximas Features
+
 - [ ] Exportar reportes a PDF/Excel
 - [ ] Sistema de notificaciones push
 - [ ] Integración con servicios de pago (Stripe)
@@ -445,6 +471,7 @@ docker-compose up -d
 ## 🎓 Decisiones Técnicas
 
 ### ¿Por qué Next.js 14?
+
 - **SSR/SSG:** Mejor SEO y performance inicial
 - **App Router:** Arquitectura moderna y escalable
 - **Server Components:** Menor bundle size y mejor UX
@@ -452,12 +479,14 @@ docker-compose up -d
 - **Vercel:** Deploy sin configuración adicional
 
 ### ¿Por qué shadcn/ui?
+
 - **Copiable:** Control total del código fuente
 - **Customizable:** Fácil personalización sin dependencias
 - **Accesible:** Basado en Radix UI (WCAG 2.1)
 - **Moderno:** Diseño actualizado y profesional
 
 ### ¿Por qué GraphQL?
+
 - **Flexibilidad:** El frontend solicita solo los datos necesarios
 - **Type safety:** End-to-end con TypeScript
 - **Introspección:** Documentación automática en Playground
@@ -465,6 +494,7 @@ docker-compose up -d
 - **Evolución:** Agregar campos sin romper clientes
 
 ### ¿Por qué NestJS?
+
 - **Escalabilidad:** Arquitectura modular y maintainable
 - **Inyección de dependencias:** Facilita testing y reutilización
 - **Ecosystem:** Excelente integración con Prisma, GraphQL, Testing
@@ -472,6 +502,7 @@ docker-compose up -d
 - **Enterprise-ready:** Robusto para proyectos grandes
 
 ### ¿Por qué Prisma?
+
 - **Type safety:** Queries type-safe con TypeScript
 - **Migraciones:** Control total sobre schema de BD
 - **Developer Experience:** Auto-completion y validación
@@ -483,6 +514,7 @@ docker-compose up -d
 ## 🐛 Troubleshooting
 
 ### Error: Puerto ya en uso
+
 ```bash
 # Cambiar puertos en docker-compose.yml
 # Frontend: "3001:3001" → "3002:3001"
@@ -490,6 +522,7 @@ docker-compose up -d
 ```
 
 ### Error: Base de datos no conecta
+
 ```bash
 # Verificar que el contenedor de PostgreSQL está corriendo
 docker-compose ps
@@ -502,6 +535,7 @@ docker-compose restart
 ```
 
 ### Error: JWT inválido
+
 ```bash
 # Verificar que JWT_SECRET en .env coincide en backend
 # Limpiar localStorage del navegador
@@ -509,6 +543,7 @@ docker-compose restart
 ```
 
 ### Error: AI Service no responde
+
 ```bash
 # Verificar logs del servicio IA
 docker logs erp-ai-service
@@ -520,6 +555,7 @@ docker-compose restart ai-service
 ```
 
 ### Frontend en blanco después de deploy
+
 ```bash
 # Limpiar caché del navegador (Ctrl + Shift + R)
 # Verificar que el build fue exitoso
@@ -542,13 +578,14 @@ Full Stack Developer | React • Next.js • NestJS • TypeScript • GraphQL
 - 🌐 Portfolio: [Sistema ERP Empresarial](https://github.com/Toni872/SISTEMAEMPRESARIAL)
 - 💼 LinkedIn: [linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)
 - 💻 GitHub: [@Toni872](https://github.com/Toni872)
-- 📧 Email: antohachi@gmail.com
+- 📧 Email: <antohachi@gmail.com>
 
 ---
 
 ## 🙏 Agradecimientos
 
 Construido con ❤️ utilizando las mejores herramientas open-source:
+
 - React Team por el increíble framework
 - Next.js Team por SSR y optimizaciones
 - Nest Team por la arquitectura robusta
@@ -565,7 +602,7 @@ Construido con ❤️ utilizando las mejores herramientas open-source:
 
 **¡Contáctame!** Estoy abierto a oportunidades de trabajo remoto full-stack.
 
-📧 **Email:** antohachi@gmail.com  
+📧 **Email:** <antohachi@gmail.com>  
 💼 **LinkedIn:** [www.linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-s%C3%A1nchez-080166156)  
 💻 **GitHub:** [github.com/Toni872](https://github.com/Toni872)
 
