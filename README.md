@@ -16,22 +16,22 @@
 <div align="center">
 
 ### 🏠 Landing Page - Página de Inicio Profesional
-![Landing Page](./screenshots/landing.png)
+![Landing Page](./screenshots/landing.jxr)
 
 ### 📊 Dashboard Principal - Métricas en Tiempo Real
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./screenshots/dashboard.jxr)
 
 ### 💼 Módulo de Ventas - Gestión Completa de Órdenes
-![Ventas](./screenshots/sales.png)
+![Ventas](./screenshots/sales.jxr)
 
 ### 📦 Control de Inventario - Productos y Stock
-![Productos](./screenshots/products.png)
+![Productos](./screenshots/products.jxr)
 
 ### 🤖 Motor de IA - Predictive Analytics
-![IA Engine](./screenshots/ai-engine.png)
+![IA Engine](./screenshots/ai-engine.jxr)
 
 ### 🔐 Login - Autenticación Segura
-![Login](./screenshots/login.png)
+![Login](./screenshots/login.jxr)
 
 </div>
 
