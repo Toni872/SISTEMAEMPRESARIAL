@@ -25,7 +25,7 @@
 ![Ventas](./screenshots/sales.png)
 
 ### 📦 Control de Inventario - Productos y Stock
-![Inventario](./screenshots/inventory.png)
+![Productos](./screenshots/products.png)
 
 ### 🤖 Motor de IA - Predictive Analytics
 ![IA Engine](./screenshots/ai-engine.png)
@@ -35,9 +35,9 @@
 
 </div>
 
-**🔗 Demo en vivo:** [https://frontend-next-m6ceik81r-toni872s-projects.vercel.app](https://frontend-next-m6ceik81r-toni872s-projects.vercel.app)
+**🔗 Demo en vivo:** [https://frontend-next-fexvo2996-toni872s-projects.vercel.app](https://frontend-next-fexvo2996-toni872s-projects.vercel.app)
 
-> **Nota para recruiters:** Este proyecto demuestra competencia end-to-end en desarrollo full-stack, desde diseño de base de datos con 24+ tablas hasta implementación de UI moderna, integrando IA predictiva, WebSockets en tiempo real y las mejores prácticas de la industria.
+> **Nota para recruiters:** Este proyecto demuestra competencia end-to-end en desarrollo full-stack, desde diseño de base de datos con 24+ tablas hasta implementación de UI moderna con Next.js 14, integrando IA predictiva, WebSockets en tiempo real y las mejores prácticas de la industria.
 
 ---
 
@@ -50,7 +50,7 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ### ✨ Características Principales
 
 #### 🎨 Frontend Premium (Next.js 14)
-- **Landing Page Moderna:** Diseño profesional inspirado en Holded con gradientes purple-blue
+- **Landing Page Moderna:** Diseño profesional inspirado en Holded con gradientes purple-blue y animaciones fluidas
 - **Dashboard Ejecutivo:** Visualización de KPIs en tiempo real con gráficos interactivos usando Recharts
 - **24 Módulos Integrados:** Dashboard, Productos, Ventas, Compras, Usuarios, Reportes, IA, Logística, Automatización, Mobile, y 15 módulos ejecutivos más
 - **Experiencia de Usuario:** Interfaz intuitiva, responsive y optimizada con shadcn/ui + Tailwind CSS v4
@@ -73,82 +73,6 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 - **WebSockets:** Comunicación bidireccional en tiempo real
 - **Redis:** Caché y sesiones distribuidas
 
-#### 📊 Módulos de Negocio
-
-**📈 Ventas**
-- Gestión de órdenes de venta y facturación completa
-- CRM con historial de clientes y seguimiento
-- Estados avanzados (pendiente, procesado, completado, cancelado)
-- Órdenes pendientes con alertas
-
-**🛒 Compras**
-- Control de proveedores y órdenes de compra
-- Gestión de relaciones con proveedores
-- Histórico de transacciones con filtros avanzados
-- Facturas de compra con seguimiento
-
-**📦 Inventario**
-- Control de stock en tiempo real
-- Alertas de stock bajo configurables
-- Categorización de productos (físicos, software, servicios)
-- Movimientos de stock con auditoría
-- Filtros avanzados y búsqueda inteligente
-
-**👥 Usuarios y Permisos**
-- Sistema de roles granular (RBAC) con 4 niveles
-- Gestión de equipos y accesos
-- Auditoría completa de acciones
-- Activación/desactivación de usuarios
-- Validación de permisos en frontend y backend
-
-**📊 Reportes y Analytics**
-- Gráficos interactivos con Recharts
-- Datos en tiempo real con WebSockets
-- Exportación de reportes (próximamente)
-- Métricas de negocio personalizables
-- Dashboard predictivo con IA
-
-**🤖 Motor de IA**
-- Predicción de demanda con ML
-- Optimización de precios dinámica
-- Monitoreo de modelos en tiempo real
-- Integración con servicio Python FastAPI
-- Streaming de métricas con Socket.IO
-
-**🚚 Logística Inteligente**
-- Gestión de rutas y entregas
-- Optimización de rutas con IA
-- Control de flotas y vehículos
-- Seguimiento GPS
-- Estado de drivers y pedidos
-
-**⚙️ Centro de Automatización**
-- Automatizaciones personalizadas
-- Bots y scripts programables
-- Flujos RPA (Robotic Process Automation)
-- Monitoreo de ejecuciones
-
-**📱 Operaciones Móviles**
-- Gestión de agentes móviles
-- Pedidos en campo
-- Inventario móvil con sincronización offline
-- Estado de batería y conectividad GPS
-
-**🌐 Integración Webflow**
-- API REST pública para productos
-- Creación de órdenes desde sitios web externos
-- Validación de carrito en tiempo real
-- Webhooks configurables
-- E-commerce sin límites
-
-#### 🔒 Seguridad y Compliance
-- Autenticación JWT con expiración configurable
-- Hash de contraseñas con bcrypt
-- Guards y decoradores para protección de rutas
-- Rate limiting para prevenir abuso
-- CORS configurable
-- Auditoría completa de acciones
-
 ---
 
 ## 🛠️ Stack Tecnológico
@@ -156,8 +80,8 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ### Frontend (Next.js 14)
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
-| **Next.js 14** | Framework SSR/SSG | 16.0 |
-| **React 18** | UI Library | 18.2 |
+| **Next.js** | Framework SSR/SSG | 16.0 |
+| **React** | UI Library | 18.2 |
 | **TypeScript** | Type safety | 5.3 |
 | **shadcn/ui** | Component library | Latest |
 | **Tailwind CSS** | Styling | v4 |
@@ -183,11 +107,11 @@ Sistema ERP completo diseñado para empresas que necesitan centralizar y automat
 ### IA y Machine Learning
 | Tecnología | Uso | Versión |
 |------------|-----|---------|
-| **Python 3.11** | ML Framework | 3.11 |
-| **FastAPI** | API REST | - |
-| **NumPy** | Computación numérica | - |
-| **Pandas** | Data processing | - |
-| **scikit-learn** | Machine Learning | - |
+| **Python** | ML Framework | 3.11 |
+| **FastAPI** | API REST | Latest |
+| **NumPy** | Computación numérica | Latest |
+| **Pandas** | Data processing | Latest |
+| **scikit-learn** | Machine Learning | Latest |
 
 ### DevOps & Infrastructure
 | Tecnología | Uso |
@@ -398,120 +322,35 @@ AI_SERVICE_URL="http://ai-service:8000"
 
 ---
 
-## 📊 Casos de Uso
+## 📊 Módulos del Sistema
 
-### 1. Dashboard Ejecutivo
-```graphql
-query GetDashboard {
-  dashboardMetrics {
-    totalSales
-    totalOrders
-    totalProducts
-    activeUsers
-  }
-  recentActivities(limit: 10) {
-    items {
-      action
-      entity
-      timestamp
-    }
-  }
-  performanceData(period: "month") {
-    date
-    sales
-    orders
-  }
-}
-```
+### Módulos Core
+- **Dashboard:** Métricas en tiempo real, gráficos interactivos y actividad reciente
+- **Productos:** Gestión completa de inventario con control de stock y categorías
+- **Ventas:** Órdenes de venta, facturación y gestión de clientes
+- **Compras:** Órdenes de compra, proveedores y facturas de compra
+- **Usuarios:** Gestión de usuarios con sistema de roles granular (RBAC)
+- **Reportes:** Analytics avanzado con gráficos y exportación de datos
 
-### 2. Gestión de Productos
-```graphql
-# Crear producto
-mutation CreateProduct {
-  createProduct(input: {
-    name: "Laptop HP"
-    description: "Laptop empresarial"
-    price: 899.99
-    stock: 50
-    category: "ELECTRONICS"
-  }) {
-    id
-    name
-    sku
-    price
-    stock
-  }
-}
-
-# Listar productos con stock bajo
-query LowStockProducts {
-  inventoryValue {
-    lowStockProducts
-    outOfStockProducts
-    totalValue
-  }
-}
-```
-
-### 3. Predicción de Demanda con IA
-```graphql
-# Predecir demanda
-query PredictDemand {
-  predictDemand(productId: 1, days: 30) {
-    predictedDemand
-    confidence
-    recommendations
-    chartData {
-      date
-      predicted
-      historical
-    }
-  }
-}
-
-# Optimizar precio
-query OptimizePrice {
-  optimizePrice(productId: 1, currentPrice: 299.99, stock: 50) {
-    optimalPrice
-    expectedRevenue
-    conversionRate
-  }
-}
-```
-
-### 4. Sistema de Ventas
-```graphql
-# Crear orden de venta
-mutation CreateSaleOrder {
-  createSaleOrder(input: {
-    customerId: 1
-    items: [
-      { productId: 1, quantity: 2, unitPrice: 899.99 }
-    ]
-    subtotal: 1799.98
-    taxAmount: 359.99
-    totalAmount: 2159.97
-  }) {
-    id
-    orderNumber
-    status
-    totalAmount
-  }
-}
-
-# Obtener facturas pendientes
-query PendingInvoices {
-  salesInvoices(where: { status: PENDING }) {
-    invoiceNumber
-    customer {
-      name
-    }
-    total
-    dueDate
-    outstandingAmount
-  }
-}
-```
+### Módulos Ejecutivos (18 módulos)
+- **Motor de IA:** Predicción de demanda, optimización de precios y análisis predictivo
+- **Logística Inteligente:** Gestión de rutas, entregas y optimización con IA
+- **Business Core:** Núcleo de negocio con procesos centralizados
+- **Centro Automatización:** Automatizaciones personalizadas y flujos RPA
+- **Operaciones Móviles:** Gestión de agentes móviles y sincronización offline
+- **Capa Integración:** Integración con sistemas externos y APIs
+- **Datos Tiempo Real:** Streaming de datos y métricas en tiempo real
+- **Customer Engagement:** CRM avanzado y gestión de relaciones
+- **Red de Proveedores:** Gestión de proveedores y cadena de suministro
+- **Operaciones Financieras:** Contabilidad y gestión financiera
+- **Plataforma Analytics:** Analytics avanzado y business intelligence
+- **Gestión Documental:** Almacenamiento y gestión de documentos
+- **Seguridad y Gobernanza:** Seguridad, compliance y auditoría
+- **Motor Configuración:** Configuración avanzada del sistema
+- **Centro Comunicaciones:** Sistema de comunicaciones integrado
+- **Gestión Conocimiento:** Base de conocimientos y documentación
+- **Gestión Infraestructura:** Monitoreo y gestión de infraestructura
+- **Laboratorio Experimental:** Testing y experimentación con nuevas features
 
 ---
 
@@ -565,10 +404,6 @@ npx prisma studio
 # Resetear base de datos (¡CUIDADO!)
 docker-compose down -v
 docker-compose up -d
-
-# Rebuild específico
-docker-compose build --no-cache [service_name]
-docker-compose up -d [service_name]
 ```
 
 ---
@@ -607,7 +442,7 @@ docker-compose up -d [service_name]
 
 ---
 
-## 🎓 Aprendizajes y Decisiones Técnicas
+## 🎓 Decisiones Técnicas
 
 ### ¿Por qué Next.js 14?
 - **SSR/SSG:** Mejor SEO y performance inicial
