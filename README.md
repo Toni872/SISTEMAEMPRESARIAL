@@ -31,9 +31,6 @@
 
 ![Productos](./screenshots/products.png)
 
-### 🤖 Motor de IA - Predictive Analytics
-
-![IA Engine](./screenshots/ai-engine.png)
 
 ### 🔐 Login - Autenticación Segura
 
