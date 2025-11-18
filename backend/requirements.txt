@@ -1,0 +1,26 @@
+# FastAPI
+fastapi
+uvicorn[standard]
+
+# Database
+psycopg2-binary
+SQLAlchemy
+alembic
+
+# Pydantic
+pydantic
+pydantic-settings
+email-validator
+python-multipart
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Testing
+pytest
+httpx
+pytest-asyncio
+
+# Development
+python-dotenv

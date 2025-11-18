@@ -1,4 +1,6 @@
 # Docker Compose configuration for ERP System
+# Solo servicios de infraestructura (DB, Redis, pgAdmin)
+# El backend se ejecutará localmente
 
 services:
   # Base de datos PostgreSQL
@@ -14,8 +16,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./scripts/backup-database.sh:/usr/local/bin/backup-database.sh
     networks:
       - erp-network
     healthcheck:
@@ -37,75 +37,6 @@ services:
       - erp-network
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Backend NestJS (desarrollo)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
-    container_name: erp-backend
-    restart: unless-stopped
-    ports:
-      - "3001:3000"
-      - "9229:9229" # Puerto para debugging
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:erp_password@postgres:5432/erp_db
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      PORT: 3000
-      LOG_LEVEL: info
-      THROTTLE_TTL: 60
-      THROTTLE_LIMIT: 100
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-      - /app/dist
-      - ./logs:/app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - erp-network
-    command: npm run start:dev
-    # healthcheck:
-    #   test: [ "CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))" ]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 40s
-
-    # Frontend React (desarrollo)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: erp-frontend
-    restart: unless-stopped
-    ports:
-      - "5173:5173"
-    environment:
-      NODE_ENV: development
-      VITE_API_URL: http://localhost:3001
-      VITE_WS_URL: ws://localhost:3001
-      VITE_GRAPHQL_URL: http://localhost:3001/graphql
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/dist
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - erp-network
-    command: npm run dev -- --host 0.0.0.0
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5173" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -134,46 +65,12 @@ services:
       timeout: 10s
       retries: 3
 
-  # AI Service (Python FastAPI)
-  ai-service:
-    build:
-      context: ./ai_service
-      dockerfile: Dockerfile
-    container_name: erp-ai-service
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://postgres:erp_password@postgres:5432/erp_db
-      REDIS_URL: redis://redis:6379
-      PORT: 8000
-      DEBUG: 'True'
-      LOG_LEVEL: INFO
-    volumes:
-      - ./ai_service:/app
-      - ai_models:/app/models
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - erp-network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
   pgadmin_data:
-    driver: local
-  ai_models:
     driver: local
 
 networks:

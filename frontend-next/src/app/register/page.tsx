@@ -48,11 +48,9 @@ export default function RegisterPage() {
 
       if (success) {
         router.push('/landing');
-      } else {
-        setError('Este email ya está registrado');
       }
-    } catch (err) {
-      setError('Error al crear la cuenta');
+    } catch (err: any) {
+      setError(err.message || 'Error al crear la cuenta');
     } finally {
       setLoading(false);
     }

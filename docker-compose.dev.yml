@@ -1,5 +1,6 @@
-# Docker Compose configuration para desarrollo local (solo DB y Redis)
-version: '3.8'
+# Docker Compose configuration para desarrollo local
+# Solo servicios de infraestructura (DB, Redis, pgAdmin)
+# El backend se ejecutará localmente
 
 services:
   # Base de datos PostgreSQL
@@ -15,7 +16,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -53,52 +53,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
-  # Backend NestJS (desarrollo local)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
-    container_name: erp-backend-dev
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:erp_password@postgres:5432/erp_db
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      PORT: 3000
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    command: npm run start:dev
-
-  # Frontend React (desarrollo local)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: erp-frontend-dev
-    restart: unless-stopped
-    ports:
-      - "5173:5173"
-    environment:
-      VITE_API_URL: http://localhost:3000
-      VITE_WS_URL: ws://localhost:3000
-      VITE_GRAPHQL_URL: http://localhost:3000/graphql
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      backend:
-        condition: service_started
-    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   postgres_data:
