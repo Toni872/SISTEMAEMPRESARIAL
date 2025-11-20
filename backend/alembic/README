@@ -1,0 +1,10 @@
+Generic single-database configuration with an async dbapi.
+
+Alembic will:
+- Load the Alembic configuration from alembic.ini
+- Run the env.py script, which will:
+  - connect to the database using the connection string in alembic.ini
+  - instantiate the Engine for a database connection
+  - run the migrations against the target database
+  - handle the connection and transaction for the migration process
+

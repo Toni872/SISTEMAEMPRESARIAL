@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: ./backend
+    container_name: erp-backend-fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:erp_password@postgres:5432/erp_fastapi_db
+      - SECRET_KEY=super-secret-key-change-in-production
+      - ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/code
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - erp-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: erp-postgres-fastapi
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: erp_fastapi_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: erp_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_fastapi_data:/var/lib/postgresql/data
+    networks:
+      - erp-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_fastapi_data:
+    driver: local
+
+networks:
+  erp-network:
+    driver: bridge
+

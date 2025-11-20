@@ -36,10 +36,10 @@ export default function LoginPage() {
       if (success) {
         router.push('/landing');
       } else {
-        setError('Credenciales incorrectas. Intenta con: admin@erp.com / admin123');
+        setError('Credenciales incorrectas');
       }
-    } catch (err) {
-      setError('Error al iniciar sesión');
+    } catch (err: any) {
+      setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
@@ -198,8 +198,8 @@ export default function LoginPage() {
                   Credenciales de prueba:
                 </p>
                 <div className="space-y-1 text-xs text-blue-700 dark:text-blue-400 font-mono">
-                  <p>Admin: admin@erp.com / admin123</p>
-                  <p>User: user@erp.com / user123</p>
+                  <p>Admin: admin@example.com / admin1234</p>
+                  <p>User: user@example.com / user1234</p>
                 </div>
               </div>
             </CardContent>
