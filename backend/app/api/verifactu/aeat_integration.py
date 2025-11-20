@@ -29,16 +29,12 @@ def send_registry_to_aeat(
     
     registry = get_invoice_registry(db, registry_id)
     if not registry:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registro no encontrado"
-        )
+        logger.warning(f"Registro Verifactu no encontrado para envío AEAT: {registry_id}", extra={"registry_id": registry_id, "user_id": current_user.id})
+        raise NotFoundError("Registro de Verifactu", registry_id)
     
     if registry.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para enviar este registro"
-        )
+        logger.warning(f"Intento de enviar registro no autorizado: {registry_id}", extra={"registry_id": registry_id, "user_id": current_user.id, "owner_id": registry.user_id})
+        raise AuthorizationError("No tienes permiso para enviar este registro")
     
     # Envío real a AEAT (preparado para producción)
     from ...utils.verifactu import generate_facturae_xml
@@ -72,17 +68,13 @@ def send_registry_to_aeat(
                 "aeat_response": aeat_response
             }
         else:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail=f"Error al enviar a AEAT: {aeat_response.get('message', 'Error desconocido')}"
-            )
+            error_msg = aeat_response.get('message', 'Error desconocido')
+            logger.error(f"Error al enviar a AEAT: {error_msg}", extra={"registry_id": registry_id})
+            raise ExternalServiceError("AEAT", error_msg)
     except Exception as e:
         # Si falla el envío real, registrar el error pero no marcar como enviado
-        logger.error(f"Error enviando registro {registry_id} a AEAT: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Error al conectar con AEAT: {str(e)}"
-        )
+        logger.error(f"Error enviando registro {registry_id} a AEAT: {str(e)}", extra={"registry_id": registry_id}, exc_info=True)
+        raise ExternalServiceError("AEAT", f"Error al conectar con AEAT: {str(e)}")
 
 
 @router.post("/send-all-pending")

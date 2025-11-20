@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query
+from fastapi import APIRouter, Depends, status, HTTPException, Query, Request
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -6,6 +6,10 @@ from datetime import datetime
 
 from ...api.auth.deps import get_db_session, get_current_user
 from ...models.user import User
+from ...core.exceptions import NotFoundError, ValidationError, BusinessLogicError
+from ...core.logging_config import get_logger
+
+logger = get_logger(__name__)
 from ...crud.supplier import (
     get_suppliers,
     get_supplier,
@@ -75,10 +79,11 @@ def get_supplier_endpoint(
     """Obtiene un proveedor por ID"""
     supplier = get_supplier(db, supplier_id, current_user.id)
     if not supplier:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Proveedor no encontrado"
+        logger.warning(
+            f"Proveedor no encontrado: {supplier_id}",
+            extra={"user_id": current_user.id, "supplier_id": supplier_id}
         )
+        raise NotFoundError("Proveedor", supplier_id)
     return supplier
 
 

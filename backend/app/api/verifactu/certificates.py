@@ -68,10 +68,9 @@ def upload_certificate(
         import os
         if os.path.exists(certificate_path):
             os.remove(certificate_path)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Certificado inválido: {validation_result.get('error', 'Error desconocido')}"
-        )
+        error_msg = validation_result.get('error', 'Error desconocido')
+        logger.warning(f"Certificado inválido: {error_msg}", extra={"user_id": current_user.id})
+        raise ValidationError(f"Certificado inválido: {error_msg}")
     
     # Crear registro en base de datos
     cert_info = validation_result
@@ -119,10 +118,8 @@ def delete_certificate(
     ).first()
     
     if not certificate:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Certificado no encontrado"
-        )
+        logger.warning(f"Certificado no encontrado: {certificate_id}", extra={"certificate_id": certificate_id, "user_id": current_user.id})
+        raise NotFoundError("Certificado", certificate_id)
     
     db.delete(certificate)
     db.commit()

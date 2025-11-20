@@ -13,7 +13,11 @@ from ...crud.sale import (
 )
 from ...api.sales.schemas import SaleCreate, SaleUpdate, SaleOut
 from ...api.auth.deps import get_db_session, get_current_user
+from ...core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
+from ...core.logging_config import get_logger
 from ...models.user import User
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/sales", tags=["sales"])
 
@@ -62,11 +66,19 @@ def get_sale_by_id(
     """Obtener una venta por ID"""
     sale = get_sale(db, sale_id)
     if not sale:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venta no encontrada")
+        logger.warning(
+            f"Venta no encontrada: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id}
+        )
+        raise NotFoundError("Venta", sale_id)
     
     # Verificar que la venta pertenece al usuario
     if sale.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes permiso para ver esta venta")
+        logger.warning(
+            f"Intento de acceso no autorizado a venta: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id, "owner_id": sale.user_id}
+        )
+        raise AuthorizationError("No tienes permiso para ver esta venta")
     
     return sale
 
@@ -81,7 +93,11 @@ def create_new_sale(
     try:
         return create_sale(db, sale, current_user.id)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        logger.warning(
+            f"Error al crear venta: {str(e)}",
+            extra={"user_id": current_user.id}
+        )
+        raise BusinessLogicError(str(e))
 
 
 @router.put("/{sale_id}", response_model=SaleOut)
@@ -94,11 +110,19 @@ def update_sale_by_id(
     """Actualizar una venta"""
     sale = get_sale(db, sale_id)
     if not sale:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venta no encontrada")
+        logger.warning(
+            f"Intento de actualizar venta inexistente: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id}
+        )
+        raise NotFoundError("Venta", sale_id)
     
     # Verificar que la venta pertenece al usuario
     if sale.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes permiso para actualizar esta venta")
+        logger.warning(
+            f"Intento de actualizar venta no autorizada: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id, "owner_id": sale.user_id}
+        )
+        raise AuthorizationError("No tienes permiso para actualizar esta venta")
     
     updated_sale = update_sale(db, sale_id, sale_update)
     return updated_sale
@@ -113,15 +137,27 @@ def delete_sale_by_id(
     """Eliminar una venta"""
     sale = get_sale(db, sale_id)
     if not sale:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venta no encontrada")
+        logger.warning(
+            f"Intento de eliminar venta inexistente: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id}
+        )
+        raise NotFoundError("Venta", sale_id)
     
     # Verificar que la venta pertenece al usuario
     if sale.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No tienes permiso para eliminar esta venta")
+        logger.warning(
+            f"Intento de eliminar venta no autorizada: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id, "owner_id": sale.user_id}
+        )
+        raise AuthorizationError("No tienes permiso para eliminar esta venta")
     
     success = delete_sale(db, sale_id)
     if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venta no encontrada")
+        logger.warning(
+            f"Error al eliminar venta: {sale_id}",
+            extra={"user_id": current_user.id, "sale_id": sale_id}
+        )
+        raise NotFoundError("Venta", sale_id)
     return None
 
 

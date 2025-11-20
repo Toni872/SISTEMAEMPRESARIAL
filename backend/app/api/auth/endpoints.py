@@ -17,9 +17,19 @@ from ...core.security import (
 )
 from ...core.email import send_verification_email
 from ...core.rate_limit import limiter
+from ...core.exceptions import (
+    AuthenticationError,
+    AuthorizationError,
+    BusinessLogicError,
+    ValidationError,
+    ConflictError
+)
+from ...core.logging_config import get_logger
 from ...api.auth.schemas import UserCreate, Token, UserOut, TokenRefresh
 from ...api.auth.deps import get_db_session, get_current_user
 from ...models.user import User
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -33,9 +43,11 @@ async def register(
 ):
     """Registrar nuevo usuario y enviar email de verificación"""
     if existing := get_user_by_email(db, user_in.email):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Email already registered"
+        logger.warning(
+            f"Intento de registro con email ya existente: {user_in.email}",
+            extra={"email": user_in.email}
         )
+        raise ConflictError("El email ya está registrado", error_code="EMAIL_ALREADY_REGISTERED")
     
     hashed_pw = get_password_hash(user_in.password)
     verification_token = generate_verification_token()
@@ -62,7 +74,37 @@ async def register(
     }
 
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login",
+    response_model=Token,
+    summary="Iniciar sesión",
+    description="""
+    Autentica un usuario y retorna tokens de acceso y refresco.
+    
+    **Limitaciones:**
+    - Máximo 5 intentos de login por minuto por IP
+    
+    **Respuestas:**
+    - `200`: Login exitoso, retorna tokens
+    - `401`: Credenciales incorrectas
+    - `403`: Cuenta inactiva
+    
+    **Ejemplo de uso:**
+    ```python
+    import requests
+    
+    response = requests.post(
+        "/api/auth/login",
+        data={
+            "username": "usuario@example.com",
+            "password": "contraseña123"
+        }
+    )
+    tokens = response.json()
+    # Usar tokens["access_token"] en headers: Authorization: Bearer <token>
+    ```
+    """
+)
 @limiter.limit("5/minute")
 async def login(
     request: Request,
@@ -73,17 +115,18 @@ async def login(
     user = get_user_by_email(db, form_data.username)  # OAuth2 usa 'username' para email
     
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        logger.warning(
+            f"Intento de login fallido: {form_data.username}",
+            extra={"email": form_data.username}
         )
+        raise AuthenticationError("Email o contraseña incorrectos")
     
     if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive"
+        logger.warning(
+            f"Intento de login con cuenta inactiva: {user.email}",
+            extra={"user_id": user.id}
         )
+        raise AuthorizationError("La cuenta de usuario está inactiva")
     
     # Crear tokens
     access_token = create_access_token({"sub": str(user.id), "role": user.role})
@@ -108,31 +151,29 @@ async def refresh_token(
     payload = decode_refresh_token(token_data.refresh_token)
     
     if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token"
-        )
+        logger.warning("Intento de refresh con token inválido")
+        raise AuthenticationError("Token de refresco inválido")
     
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload"
-        )
+        logger.warning("Token de refresco sin payload válido")
+        raise AuthenticationError("Payload del token inválido")
     
     user = db.query(User).filter(User.id == int(user_id)).first()
     if not user or not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found or inactive"
+        logger.warning(
+            f"Usuario no encontrado o inactivo para refresh: {user_id}",
+            extra={"user_id": user_id}
         )
+        raise AuthenticationError("Usuario no encontrado o inactivo")
     
     # Verificar que el refresh token coincide con el almacenado
     if user.refresh_token != token_data.refresh_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token mismatch"
+        logger.warning(
+            f"Refresh token no coincide para usuario: {user.id}",
+            extra={"user_id": user.id}
         )
+        raise AuthenticationError("El token de refresco no coincide")
     
     # Generar nuevos tokens
     access_token = create_access_token({"sub": str(user.id), "role": user.role})
@@ -160,10 +201,8 @@ async def verify_email(
     ).first()
     
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid or expired verification token"
-        )
+        logger.warning("Intento de verificación con token inválido o expirado")
+        raise ValidationError("Token de verificación inválido o expirado")
     
     verify_user_email(db, user.id)
     
@@ -179,10 +218,11 @@ async def resend_verification(
 ):
     """Reenviar email de verificación"""
     if current_user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already verified"
+        logger.info(
+            f"Intento de reenvío de verificación para email ya verificado: {current_user.email}",
+            extra={"user_id": current_user.id}
         )
+        raise BusinessLogicError("El email ya está verificado")
     
     verification_token = generate_verification_token()
     token_expires = datetime.utcnow() + timedelta(days=1)

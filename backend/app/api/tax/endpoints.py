@@ -5,7 +5,11 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from ...api.auth.deps import get_db_session, get_current_user
+from ...core.exceptions import NotFoundError, AuthorizationError, ValidationError, BusinessLogicError, DatabaseError
+from ...core.logging_config import get_logger
 from ...models.user import User
+
+logger = get_logger(__name__)
 from ...models.tax_declaration import TaxModelType, TaxDeclarationStatus
 from ...crud.tax import (
     get_tax_declaration,
@@ -46,10 +50,8 @@ def list_tax_declarations(
         try:
             tax_model_type = TaxModelType(model_type)
         except ValueError:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Tipo de modelo inválido: {model_type}"
-            )
+            logger.warning(f"Tipo de modelo inválido: {model_type}", extra={"model_type": model_type})
+            raise ValidationError(f"Tipo de modelo inválido: {model_type}", field="model_type")
     
     declarations = get_tax_declarations(
         db,
@@ -70,16 +72,12 @@ def get_tax_declaration_by_id(
     """Obtiene una declaración fiscal por ID"""
     declaration = get_tax_declaration(db, declaration_id)
     if not declaration:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Declaración fiscal no encontrada"
-        )
+        logger.warning(f"Declaración fiscal no encontrada: {declaration_id}", extra={"declaration_id": declaration_id, "user_id": current_user.id})
+        raise NotFoundError("Declaración fiscal", declaration_id)
     
     if declaration.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver esta declaración"
-        )
+        logger.warning(f"Intento de acceso no autorizado a declaración: {declaration_id}", extra={"declaration_id": declaration_id, "user_id": current_user.id, "owner_id": declaration.user_id})
+        raise AuthorizationError("No tienes permiso para ver esta declaración")
     
     return declaration
 
@@ -104,10 +102,8 @@ def calculate_model_303_endpoint(
         )
         return result
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calculando modelo 303: {str(e)}"
-        )
+        logger.error(f"Error calculando modelo 303: {str(e)}", extra={"user_id": current_user.id}, exc_info=True)
+        raise DatabaseError(f"Error calculando modelo 303: {str(e)}")
 
 
 @router.post("/model-303/generate", response_model=TaxDeclarationOut, status_code=status.HTTP_201_CREATED)
@@ -143,10 +139,8 @@ def generate_model_303(
         
         return declaration
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error generando modelo 303: {str(e)}"
-        )
+        logger.error(f"Error generando modelo 303: {str(e)}", extra={"user_id": current_user.id}, exc_info=True)
+        raise DatabaseError(f"Error generando modelo 303: {str(e)}")
 
 
 @router.put("/declarations/{declaration_id}", response_model=TaxDeclarationOut)
@@ -191,16 +185,12 @@ def download_tax_declaration_pdf(
     """Genera y descarga el PDF de una declaración fiscal (Modelo 303 o 111)"""
     declaration = get_tax_declaration(db, declaration_id)
     if not declaration:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Declaración fiscal no encontrada"
-        )
+        logger.warning(f"Declaración fiscal no encontrada para PDF: {declaration_id}", extra={"declaration_id": declaration_id, "user_id": current_user.id})
+        raise NotFoundError("Declaración fiscal", declaration_id)
     
     if declaration.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver esta declaración"
-        )
+        logger.warning(f"Intento de descargar PDF de declaración no autorizada: {declaration_id}", extra={"declaration_id": declaration_id, "user_id": current_user.id, "owner_id": declaration.user_id})
+        raise AuthorizationError("No tienes permiso para ver esta declaración")
     
     try:
         from ...utils.pdf_generator import generate_model_303_pdf, generate_model_111_pdf
@@ -218,10 +208,8 @@ def download_tax_declaration_pdf(
             pdf_bytes = generate_model_111_pdf(declaration_data)
             filename = f"modelo_111_q{declaration.period_quarter}_{declaration.period_year}.pdf"
         else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Generación de PDF no disponible para modelo {declaration.model_type}"
-            )
+            logger.warning(f"Generación de PDF no disponible para modelo: {declaration.model_type}", extra={"model_type": declaration.model_type})
+            raise BusinessLogicError(f"Generación de PDF no disponible para modelo {declaration.model_type}")
         
         return Response(
             content=pdf_bytes,
@@ -233,10 +221,8 @@ def download_tax_declaration_pdf(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error generando PDF: {str(e)}"
-        )
+        logger.error(f"Error generando PDF: {str(e)}", extra={"declaration_id": declaration_id}, exc_info=True)
+        raise DatabaseError(f"Error generando PDF: {str(e)}")
 
 
 class Model111CalculateRequest(BaseModel):
@@ -266,10 +252,8 @@ def calculate_model_111_endpoint(
         )
         return result
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error calculando modelo 111: {str(e)}"
-        )
+        logger.error(f"Error calculando modelo 111: {str(e)}", extra={"user_id": current_user.id}, exc_info=True)
+        raise DatabaseError(f"Error calculando modelo 111: {str(e)}")
 
 
 @router.post("/model-111/generate", response_model=TaxDeclarationOut, status_code=status.HTTP_201_CREATED)
@@ -304,8 +288,6 @@ def generate_model_111(
         
         return declaration
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error generando modelo 111: {str(e)}"
-        )
+        logger.error(f"Error generando modelo 111: {str(e)}", extra={"user_id": current_user.id}, exc_info=True)
+        raise DatabaseError(f"Error generando modelo 111: {str(e)}")
 

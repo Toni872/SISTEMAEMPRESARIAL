@@ -14,7 +14,11 @@ from ...crud.product import (
 )
 from ...api.products.schemas import ProductCreate, ProductUpdate, ProductOut
 from ...api.auth.deps import get_db_session, get_current_user
+from ...core.exceptions import NotFoundError, ConflictError, BusinessLogicError
+from ...core.logging_config import get_logger
 from ...models.user import User
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -55,7 +59,8 @@ def get_product_by_id(product_id: int, db: Session = Depends(get_db_session)):
     """Obtener un producto por ID"""
     product = get_product(db, product_id)
     if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        logger.warning(f"Producto no encontrado: {product_id}", extra={"product_id": product_id})
+        raise NotFoundError("Producto", product_id)
     return product
 
 
@@ -70,10 +75,11 @@ def create_new_product(
     if product.sku:
         existing = get_product_by_sku(db, product.sku)
         if existing:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Ya existe un producto con este SKU"
+            logger.warning(
+                f"Intento de crear producto con SKU duplicado: {product.sku}",
+                extra={"sku": product.sku, "user_id": current_user.id}
             )
+            raise ConflictError("Ya existe un producto con este SKU", error_code="SKU_ALREADY_EXISTS")
     
     return create_product(db, product)
 
@@ -88,7 +94,11 @@ def update_product_by_id(
     """Actualizar un producto"""
     product = update_product(db, product_id, product_update)
     if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        logger.warning(
+            f"Intento de actualizar producto inexistente: {product_id}",
+            extra={"product_id": product_id, "user_id": current_user.id}
+        )
+        raise NotFoundError("Producto", product_id)
     return product
 
 
@@ -101,6 +111,10 @@ def delete_product_by_id(
     """Eliminar un producto"""
     success = delete_product(db, product_id)
     if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        logger.warning(
+            f"Intento de eliminar producto inexistente: {product_id}",
+            extra={"product_id": product_id, "user_id": current_user.id}
+        )
+        raise NotFoundError("Producto", product_id)
     return None
 

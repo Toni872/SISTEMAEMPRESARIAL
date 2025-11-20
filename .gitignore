@@ -79,6 +79,8 @@ alembic/versions/*.pyc
 # Logs
 logs/
 *.log
+backend/logs/
+frontend-next/.next/
 
 # Vercel
 .vercel/

@@ -71,23 +71,17 @@ def get_invoice_xml(
     """
     sale = get_sale(db, sale_id)
     if not sale:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura no encontrada"
-        )
+        logger.warning(f"Factura no encontrada para XML Verifactu: {sale_id}", extra={"sale_id": sale_id, "user_id": current_user.id})
+        raise NotFoundError("Factura", sale_id)
     
     if sale.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver esta factura"
-        )
+        logger.warning(f"Intento de ver XML de factura no autorizada: {sale_id}", extra={"sale_id": sale_id, "user_id": current_user.id, "owner_id": sale.user_id})
+        raise AuthorizationError("No tienes permiso para ver esta factura")
     
     registry = get_invoice_registry(db, sale_id)
     if not registry:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Esta factura no está registrada en Verifactu. Regístrala primero."
-        )
+        logger.warning(f"Factura no registrada en Verifactu: {sale_id}", extra={"sale_id": sale_id, "user_id": current_user.id})
+        raise NotFoundError("Registro de Verifactu", sale_id)
     
     # Generar XML
     import json
@@ -154,16 +148,12 @@ def mark_registry_sent(
     """
     registry = mark_as_sent_to_aeat(db, registry_id)
     if not registry:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registro no encontrado"
-        )
+        logger.warning(f"Registro Verifactu no encontrado: {registry_id}", extra={"registry_id": registry_id, "user_id": current_user.id})
+        raise NotFoundError("Registro de Verifactu", registry_id)
     
     if registry.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para modificar este registro"
-        )
+        logger.warning(f"Intento de modificar registro no autorizado: {registry_id}", extra={"registry_id": registry_id, "user_id": current_user.id, "owner_id": registry.user_id})
+        raise AuthorizationError("No tienes permiso para modificar este registro")
     
     return {
         "message": "Registro marcado como enviado a AEAT",

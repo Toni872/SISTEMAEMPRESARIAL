@@ -4,6 +4,8 @@ from typing import Optional, List
 
 from ...api.auth.deps import get_db_session, get_current_user
 from ...models.user import User
+from ...core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
+from ...core.logging_config import get_logger
 from ...crud.recurring_invoice import (
     get_recurring_invoice,
     get_recurring_invoices,
@@ -18,6 +20,8 @@ from .schemas import (
     RecurringInvoiceUpdate,
     RecurringInvoiceOut
 )
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/api/recurring-invoices", tags=["recurring-invoices"])
 
@@ -50,17 +54,19 @@ def get_recurring_invoice_by_id(
     """Obtiene una factura recurrente por ID"""
     recurring_invoice = get_recurring_invoice(db, recurring_invoice_id)
     if not recurring_invoice:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura recurrente no encontrada"
+        logger.warning(
+            f"Factura recurrente no encontrada: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id}
         )
+        raise NotFoundError("Factura recurrente", recurring_invoice_id)
     
     # Verificar que pertenece al usuario
     if recurring_invoice.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para ver esta factura recurrente"
+        logger.warning(
+            f"Intento de acceso no autorizado a factura recurrente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id, "owner_id": recurring_invoice.user_id}
         )
+        raise AuthorizationError("No tienes permiso para ver esta factura recurrente")
     
     return recurring_invoice
 
@@ -75,10 +81,11 @@ def create_new_recurring_invoice(
     try:
         return create_recurring_invoice(db, recurring_invoice, current_user.id)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+        logger.warning(
+            f"Error al crear factura recurrente: {str(e)}",
+            extra={"user_id": current_user.id}
         )
+        raise BusinessLogicError(str(e))
 
 
 @router.put("/{recurring_invoice_id}", response_model=RecurringInvoiceOut)
@@ -91,17 +98,19 @@ def update_recurring_invoice_by_id(
     """Actualiza una factura recurrente"""
     recurring_invoice = get_recurring_invoice(db, recurring_invoice_id)
     if not recurring_invoice:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura recurrente no encontrada"
+        logger.warning(
+            f"Intento de actualizar factura recurrente inexistente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id}
         )
+        raise NotFoundError("Factura recurrente", recurring_invoice_id)
     
     # Verificar que pertenece al usuario
     if recurring_invoice.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para actualizar esta factura recurrente"
+        logger.warning(
+            f"Intento de actualizar factura recurrente no autorizada: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id, "owner_id": recurring_invoice.user_id}
         )
+        raise AuthorizationError("No tienes permiso para actualizar esta factura recurrente")
     
     updated = update_recurring_invoice(db, recurring_invoice_id, recurring_invoice_update)
     return updated
@@ -116,24 +125,27 @@ def delete_recurring_invoice_by_id(
     """Elimina una factura recurrente"""
     recurring_invoice = get_recurring_invoice(db, recurring_invoice_id)
     if not recurring_invoice:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura recurrente no encontrada"
+        logger.warning(
+            f"Intento de eliminar factura recurrente inexistente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id}
         )
+        raise NotFoundError("Factura recurrente", recurring_invoice_id)
     
     # Verificar que pertenece al usuario
     if recurring_invoice.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para eliminar esta factura recurrente"
+        logger.warning(
+            f"Intento de eliminar factura recurrente no autorizada: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id, "owner_id": recurring_invoice.user_id}
         )
+        raise AuthorizationError("No tienes permiso para eliminar esta factura recurrente")
     
     success = delete_recurring_invoice(db, recurring_invoice_id)
     if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura recurrente no encontrada"
+        logger.warning(
+            f"Error al eliminar factura recurrente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id}
         )
+        raise NotFoundError("Factura recurrente", recurring_invoice_id)
     return None
 
 
@@ -147,17 +159,19 @@ def generate_invoice_now(
     """Genera una factura manualmente desde una factura recurrente"""
     recurring_invoice = get_recurring_invoice(db, recurring_invoice_id)
     if not recurring_invoice:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Factura recurrente no encontrada"
+        logger.warning(
+            f"Intento de generar factura desde recurrente inexistente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id}
         )
+        raise NotFoundError("Factura recurrente", recurring_invoice_id)
     
     # Verificar que pertenece al usuario
     if recurring_invoice.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para generar facturas desde esta factura recurrente"
+        logger.warning(
+            f"Intento de generar factura desde recurrente no autorizada: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id, "owner_id": recurring_invoice.user_id}
         )
+        raise AuthorizationError("No tienes permiso para generar facturas desde esta factura recurrente")
     
     # Si force=True, actualizar next_run_date a hoy para permitir generación
     if force:
@@ -168,10 +182,11 @@ def generate_invoice_now(
     
     result = generate_invoice_from_recurring(db, recurring_invoice_id)
     if not result:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No se pudo generar la factura. Verifica que la factura recurrente esté activa y en fecha. Usa ?force=true para forzar la generación."
+        logger.warning(
+            f"No se pudo generar factura desde recurrente: {recurring_invoice_id}",
+            extra={"recurring_invoice_id": recurring_invoice_id, "user_id": current_user.id, "force": force}
         )
+        raise BusinessLogicError("No se pudo generar la factura. Verifica que la factura recurrente esté activa y en fecha. Usa ?force=true para forzar la generación.")
     
     from ...api.sales.schemas import SaleOut
     return {
