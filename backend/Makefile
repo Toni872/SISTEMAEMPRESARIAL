@@ -26,13 +26,13 @@ dev:
 	uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
 
 up:
-	docker-compose up -d
+	docker-compose -f ../docker-compose.backend.yml up -d
 
 down:
-	docker-compose down
+	docker-compose -f ../docker-compose.backend.yml down
 
 logs:
-	docker-compose logs -f web
+	docker-compose -f ../docker-compose.backend.yml logs -f backend
 
 clean:
 	find . -type d -name __pycache__ -exec rm -r {} +

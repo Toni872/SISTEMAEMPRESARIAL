@@ -15,7 +15,13 @@ python-multipart
 
 # Authentication & Security
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt
+
+# Rate Limiting
+slowapi
+
+# Email
+fastapi-mail
 
 # Testing
 pytest
@@ -24,3 +30,15 @@ pytest-asyncio
 
 # Development
 python-dotenv
+
+# PDF Generation
+reportlab
+
+# Certificate Management
+cryptography
+
+# HTTP Client (for AEAT integration)
+requests>=2.31.0
+
+# Excel Export
+openpyxl

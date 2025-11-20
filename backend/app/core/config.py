@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 
 try:
     from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -21,9 +21,33 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # ──────── SECURITY ───────
     PASSWORD_HASH_ALGORITHM: str = "bcrypt"
+
+    # ──────── EMAIL ───────
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_FROM: str = "noreply@erp.com"
+    MAIL_PORT: int = 587
+    MAIL_SERVER: str = "smtp.gmail.com"
+    MAIL_FROM_NAME: str = "ERP Sistema"
+    MAIL_STARTTLS: bool = True
+    MAIL_SSL_TLS: bool = False
+    USE_CREDENTIALS: bool = True
+    VALIDATE_CERTS: bool = True
+    
+    # ──────── VERIFACTU/AEAT ───────
+    VERIFACTU_CERTIFICATES_DIR: str = "certificates"
+    AEAT_BASE_URL: str = "https://sede.agenciatributaria.gob.es/verifactu/api"
+    AEAT_CERTIFICATE_PATH: Optional[str] = None
+    AEAT_CERTIFICATE_PASSWORD: Optional[str] = None
+    AEAT_AUTO_SEND: bool = False
+
+    # ──────── RATE LIMITING ───────
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_PER_MINUTE: int = 60
 
     # ──────── ENV ───────
     ENV: str = "development"

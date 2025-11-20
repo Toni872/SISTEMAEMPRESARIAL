@@ -30,7 +30,7 @@ class SaleBase(BaseModel):
 
 
 class SaleCreate(SaleBase):
-    items: List[SaleItemCreate] = Field(..., min_length=1)
+    items: List[SaleItemCreate] = Field(..., min_items=1)
 
 
 class SaleOut(SaleBase):

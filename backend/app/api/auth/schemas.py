@@ -17,9 +17,17 @@ class UserLogin(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str = "bearer"
+
+
+class TokenRefresh(BaseModel):
+    refresh_token: str
 
 
 class UserOut(UserBase):
     id: int
+    is_active: bool
+    role: str | None = None
+    is_verified: bool = False
     model_config = ConfigDict(from_attributes=True)
