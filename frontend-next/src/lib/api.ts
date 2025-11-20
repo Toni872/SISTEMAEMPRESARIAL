@@ -91,9 +91,9 @@ class ApiClient {
     const url = `${this.baseUrl}${endpoint}`;
     const token = this.getToken();
 
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string> || {}),
     };
 
     if (token) {
@@ -163,7 +163,7 @@ class ApiClient {
 
       // Manejar respuestas vacías (204 No Content) antes de verificar errores
       if (response.status === 204 || response.statusText === 'No Content') {
-        return null;
+        return null as T;
       }
 
       if (!response.ok) {
@@ -184,20 +184,20 @@ class ApiClient {
       // Verificar si hay contenido antes de parsear JSON
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        return null;
+        return null as T;
       }
 
       // Intentar parsear JSON, pero manejar respuestas vacías
       try {
         const text = await response.text();
         if (!text || text.trim() === '') {
-          return null;
+          return null as T;
         }
         return JSON.parse(text);
       } catch (e) {
         // Si no se puede parsear, retornar null en lugar de lanzar error
         console.warn('Could not parse JSON response, returning null:', e);
-        return null;
+        return null as T;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -800,7 +800,7 @@ class ApiClient {
   async getInvoicePreview(templateId: number, saleId: number): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/invoice-templates/${templateId}/preview/${saleId}`, {
       headers: {
-        'Authorization': `Bearer ${this.getAccessToken()}`,
+        'Authorization': `Bearer ${this.getToken()}`,
       },
     });
     if (!response.ok) {
@@ -863,7 +863,7 @@ class ApiClient {
   async getVerifactuXML(saleId: number): Promise<Blob> {
     const response = await fetch(`${this.baseUrl}/api/verifactu/sales/${saleId}/xml`, {
       headers: {
-        'Authorization': `Bearer ${this.getAccessToken()}`,
+        'Authorization': `Bearer ${this.getToken()}`,
       },
     });
     
@@ -918,7 +918,7 @@ class ApiClient {
     const response = await fetch(`${this.baseUrl}/api/verifactu/certificates`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.getAccessToken()}`,
+        'Authorization': `Bearer ${this.getToken()}`,
       },
       body: formData,
     });
@@ -1136,7 +1136,7 @@ class ApiClient {
   async downloadTaxDeclarationPDF(declarationId: number): Promise<Blob> {
     const response = await fetch(`${this.baseUrl}/api/tax/declarations/${declarationId}/pdf`, {
       headers: {
-        'Authorization': `Bearer ${this.getAccessToken()}`,
+        'Authorization': `Bearer ${this.getToken()}`,
       },
     });
     
@@ -1159,8 +1159,8 @@ class ApiClient {
   /**
    * Calcular Modelo 111 sin generar declaración
    */
-  async calculateModel111(quarter: number, year: number, withholdings: Model111WithholdingDetail[]): Promise<Model111CalculationResult> {
-    return this.request<Model111CalculationResult>('/api/tax/model-111/calculate', {
+  async calculateModel111(quarter: number, year: number, withholdings: any[]): Promise<any> {
+    return this.request<any>('/api/tax/model-111/calculate', {
       method: 'POST',
       body: JSON.stringify({ quarter, year, withholdings }),
     });
@@ -1169,7 +1169,7 @@ class ApiClient {
   /**
    * Generar declaración Modelo 111
    */
-  async generateModel111(quarter: number, year: number, withholdings: Model111WithholdingDetail[], notes?: string): Promise<TaxDeclaration> {
+  async generateModel111(quarter: number, year: number, withholdings: any[], notes?: string): Promise<TaxDeclaration> {
     return this.request<TaxDeclaration>('/api/tax/model-111/generate', {
       method: 'POST',
       body: JSON.stringify({ quarter, year, withholdings, notes }),
@@ -1308,17 +1308,7 @@ export interface Model303CalculationResult {
   }>;
 }
 
-export type { 
-  RecurringInvoice, 
-  RecurringInvoiceItem, 
-  RecurringInvoiceCreate, 
-  InvoiceTemplate, 
-  InvoiceTemplateCreate,
-  TaxDeclaration,
-  Model303CalculationResult,
-  Model111WithholdingDetail,
-  Model111CalculationResult
-};
+// Types are already exported above as interfaces
 
 export const apiClient = new ApiClient();
 

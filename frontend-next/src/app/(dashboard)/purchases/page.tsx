@@ -1040,19 +1040,19 @@ export default function PurchasesPage() {
                         : viewingPurchase.status}
                     </Badge>
                   </div>
-                  {viewingPurchase.reference_number && (
+                  {(viewingPurchase as any).reference_number && (
                     <div>
                       <p className="text-sm text-muted-foreground">Número de Referencia</p>
-                      <p className="font-medium">{viewingPurchase.reference_number}</p>
+                      <p className="font-medium">{(viewingPurchase as any).reference_number}</p>
                     </div>
                   )}
                 </div>
-                {viewingPurchase.notes && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Notas</p>
-                    <p className="text-sm">{viewingPurchase.notes}</p>
-                  </div>
-                )}
+                 {(viewingPurchase as any).notes && (
+                   <div>
+                     <p className="text-sm text-muted-foreground">Notas</p>
+                     <p className="text-sm">{(viewingPurchase as any).notes}</p>
+                   </div>
+                 )}
               </div>
 
               {/* Artículos */}
@@ -1095,19 +1095,19 @@ export default function PurchasesPage() {
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Subtotal:</span>
                   <span className="font-medium">
-                    €{parseFloat(viewingPurchase.subtotal?.toString() || '0').toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                    €{parseFloat((viewingPurchase as any).subtotal?.toString() || '0').toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">IVA:</span>
                   <span className="font-medium">
-                    €{parseFloat(viewingPurchase.tax?.toString() || '0').toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                    €{parseFloat((viewingPurchase as any).tax?.toString() || '0').toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t font-bold text-lg">
                   <span>Total:</span>
                   <span>
-                    €{parseFloat(viewingPurchase.total.toString()).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                    €{parseFloat((viewingPurchase as any).total?.toString() || '0').toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>

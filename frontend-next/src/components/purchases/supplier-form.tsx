@@ -16,16 +16,16 @@ import { Loader2 } from 'lucide-react';
 
 interface SupplierFormData {
   name: string;
-  tax_id: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  postal_code: string;
+  tax_id?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
   country: string;
-  contact_person: string;
-  website: string;
-  notes: string;
+  contact_person?: string | null;
+  website?: string | null;
+  notes?: string | null;
   is_active: boolean;
 }
 
@@ -133,7 +133,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                 <div className="space-y-2">
                   <label className="text-sm font-medium">CIF/NIF</label>
                   <Input
-                    value={formData.tax_id}
+                    value={formData.tax_id || ''}
                     onChange={(e) => setFormData({ ...formData, tax_id: e.target.value })}
                     placeholder="CIF/NIF"
                     disabled={loading}
@@ -150,7 +150,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                   <label className="text-sm font-medium">Email</label>
                   <Input
                     type="email"
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="email@ejemplo.com"
                     disabled={loading}
@@ -159,7 +159,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Teléfono</label>
                   <Input
-                    value={formData.phone}
+                    value={formData.phone || ''}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="Teléfono"
                     disabled={loading}
@@ -169,7 +169,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
               <div className="space-y-2">
                 <label className="text-sm font-medium">Persona de Contacto</label>
                 <Input
-                  value={formData.contact_person}
+                    value={formData.contact_person || ''}
                   onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
                   placeholder="Nombre del contacto"
                   disabled={loading}
@@ -183,7 +183,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
               <div className="space-y-2">
                 <label className="text-sm font-medium">Dirección</label>
                 <Input
-                  value={formData.address}
+                    value={formData.address || ''}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Calle y número"
                   disabled={loading}
@@ -193,7 +193,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Ciudad</label>
                   <Input
-                    value={formData.city}
+                    value={formData.city || ''}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     placeholder="Ciudad"
                     disabled={loading}
@@ -202,7 +202,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Código Postal</label>
                   <Input
-                    value={formData.postal_code}
+                    value={formData.postal_code || ''}
                     onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
                     placeholder="CP"
                     disabled={loading}
@@ -227,7 +227,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
                 <label className="text-sm font-medium">Sitio Web</label>
                 <Input
                   type="url"
-                  value={formData.website}
+                    value={formData.website || ''}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                   placeholder="https://ejemplo.com"
                   disabled={loading}
@@ -236,7 +236,7 @@ export function SupplierForm({ open, onOpenChange, onSubmit, supplier, loading =
               <div className="space-y-2">
                 <label className="text-sm font-medium">Notas</label>
                 <Textarea
-                  value={formData.notes}
+                    value={formData.notes || ''}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Notas adicionales sobre el proveedor"
                   rows={3}

@@ -7,7 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { apiClient, Model111WithholdingDetail } from '@/lib/api';
+import { apiClient } from '@/lib/api';
+
+interface Model111WithholdingDetail {
+  nif?: string;
+  name?: string;
+  supplier_id?: number;
+  supplier_name?: string;
+  base_amount: number;
+  withholding_rate: number;
+  withholding_amount?: number;
+}
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, ArrowLeft, Calculator, FileText, CheckCircle, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -309,7 +319,7 @@ export default function Model111Page() {
                     <div>
                       <Label>Importe Retenido</Label>
                       <div className="px-3 py-2 border rounded-md bg-neutral-50 dark:bg-neutral-900">
-                        <p className="font-semibold">{formatCurrency(withholding.withholding_amount)}</p>
+                        <p className="font-semibold">{formatCurrency(withholding.withholding_amount || 0)}</p>
                       </div>
                     </div>
                   </div>
@@ -366,7 +376,7 @@ export default function Model111Page() {
                         <div className="text-right">
                           <p className="font-medium">{formatCurrency(w.base_amount)}</p>
                           <p className="text-sm text-muted-foreground">
-                            {w.withholding_rate}% = {formatCurrency(w.withholding_amount)}
+                            {w.withholding_rate}% = {formatCurrency(w.withholding_amount || 0)}
                           </p>
                         </div>
                       </div>

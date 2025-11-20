@@ -35,7 +35,7 @@ export function Navbar() {
                 <div className="hidden sm:flex items-center gap-2">
                   <Avatar className="w-8 h-8">
                     <AvatarFallback className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user.name?.charAt(0).toUpperCase() || user.email.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="text-sm">

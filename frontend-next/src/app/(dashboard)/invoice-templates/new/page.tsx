@@ -285,7 +285,7 @@ export default function NewInvoiceTemplatePage() {
         <Card>
           <CardHeader>
             <CardTitle>Plantilla HTML</CardTitle>
-            <CardDescription>Edita el HTML de la plantilla. Usa variables como {{sale_number}}, {{customer_name}}, {{items}}, {{total}}</CardDescription>
+            <CardDescription>Edita el HTML de la plantilla. Usa variables como {"{{sale_number}}"}, {"{{customer_name}}"}, {"{{items}}"}, {"{{total}}"}</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
