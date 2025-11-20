@@ -1,0 +1,12 @@
+# Docker Compose para staging
+# Usar: docker-compose -f docker-compose.backend.yml -f docker-compose.staging.yml up
+
+services:
+  backend:
+    environment:
+      - ENV=staging
+      - DEBUG=true
+      - RATE_LIMIT_ENABLED=true
+      - RATE_LIMIT_PER_MINUTE=100
+
+

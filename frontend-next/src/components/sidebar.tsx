@@ -38,8 +38,13 @@ import {
   ChevronRight,
   Menu,
   X,
+  Repeat,
+  Receipt,
+  Calculator,
+  FolderTree,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Collapsible } from '@/components/ui/collapsible';
 
 interface MenuItem {
   text: string;
@@ -49,38 +54,67 @@ interface MenuItem {
   badge?: string;
 }
 
-const menuSections = {
-  core: [
-    { text: 'Dashboard', icon: BarChart3, path: '/dashboard' },
-    { text: 'Productos', icon: Package, path: '/products' },
-    { text: 'Ventas', icon: ShoppingCart, path: '/sales' },
-    // Módulos ocultos temporalmente - Fase 2+
-    // { text: 'Compras', icon: Truck, path: '/purchases', roles: ['ADMIN', 'MANAGER'] },
-    // { text: 'Usuarios', icon: Users, path: '/users', roles: ['ADMIN'] },
-    // { text: 'Reportes', icon: FileText, path: '/reports', roles: ['ADMIN', 'MANAGER'] },
-  ],
-  executive: [
-    // Módulos ejecutivos ocultos temporalmente - Fase 3+
-    // { text: 'Motor de IA', icon: Brain, path: '/ai-engine', badge: 'AI' },
-    // { text: 'Logística Inteligente', icon: Box, path: '/logistics' },
-    // { text: 'Business Core', icon: Building2, path: '/business-core' },
-    // { text: 'Centro Automatización', icon: Zap, path: '/automation-center' },
-    // { text: 'Operaciones Móviles', icon: Smartphone, path: '/mobile-ops' },
-    // { text: 'Capa Integración', icon: Layers, path: '/integration-layer' },
-    // { text: 'Datos Tiempo Real', icon: Cloud, path: '/realtime-data' },
-    // { text: 'Customer Engagement', icon: UserCircle, path: '/customer-engagement' },
-    // { text: 'Red de Proveedores', icon: Store, path: '/supplier-network' },
-    // { text: 'Operaciones Financieras', icon: DollarSign, path: '/financial-ops' },
-    // { text: 'Plataforma Analytics', icon: TrendingUp, path: '/platform-analytics' },
-    // { text: 'Gestión Documental', icon: Archive, path: '/document-management' },
-    // { text: 'Seguridad y Gobernanza', icon: Shield, path: '/security-governance' },
-    // { text: 'Motor Configuración', icon: Sliders, path: '/config-engine' },
-    // { text: 'Centro Comunicaciones', icon: MessageSquare, path: '/communications-center' },
-    // { text: 'Gestión Conocimiento', icon: BookOpen, path: '/knowledge-management' },
-    // { text: 'Gestión Infraestructura', icon: Server, path: '/infrastructure' },
-    // { text: 'Laboratorio Experimental', icon: Beaker, path: '/lab', badge: 'Beta' },
-  ],
-};
+interface MenuCategory {
+  title: string;
+  icon: React.ElementType;
+  items: MenuItem[];
+  defaultOpen?: boolean;
+}
+
+const menuCategories: MenuCategory[] = [
+  {
+    title: 'General',
+    icon: BarChart3,
+    items: [
+      { text: 'Dashboard', icon: BarChart3, path: '/dashboard' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    title: 'Ventas',
+    icon: ShoppingCart,
+    items: [
+      { text: 'Ventas', icon: ShoppingCart, path: '/sales' },
+      { text: 'Facturas Recurrentes', icon: Repeat, path: '/recurring-invoices' },
+      { text: 'Plantillas de Factura', icon: FileText, path: '/invoice-templates' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    title: 'Compras',
+    icon: Truck,
+    items: [
+      { text: 'Compras', icon: Truck, path: '/purchases' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    title: 'Fiscalidad',
+    icon: Receipt,
+    items: [
+      { text: 'Declaraciones Fiscales', icon: FileText, path: '/tax' },
+      { text: 'Modelo 303 (IVA)', icon: Calculator, path: '/tax/model-303' },
+      { text: 'Modelo 111 (IRPF)', icon: Calculator, path: '/tax/model-111' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    title: 'Verifactu',
+    icon: Shield,
+    items: [
+      { text: 'Registro de Facturas', icon: Shield, path: '/verifactu' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    title: 'Inventario',
+    icon: Package,
+    items: [
+      { text: 'Productos', icon: Package, path: '/products' },
+    ],
+    defaultOpen: true,
+  },
+];
 
 interface SidebarProps {
   className?: string;
@@ -177,15 +211,66 @@ export function Sidebar({ className }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-2">
-        {/* Core Modules */}
-        <div className="mb-6">
-          {!collapsed && (
-            <p className="px-3 mb-2 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-              Módulos Core
-            </p>
-          )}
-          <div className="space-y-1">
-            {(menuSections.core as MenuItem[]).filter(canAccessMenuItem).map((item) => {
+        <div className="space-y-2">
+          {menuCategories.map((category) => {
+            const filteredItems = category.items.filter(canAccessMenuItem);
+            
+            // Si no hay items accesibles, no mostrar la categoría
+            if (filteredItems.length === 0) return null;
+
+            // Si está colapsado, mostrar solo el icono de la categoría principal
+            // Si hay solo un item, mostrar ese item directamente
+            if (collapsed) {
+              // Si hay solo un item, mostrar ese item
+              if (filteredItems.length === 1) {
+                const item = filteredItems[0];
+                const Icon = item.icon;
+                const isActive = pathname === item.path;
+
+                if (!Icon) return null;
+
+                return (
+                  <Link key={item.path} href={item.path} prefetch={true}>
+                    <Button
+                      variant={isActive ? 'default' : 'ghost'}
+                      className={cn(
+                        'w-full justify-center',
+                        isActive &&
+                          'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+                      )}
+                      title={item.text}
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                    </Button>
+                  </Link>
+                );
+              }
+
+              // Si hay múltiples items, mostrar el icono de la categoría
+              // El usuario puede expandir el sidebar para ver los subitems
+              const CategoryIcon = category.icon;
+              const hasActiveItem = filteredItems.some(item => pathname === item.path);
+
+              return (
+                <div key={category.title} className="relative group">
+                  <Button
+                    variant={hasActiveItem ? 'default' : 'ghost'}
+                    className={cn(
+                      'w-full justify-center',
+                      hasActiveItem &&
+                        'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+                    )}
+                    title={category.title}
+                  >
+                    <CategoryIcon className="w-5 h-5 flex-shrink-0" />
+                  </Button>
+                </div>
+              );
+            }
+
+            // Si hay solo un item, mostrar sin collapsible
+            if (filteredItems.length === 1) {
+              const item = filteredItems[0];
               const Icon = item.icon;
               const isActive = pathname === item.path;
 
@@ -197,16 +282,13 @@ export function Sidebar({ className }: SidebarProps) {
                     variant={isActive ? 'default' : 'ghost'}
                     className={cn(
                       'w-full justify-start gap-3',
-                      collapsed && 'justify-center',
                       isActive &&
                         'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
                     )}
                   >
-                    {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
-                    {!collapsed && (
-                      <span className="flex-1 text-left truncate">{item.text}</span>
-                    )}
-                    {!collapsed && item.badge && (
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="flex-1 text-left truncate">{item.text}</span>
+                    {item.badge && (
                       <Badge variant="secondary" className="text-xs">
                         {item.badge}
                       </Badge>
@@ -214,52 +296,47 @@ export function Sidebar({ className }: SidebarProps) {
                   </Button>
                 </Link>
               );
-            })}
-          </div>
-        </div>
+            }
 
-        {/* Executive Modules - Ocultos temporalmente para MVP */}
-        {menuSections.executive.length > 0 && (
-          <div>
-            {!collapsed && (
-              <p className="px-3 mb-2 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                Módulos Ejecutivos
-              </p>
-            )}
-            <div className="space-y-1">
-              {(menuSections.executive as MenuItem[]).filter(canAccessMenuItem).map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.path;
+            // Múltiples items: usar collapsible
+            return (
+              <Collapsible
+                key={category.title}
+                title={category.title}
+                icon={category.icon}
+                defaultOpen={category.defaultOpen}
+              >
+                {filteredItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.path;
 
-                if (!Icon) return null;
+                  if (!Icon) return null;
 
-                return (
-                  <Link key={item.path} href={item.path} prefetch={true}>
-                    <Button
-                      variant={isActive ? 'default' : 'ghost'}
-                      className={cn(
-                        'w-full justify-start gap-3',
-                        collapsed && 'justify-center',
-                        isActive &&
-                          'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
-                      )}
-                    >
-                      {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
-                      {!collapsed && (
+                  return (
+                    <Link key={item.path} href={item.path} prefetch={true}>
+                      <Button
+                        variant={isActive ? 'default' : 'ghost'}
+                        className={cn(
+                          'w-full justify-start gap-3 h-9',
+                          isActive &&
+                            'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+                        )}
+                      >
+                        <Icon className="w-4 h-4 flex-shrink-0" />
                         <span className="flex-1 text-left truncate text-sm">{item.text}</span>
-                      )}
-                      {!collapsed && item.badge && (
-                        <Badge variant="secondary" className="text-xs">
-                          {item.badge}
-                        </Badge>
-                      )}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
+                        {item.badge && (
+                          <Badge variant="secondary" className="text-xs">
+                            {item.badge}
+                          </Badge>
+                        )}
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </Collapsible>
+            );
+          })}
+        </div>
       </nav>
 
       {/* Footer */}

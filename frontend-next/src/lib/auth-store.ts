@@ -90,11 +90,17 @@ export const useAuthStore = create<AuthState>()(
       },
 
       loadUser: async () => {
-        if (!apiClient.isAuthenticated()) {
-          set({ user: null, isAuthenticated: false });
+        // Verificar si hay tokens disponibles
+        const hasAccessToken = apiClient.isAuthenticated();
+        const hasRefreshToken = typeof window !== 'undefined' && !!localStorage.getItem('refresh_token');
+        
+        // Si no hay ningún token, limpiar estado
+        if (!hasAccessToken && !hasRefreshToken) {
+          set({ user: null, isAuthenticated: false, isLoading: false });
           return;
         }
 
+        // Si hay tokens, intentar cargar usuario (el refresh automático manejará tokens expirados)
         set({ isLoading: true });
         try {
           const userData = await apiClient.getCurrentUser();
@@ -106,11 +112,32 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error) {
+        } catch (error: any) {
           console.error('Load user error:', error);
-          // Token inválido o expirado
-          apiClient.logout();
-          set({ user: null, isAuthenticated: false, isLoading: false });
+          
+          // Verificar si el error es por sesión expirada o token inválido
+          const isSessionExpired = 
+            error?.message?.includes('Sesión expirada') || 
+            error?.message?.includes('expired') ||
+            error?.message?.includes('Could not validate credentials') ||
+            error?.message?.includes('Unauthorized');
+          
+          if (isSessionExpired) {
+            // Si hay refresh token, el refresh automático debería haberlo manejado
+            // Si aún así falla, hacer logout
+            apiClient.logout();
+            set({ user: null, isAuthenticated: false, isLoading: false });
+          } else {
+            // Otros errores (conexión, etc.) - mantener estado persistido si existe
+            const currentState = get();
+            if (currentState.user && currentState.isAuthenticated) {
+              // Mantener estado persistido si hay error de conexión
+              set({ isLoading: false });
+            } else {
+              // Si no hay estado persistido, marcar como no autenticado
+              set({ user: null, isAuthenticated: false, isLoading: false });
+            }
+          }
         }
       },
     }),

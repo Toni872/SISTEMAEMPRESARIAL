@@ -2,6 +2,7 @@
 node_modules/
 /.pnp
 .pnp.js
+yarn.lock
 
 # Testing
 /coverage
@@ -23,11 +24,14 @@ node_modules/
 *.swp
 *.swo
 *~
+
+# IDE
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 
 # Docker
-*.log
 docker-compose.override.yml
 
 # Database
@@ -38,16 +42,13 @@ docker-compose.override.yml
 .env
 .env.local
 .env.*.local
+# Pero mantener el ejemplo
+!.env.example
+!env.example
 
 # Build
 dist/
 build/
-
-# IDE
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
 
 # OS
 Thumbs.db
@@ -56,12 +57,6 @@ Thumbs.db
 # Temporary
 *.tmp
 .cache/
-
-# Specific to this project
-frontend/dist/
-frontend/build/
-backend/dist/
-backend/build/
 
 # Python
 __pycache__/
@@ -72,3 +67,27 @@ __pycache__/
 venv/
 ENV/
 env/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Alembic
+alembic/versions/*.pyc
+
+# Logs
+logs/
+*.log
+
+# Vercel
+.vercel/
+
+# Specific to this project
+frontend/dist/
+frontend/build/
+frontend-next/.next/
+frontend-next/out/
+backend/dist/
+backend/build/
+backend/logs/
