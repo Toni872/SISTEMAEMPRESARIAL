@@ -4,7 +4,7 @@ Esta guía te explica cómo configurar Vercel para que el frontend se visualice 
 
 ## 📋 Situación Actual
 
-- ✅ Frontend desplegado en Vercel: `https://frontend-next-silk.vercel.app`
+- ✅ Frontend desplegado en Vercel: `https://frontend-next-silk-inky.vercel.app`
 - ⚠️ Backend corriendo localmente: `http://localhost:8000`
 - ❌ Problema: Vercel no puede conectarse a `localhost:8000`
 
@@ -35,7 +35,7 @@ Cuando quieras probar el frontend en Vercel con tu backend local:
 4. **Copia la URL HTTPS** que te da ngrok (ej: `https://abc123.ngrok.io`)
 
 5. **Actualiza la variable en Vercel:**
-   - Ve a: https://vercel.com/toni872s-projects/frontend-next-silk/settings/environment-variables
+   - Ve a: https://vercel.com/toni872s-projects/frontend-next-silk-inky/settings/environment-variables
    - Actualiza `NEXT_PUBLIC_API_URL` con la URL de ngrok
    - Redesplega el frontend
 
@@ -118,7 +118,7 @@ Si solo quieres ver cómo se ve el frontend en Vercel (sin funcionalidad del bac
 
 ```bash
 # Ver el frontend en Vercel
-# Abre: https://frontend-next-silk.vercel.app
+# Abre: https://frontend-next-silk-inky.vercel.app
 
 # Desarrollo local completo
 cd backend && uvicorn app.main:app --reload  # Terminal 1

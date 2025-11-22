@@ -1,5 +1,8 @@
 # 🚀 Guía de Despliegue a Vercel
 
+**Proyecto actual:** `frontend-next-silk-inky`  
+**URL de producción:** https://frontend-next-silk-inky.vercel.app
+
 ## Prerrequisitos
 
 1. Tener cuenta en [Vercel](https://vercel.com)
@@ -30,11 +33,8 @@ cd frontend-next
 
 ```bash
 # Primera vez (configuración inicial)
-# Te pedirá el nombre del proyecto, usa: sistema-empresarial-frontend
-vercel
-
-# O especifica el nombre directamente
-vercel --name sistema-empresarial-frontend
+# Vincular al proyecto existente
+vercel link --project frontend-next-silk-inky
 
 # Despliegues posteriores
 vercel --prod
@@ -71,7 +71,8 @@ Agregar las siguientes variables de entorno en Vercel:
 NEXT_PUBLIC_API_URL=https://tu-backend-url.com
 ```
 
-**Importante:** 
+**Importante:**
+
 - Si el backend está en producción, usar la URL de producción
 - Si el backend está local, usar un servicio como ngrok o desplegar el backend también
 
@@ -92,11 +93,12 @@ Click en "Deploy" y Vercel desplegará automáticamente.
 ## Verificar el Despliegue
 
 Una vez desplegado, Vercel te dará una URL como:
+
 ```
 https://tu-proyecto.vercel.app
 ```
 
-### Verificar que funciona:
+### Verificar que funciona
 
 1. Abre la URL en el navegador
 2. Deberías ver la landing page
@@ -105,6 +107,7 @@ https://tu-proyecto.vercel.app
 ## Actualizaciones Automáticas
 
 Si conectaste el repositorio de GitHub, Vercel desplegará automáticamente:
+
 - **Production:** Cada push a `master` o `main`
 - **Preview:** Cada pull request
 
@@ -116,7 +119,8 @@ Si conectaste el repositorio de GitHub, Vercel desplegará automáticamente:
 
 ### Error: "Build failed"
 
-**Solución:** 
+**Solución:**
+
 1. Revisa los logs de build en Vercel
 2. Verifica que `npm run build` funcione localmente
 3. Asegúrate de que todas las dependencias estén en `package.json`
@@ -124,6 +128,7 @@ Si conectaste el repositorio de GitHub, Vercel desplegará automáticamente:
 ### Error: "Cannot connect to backend"
 
 **Solución:**
+
 1. Verifica que el backend esté desplegado y accesible
 2. Verifica la URL en `NEXT_PUBLIC_API_URL`
 3. Verifica CORS en el backend para permitir tu dominio de Vercel
@@ -167,4 +172,3 @@ vercel remove
 ---
 
 **¿Necesitas ayuda?** Revisa la [documentación de Vercel](https://vercel.com/docs)
-

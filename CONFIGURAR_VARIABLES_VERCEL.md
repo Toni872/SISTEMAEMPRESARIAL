@@ -53,7 +53,7 @@ Después de agregar la variable:
 
 ## Verificar que Funciona
 
-1. Abre tu aplicación en Vercel: `https://frontend-next-silk.vercel.app`
+1. Abre tu aplicación en Vercel: `https://frontend-next-silk-inky.vercel.app`
 2. Abre la consola del navegador (F12)
 3. Intenta hacer login
 4. Deberías ver que ahora intenta conectarse a tu URL de backend, no a localhost
