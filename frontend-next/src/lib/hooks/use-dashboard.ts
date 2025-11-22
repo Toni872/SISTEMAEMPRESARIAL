@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../api';
+import { logger } from '../logger';
 
 interface DashboardStats {
   // Métricas básicas
@@ -114,7 +115,7 @@ export function useDashboard() {
           error: null,
         });
       } catch (error: any) {
-        console.error('Error fetching dashboard data:', error);
+        logger.error('Error fetching dashboard data', error);
         setStats(prev => ({
           ...prev,
           loading: false,

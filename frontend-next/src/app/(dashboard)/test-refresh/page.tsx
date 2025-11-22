@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { logger } from '@/lib/logger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,7 +57,7 @@ export default function TestRefreshPage() {
     } catch (error: any) {
       setStatus('error');
       setMessage(error.message || 'Error desconocido');
-      console.error('Error en test:', error);
+      logger.error('Error en test', error);
     }
   };
 
@@ -95,7 +96,7 @@ export default function TestRefreshPage() {
     } catch (error: any) {
       setStatus('error');
       setMessage(error.message || 'Error en la prueba');
-      console.error('Error en test auto-refresh:', error);
+      logger.error('Error en test auto-refresh', error);
     }
   };
 

@@ -2,6 +2,8 @@
  * Utilidades para exportar datos a CSV
  */
 
+import { logger } from '../logger';
+
 /**
  * Convierte un array de objetos a formato CSV
  */
@@ -49,11 +51,11 @@ function downloadCSV(csvContent: string, filename: string): void {
 export function exportProductsToCSV(products: any[]): void {
   try {
     if (!products || products.length === 0) {
-      console.warn('No hay productos para exportar');
+      logger.warn('No hay productos para exportar');
       return;
     }
 
-    console.log('Exportando productos:', products.length);
+    logger.info('Exportando productos', { count: products.length });
 
     const headers = ['ID', 'Nombre', 'Descripción', 'SKU', 'Categoría', 'Precio', 'Costo', 'Stock', 'Stock Mínimo', 'Activo'];
     
@@ -73,11 +75,11 @@ export function exportProductsToCSV(products: any[]): void {
     const csv = convertToCSV(csvData, headers);
     const filename = `productos_${new Date().toISOString().split('T')[0]}.csv`;
     
-    console.log('Descargando CSV:', filename);
+    logger.info('Descargando CSV', { filename });
     downloadCSV(csv, filename);
-    console.log('CSV descargado exitosamente');
+    logger.info('CSV descargado exitosamente', { filename });
   } catch (error) {
-    console.error('Error al exportar productos:', error);
+    logger.error('Error al exportar productos', error);
     throw error;
   }
 }
@@ -88,11 +90,11 @@ export function exportProductsToCSV(products: any[]): void {
 export function exportSalesToCSV(sales: any[]): void {
   try {
     if (!sales || sales.length === 0) {
-      console.warn('No hay ventas para exportar');
+      logger.warn('No hay ventas para exportar');
       return;
     }
 
-    console.log('Exportando ventas:', sales.length);
+    logger.info('Exportando ventas', { count: sales.length });
 
     const headers = ['ID', 'Número de Venta', 'Cliente', 'Email', 'Teléfono', 'Estado', 'Subtotal', 'Impuesto', 'Total', 'Fecha Creación', 'Notas'];
     
@@ -113,11 +115,11 @@ export function exportSalesToCSV(sales: any[]): void {
     const csv = convertToCSV(csvData, headers);
     const filename = `ventas_${new Date().toISOString().split('T')[0]}.csv`;
     
-    console.log('Descargando CSV:', filename);
+    logger.info('Descargando CSV', { filename });
     downloadCSV(csv, filename);
-    console.log('CSV descargado exitosamente');
+    logger.info('CSV descargado exitosamente', { filename });
   } catch (error) {
-    console.error('Error al exportar ventas:', error);
+    logger.error('Error al exportar ventas', error);
     throw error;
   }
 }

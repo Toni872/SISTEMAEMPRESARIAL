@@ -2,6 +2,8 @@
  * API Service - Cliente para comunicarse con el backend FastAPI
  */
 
+import { logger } from './logger';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface LoginResponse {
@@ -33,10 +35,7 @@ class ApiClient {
 
   constructor(baseUrl: string = API_URL) {
     this.baseUrl = baseUrl;
-    // Log en desarrollo para debug
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      console.log('🔗 API Client inicializado con URL:', this.baseUrl);
-    }
+    logger.debug('API Client inicializado', { url: this.baseUrl });
   }
 
   /**
@@ -108,13 +107,13 @@ class ApiClient {
       // Agregar timeout a las requests (30 segundos)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
-      
+
       const response = await fetch(url, {
         ...options,
         headers,
         signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
 
       // Si recibimos 401 y tenemos refresh token, intentar renovar
@@ -122,7 +121,7 @@ class ApiClient {
         try {
           // Renovar token
           const newToken = await this.refreshAccessToken();
-          
+
           // Reintentar request con nuevo token
           const retryHeaders: HeadersInit = {
             'Content-Type': 'application/json',
@@ -133,13 +132,13 @@ class ApiClient {
           // Agregar timeout también al retry
           const retryController = new AbortController();
           const retryTimeoutId = setTimeout(() => retryController.abort(), 30000);
-          
+
           const retryResponse = await fetch(url, {
             ...options,
             headers: retryHeaders,
             signal: retryController.signal,
           });
-          
+
           clearTimeout(retryTimeoutId);
 
           if (!retryResponse.ok) {
@@ -148,9 +147,9 @@ class ApiClient {
               const error: ApiError = await retryResponse.json();
               errorMessage = error.detail || errorMessage;
             } catch (e) {
-              console.error('Error parsing response:', e);
+              logger.error('Error parsing response', e);
             }
-            console.error(`API Error [${retryResponse.status}]:`, errorMessage, 'URL:', url);
+            logger.error(`API Error [${retryResponse.status}]`, { message: errorMessage, url });
             throw new Error(errorMessage);
           }
 
@@ -179,9 +178,9 @@ class ApiClient {
           errorMessage = error.detail || errorMessage;
         } catch (e) {
           // Si no se puede parsear JSON, usar el mensaje por defecto
-          console.error('Error parsing response:', e);
+          logger.error('Error parsing response', e);
         }
-        console.error(`API Error [${response.status}]:`, errorMessage, 'URL:', url);
+        logger.error(`API Error [${response.status}]`, { message: errorMessage, url });
         throw new Error(errorMessage);
       }
 
@@ -200,7 +199,7 @@ class ApiClient {
         return JSON.parse(text);
       } catch (e) {
         // Si no se puede parsear, retornar null en lugar de lanzar error
-        console.warn('Could not parse JSON response, returning null:', e);
+        logger.warn('Could not parse JSON response, returning null', e);
         return null as T;
       }
     } catch (error) {
@@ -274,9 +273,9 @@ class ApiClient {
           const error: ApiError = await response.json();
           errorMessage = error.detail || errorMessage;
         } catch (e) {
-          console.error('Error parsing response:', e);
+          logger.error('Error parsing response', e);
         }
-        console.error(`API Error [${response.status}]:`, errorMessage, 'URL:', url);
+        logger.error(`API Error [${response.status}]`, { message: errorMessage, url });
         throw new Error(errorMessage);
       }
 
@@ -291,7 +290,7 @@ class ApiClient {
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
         const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        
+
         if (isVercel) {
           if (apiUrl.includes('localhost')) {
             throw new Error('⚠️ El backend no está configurado en Vercel. Configura la variable NEXT_PUBLIC_API_URL en Settings → Environment Variables. Para desarrollo con backend local, usa ngrok.');
@@ -353,7 +352,7 @@ class ApiClient {
     const params = new URLSearchParams();
     if (startDate) params.append('start_date', startDate);
     if (endDate) params.append('end_date', endDate);
-    
+
     const queryString = params.toString();
     const endpoint = `/api/sales/stats${queryString ? `?${queryString}` : ''}`;
     return this.request<{
@@ -376,7 +375,7 @@ class ApiClient {
   async getProductsCount(isActive?: boolean): Promise<{ count: number }> {
     const params = new URLSearchParams();
     if (isActive !== undefined) params.append('is_active', isActive.toString());
-    
+
     const queryString = params.toString();
     const endpoint = `/api/products/count${queryString ? `?${queryString}` : ''}`;
     return this.request<{ count: number }>(endpoint);
@@ -398,7 +397,7 @@ class ApiClient {
     params.append('limit', limit.toString());
     if (search) params.append('search', search);
     if (category) params.append('category', category);
-    
+
     const queryString = params.toString();
     return this.request<any[]>(`/api/products?${queryString}`);
   }
@@ -469,7 +468,7 @@ class ApiClient {
     if (status) params.append('status', status);
     if (startDate) params.append('start_date', startDate);
     if (endDate) params.append('end_date', endDate);
-    
+
     const queryString = params.toString();
     return this.request<any[]>(`/api/sales?${queryString}`);
   }
@@ -882,11 +881,11 @@ class ApiClient {
         'Authorization': `Bearer ${this.getToken()}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Error obteniendo XML: ${response.statusText}`);
     }
-    
+
     return response.blob();
   }
 
@@ -1056,7 +1055,7 @@ class ApiClient {
   async exportPurchasePDF(purchaseId: number): Promise<Blob> {
     const url = `${this.baseUrl}/api/purchases/${purchaseId}/export/pdf`;
     const token = this.getToken();
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -1093,7 +1092,7 @@ class ApiClient {
 
     const url = `${this.baseUrl}/api/purchases/export/pdf?${queryParams.toString()}`;
     const token = this.getToken();
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -1130,7 +1129,7 @@ class ApiClient {
 
     const url = `${this.baseUrl}/api/purchases/export/excel?${queryParams.toString()}`;
     const token = this.getToken();
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -1155,11 +1154,11 @@ class ApiClient {
         'Authorization': `Bearer ${this.getToken()}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Error descargando PDF: ${response.statusText}`);
     }
-    
+
     return response.blob();
   }
 

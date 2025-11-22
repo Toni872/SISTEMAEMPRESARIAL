@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { apiClient } from './api';
+import { logger } from './logger';
 
 interface User {
   id: number;
@@ -46,7 +47,7 @@ export const useAuthStore = create<AuthState>()(
           
           return true;
         } catch (error) {
-          console.error('Login error:', error);
+          logger.error('Login error', error);
           set({ isLoading: false });
           return false;
         }
@@ -72,7 +73,7 @@ export const useAuthStore = create<AuthState>()(
           
           return true;
         } catch (error: any) {
-          console.error('Register error:', error);
+          logger.error('Register error', error);
           set({ isLoading: false });
           
           // Manejar error específico de email duplicado
@@ -113,7 +114,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error: any) {
-          console.error('Load user error:', error);
+          logger.error('Load user error', error);
           
           // Verificar si el error es por sesión expirada o token inválido
           const isSessionExpired = 

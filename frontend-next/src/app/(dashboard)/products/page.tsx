@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { logger } from '@/lib/logger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -99,7 +100,7 @@ export default function ProductsPage() {
         totalCategories: categories.size,
       });
     } catch (err: any) {
-      console.error('Error fetching products:', err);
+      logger.error('Error fetching products', err);
       setError(err.message || 'Error al cargar productos');
     } finally {
       setLoading(false);
@@ -143,7 +144,7 @@ export default function ProductsPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error creating product:', err);
+      logger.error('Error creating product', err);
       toast({
         title: "Error",
         description: err.message || 'Error al crear producto',
@@ -179,7 +180,7 @@ export default function ProductsPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error updating product:', err);
+      logger.error('Error updating product', err);
       toast({
         title: "Error",
         description: err.message || 'Error al actualizar producto',
@@ -208,7 +209,7 @@ export default function ProductsPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error deleting product:', err);
+      logger.error('Error deleting product', err);
       toast({
         title: "Error",
         description: err.message || 'Error al eliminar producto',
@@ -414,7 +415,7 @@ export default function ProductsPage() {
                           variant: "success",
                         });
                       } catch (error: any) {
-                        console.error('Error al exportar:', error);
+                        logger.error('Error al exportar', error);
                         toast({
                           title: "Error al exportar",
                           description: error.message || "No se pudo exportar los productos",
@@ -466,7 +467,7 @@ export default function ProductsPage() {
                         variant: "success",
                       });
                     } catch (error: any) {
-                      console.error('Error al exportar:', error);
+                      logger.error('Error al exportar', error);
                       toast({
                         title: "Error al exportar",
                         description: error.message || "No se pudo exportar los productos",

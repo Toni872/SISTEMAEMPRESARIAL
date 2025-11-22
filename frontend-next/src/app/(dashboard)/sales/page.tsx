@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { logger } from '@/lib/logger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +87,7 @@ export default function SalesPage() {
       setProducts(productsData);
       setStats(statsData);
     } catch (err: any) {
-      console.error('Error fetching sales:', err);
+      logger.error('Error fetching sales', err);
       setError(err.message || 'Error al cargar ventas');
     } finally {
       setLoading(false);
@@ -184,7 +185,7 @@ export default function SalesPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error creating sale:', err);
+      logger.error('Error creating sale', err);
       toast({
         title: "Error",
         description: err.message || 'Error al crear venta',
@@ -216,7 +217,7 @@ export default function SalesPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error updating sale:', err);
+      logger.error('Error updating sale', err);
       toast({
         title: "Error",
         description: err.message || 'Error al actualizar venta',
@@ -245,7 +246,7 @@ export default function SalesPage() {
         variant: "success",
       });
     } catch (err: any) {
-      console.error('Error deleting sale:', err);
+      logger.error('Error deleting sale', err);
       toast({
         title: "Error",
         description: err.message || 'Error al eliminar venta',
@@ -263,7 +264,7 @@ export default function SalesPage() {
       setEditingSale(fullSale);
       setFormOpen(true);
     } catch (err: any) {
-      console.error('Error loading sale:', err);
+      logger.error('Error loading sale', err);
       toast({
         title: "Error",
         description: err.message || 'Error al cargar venta',
@@ -541,7 +542,7 @@ export default function SalesPage() {
                             variant: "success",
                           });
                         } catch (error: any) {
-                          console.error('Error al exportar:', error);
+                          logger.error('Error al exportar', error);
                           toast({
                             title: "Error al exportar",
                             description: error.message || "No se pudo exportar las ventas",

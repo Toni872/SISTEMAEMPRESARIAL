@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { logger } from '@/lib/logger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -58,7 +59,7 @@ export default function VerifactuPage() {
       const data = await apiClient.getVerifactuRegistry();
       setRegistries(data || []);
     } catch (err: any) {
-      console.error('Error cargando registros Verifactu:', err);
+      logger.error('Error cargando registros Verifactu', err);
       toast({
         title: 'Error',
         description: err.message || 'No se pudieron cargar los registros',
@@ -702,7 +703,7 @@ function CertificatesSection() {
         const data = await apiClient.getElectronicCertificates();
         setCertificates(data || []);
       } catch (err: any) {
-        console.error('Error cargando certificados:', err);
+        logger.error('Error cargando certificados', err);
         // No mostrar toast para certificados, es opcional
         setCertificates([]);
       } finally {

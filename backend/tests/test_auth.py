@@ -23,11 +23,11 @@ async def test_register_and_login():
         assert data["name"] == "John"
         assert "id" in data
 
-        # Login
+        # Login (usando form-data como espera OAuth2)
         r = await ac.post(
             "/api/auth/login",
-            json={
-                "email": "john.doe@example.com",
+            data={
+                "username": "john.doe@example.com",
                 "password": "supersecret",
             },
         )
@@ -83,8 +83,8 @@ async def test_login_invalid_credentials():
         # Try to login with wrong password
         r = await ac.post(
             "/api/auth/login",
-            json={
-                "email": "test@example.com",
+            data={
+                "username": "test@example.com",
                 "password": "wrongpassword",
             },
         )
@@ -94,8 +94,8 @@ async def test_login_invalid_credentials():
         # Try to login with non-existent email
         r = await ac.post(
             "/api/auth/login",
-            json={
-                "email": "nonexistent@example.com",
+            data={
+                "username": "nonexistent@example.com",
                 "password": "anypassword",
             },
         )

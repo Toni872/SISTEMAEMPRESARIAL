@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { apiClient } from '@/lib/api';
+import { logger } from '@/lib/logger';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -130,15 +131,15 @@ export default function PurchasesPage() {
       // Usar Promise.allSettled para que si una falla, las otras continúen
       const results = await Promise.allSettled([
         apiClient.getPurchases().catch(err => {
-          console.error('Error cargando compras:', err);
+          logger.error('Error cargando compras', err);
           return [];
         }),
         apiClient.getSuppliers().catch(err => {
-          console.error('Error cargando proveedores:', err);
+          logger.error('Error cargando proveedores', err);
           return [];
         }),
         apiClient.getProducts(0, 1000).catch(err => {
-          console.error('Error cargando productos:', err);
+          logger.error('Error cargando productos', err);
           return [];
         }),
       ]);
@@ -155,10 +156,10 @@ export default function PurchasesPage() {
       // Mostrar warning si alguna falló
       const failedCount = results.filter(r => r.status === 'rejected').length;
       if (failedCount > 0) {
-        console.warn(`${failedCount} de ${results.length} llamadas a la API fallaron`);
+        logger.warn(`${failedCount} de ${results.length} llamadas a la API fallaron`);
       }
     } catch (err: any) {
-      console.error('Error crítico cargando datos:', err);
+      logger.error('Error crítico cargando datos', err);
       toast({
         title: 'Error',
         description: err.message || 'No se pudieron cargar los datos',
@@ -277,7 +278,7 @@ export default function PurchasesPage() {
       setSelectedSupplier(null);
       await fetchData();
     } catch (err: any) {
-      console.error('Error al guardar proveedor:', err);
+      logger.error('Error al guardar proveedor', err);
       toast({
         title: 'Error',
         description: err.message || err.detail || 'Error al guardar el proveedor',
@@ -338,7 +339,7 @@ export default function PurchasesPage() {
         return true;
       });
     } catch (error) {
-      console.error('Error filtrando compras:', error);
+      logger.error('Error filtrando compras', error);
       return purchases; // Si hay error, devolver todas las compras
     }
   }, [purchases, filters]);
