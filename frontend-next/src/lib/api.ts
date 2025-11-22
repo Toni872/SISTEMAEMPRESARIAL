@@ -207,6 +207,10 @@ class ApiClient {
         }
         // Mejorar mensaje de error para conexión fallida
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+          if (isVercel) {
+            throw new Error('El backend no está disponible. Para desarrollo, configura NEXT_PUBLIC_API_URL en Vercel o usa ngrok para conectar tu backend local.');
+          }
           throw new Error('No se puede conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:8000');
         }
         throw error;
