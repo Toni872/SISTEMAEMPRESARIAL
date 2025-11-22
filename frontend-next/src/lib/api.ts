@@ -315,11 +315,10 @@ class ApiClient {
     password: string,
     name: string
   ): Promise<RegisterResponse> {
-    const response = await this.request<RegisterResponse>('/api/auth/register', {
+    return this.request<RegisterResponse>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password, name }),
     });
-    return response;
   }
 
   /**

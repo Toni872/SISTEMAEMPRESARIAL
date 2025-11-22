@@ -17,20 +17,44 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend-next/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
 
       - name: Check outdated packages - Frontend
-        working-directory: ./frontend
+        working-directory: ./frontend-next
         run: |
           npm ci
           npm outdated || true
           echo "✅ Frontend dependencies checked"
 
       - name: Security audit - Frontend
-        working-directory: ./frontend
+        working-directory: ./frontend-next
         run: |
           npm audit --audit-level=moderate || true
           echo "✅ Frontend security audit completed"
+
+      - name: Check outdated packages - Backend
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip list --outdated || true
+          echo "✅ Backend dependencies checked"
+
+      - name: Security audit - Backend
+        working-directory: ./backend
+        run: |
+          pip install safety || true
+          safety check --file requirements.txt || true
+          echo "✅ Backend security audit completed"
 
       - name: Generate report
         run: |

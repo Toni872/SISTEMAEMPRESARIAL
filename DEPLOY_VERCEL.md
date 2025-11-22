@@ -1,7 +1,7 @@
 # 🚀 Guía de Despliegue a Vercel
 
 **Proyecto actual:** `frontend-next-silk-inky`  
-**URL de producción:** https://frontend-next-silk-inky.vercel.app
+**URL de producción:** <https://frontend-next-silk-inky.vercel.app>
 
 ## Prerrequisitos
 
@@ -67,7 +67,7 @@ vercel --prod
 
 Agregar las siguientes variables de entorno en Vercel:
 
-```
+```env
 NEXT_PUBLIC_API_URL=https://tu-backend-url.com
 ```
 
@@ -94,7 +94,7 @@ Click en "Deploy" y Vercel desplegará automáticamente.
 
 Una vez desplegado, Vercel te dará una URL como:
 
-```
+```text
 https://tu-proyecto.vercel.app
 ```
 
