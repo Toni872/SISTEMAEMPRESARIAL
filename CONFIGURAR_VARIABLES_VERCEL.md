@@ -28,7 +28,7 @@ Si aún no tienes el backend desplegado, necesitas desplegarlo primero.
 
 ### Paso 2: Configurar en Vercel
 
-1. Ve a tu proyecto en Vercel: https://vercel.com/toni872s-projects/frontend-next-silk
+1. Ve a tu proyecto en Vercel: https://vercel.com/toni872s-projects/frontend-next-silk-inky
 2. Click en **Settings** (Configuración)
 3. Click en **Environment Variables** (Variables de Entorno)
 4. Agrega la siguiente variable:
@@ -83,7 +83,7 @@ En `backend/app/main.py`, asegúrate de tener:
 BACKEND_CORS_ORIGINS = [
     "http://localhost:3001",
     "http://localhost:3000",
-    "https://frontend-next-silk.vercel.app",  # Tu dominio de Vercel
+    "https://frontend-next-silk-inky.vercel.app",  # Tu dominio de Vercel
 ]
 ```
 
