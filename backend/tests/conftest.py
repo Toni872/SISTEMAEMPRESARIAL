@@ -31,31 +31,36 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 Base.metadata.create_all(bind=engine)
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function")
 def db_session():
     """Fixture que crea una nueva sesión de BD para cada test"""
     # Asegurar que las tablas existan
     Base.metadata.create_all(bind=engine)
     
+    # Crear sesión
+    db = TestingSessionLocal()
+    
     def override_get_db_session():
-        db = TestingSessionLocal()
         try:
             yield db
         finally:
-            db.close()
+            pass  # No cerrar aquí, se cierra al final del fixture
     
     # Override la dependencia
     from app.main import app
     app.dependency_overrides[get_db_session] = override_get_db_session
     
-    yield
-    
-    # Limpiar después del test
-    Base.metadata.drop_all(bind=engine)
-    app.dependency_overrides.clear()
-    
-    # Recrear tablas para el siguiente test
-    Base.metadata.create_all(bind=engine)
+    try:
+        yield db
+    finally:
+        # Limpiar después del test
+        db.rollback()
+        db.close()
+        Base.metadata.drop_all(bind=engine)
+        app.dependency_overrides.clear()
+        
+        # Recrear tablas para el siguiente test
+        Base.metadata.create_all(bind=engine)
 
 
 def pytest_sessionfinish(session, exitstatus):

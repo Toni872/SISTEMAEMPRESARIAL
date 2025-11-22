@@ -3,56 +3,60 @@ Tests unitarios para el módulo de ventas
 """
 import pytest
 from httpx import AsyncClient, ASGITransport
+from decimal import Decimal
 from app.main import app
 from app.crud.sale import create_sale, get_sale, get_sales, update_sale, delete_sale
 from app.crud.product import create_product
+from app.api.products.schemas import ProductCreate
+from app.api.sales.schemas import SaleCreate, SaleUpdate, SaleItemCreate
 
 
 @pytest.mark.asyncio
 async def test_create_sale(db_session):
     """Test crear venta"""
     # Crear producto primero
-    product_data = {
-        "name": "Producto para Venta",
-        "price": 50.00,
-        "stock": 100,
-    }
-    product = create_product(db_session, product_data, user_id=1)
+    product_schema = ProductCreate(
+        name="Producto para Venta",
+        price=Decimal("50.00"),
+        stock=100,
+    )
+    product = create_product(db_session, product_schema)
     
     # Crear venta
-    sale_data = {
-        "customer_name": "Cliente Test",
-        "customer_email": "cliente@test.com",
-        "status": "pending",
-        "items": [
-            {
-                "product_id": product.id,
-                "quantity": 2,
-                "unit_price": 50.00,
-            }
+    sale_schema = SaleCreate(
+        customer_name="Cliente Test",
+        customer_email="cliente@test.com",
+        status="pending",
+        items=[
+            SaleItemCreate(
+                product_id=product.id,
+                quantity=2,
+                unit_price=Decimal("50.00"),
+            )
         ],
-    }
+    )
     
-    sale = create_sale(db_session, sale_data, user_id=1)
+    sale = create_sale(db_session, sale_schema, user_id=1)
     assert sale.customer_name == "Cliente Test"
     assert sale.status == "pending"
     assert len(sale.items) == 1
-    assert sale.total == 100.00  # 2 * 50.00
+    # Total incluye IVA (21%): 100 * 1.21 = 121.00
+    assert sale.total == Decimal("121.00")
 
 
 @pytest.mark.asyncio
 async def test_get_sale(db_session):
     """Test obtener venta por ID"""
     # Crear producto y venta
-    product = create_product(db_session, {"name": "Producto", "price": 50.00, "stock": 100}, user_id=1)
-    sale_data = {
-        "customer_name": "Cliente",
-        "items": [{"product_id": product.id, "quantity": 1, "unit_price": 50.00}],
-    }
-    created_sale = create_sale(db_session, sale_data, user_id=1)
+    product = create_product(db_session, ProductCreate(name="Producto", price=Decimal("50.00"), stock=100))
+    sale_schema = SaleCreate(
+        customer_name="Cliente",
+        items=[SaleItemCreate(product_id=product.id, quantity=1, unit_price=Decimal("50.00"))],
+    )
+    created_sale = create_sale(db_session, sale_schema, user_id=1)
     
     # Obtener venta
-    sale = get_sale(db_session, created_sale.id, user_id=1)
+    sale = get_sale(db_session, created_sale.id)
     assert sale is not None
     assert sale.customer_name == "Cliente"
 
@@ -61,15 +65,15 @@ async def test_get_sale(db_session):
 async def test_get_sales(db_session):
     """Test obtener lista de ventas"""
     # Crear producto
-    product = create_product(db_session, {"name": "Producto", "price": 50.00, "stock": 100}, user_id=1)
+    product = create_product(db_session, ProductCreate(name="Producto", price=Decimal("50.00"), stock=100))
     
     # Crear varias ventas
     for i in range(3):
-        sale_data = {
-            "customer_name": f"Cliente {i+1}",
-            "items": [{"product_id": product.id, "quantity": 1, "unit_price": 50.00}],
-        }
-        create_sale(db_session, sale_data, user_id=1)
+        sale_schema = SaleCreate(
+            customer_name=f"Cliente {i+1}",
+            items=[SaleItemCreate(product_id=product.id, quantity=1, unit_price=Decimal("50.00"))],
+        )
+        create_sale(db_session, sale_schema, user_id=1)
     
     # Obtener ventas
     sales = get_sales(db_session, user_id=1, skip=0, limit=10)
@@ -80,20 +84,21 @@ async def test_get_sales(db_session):
 async def test_update_sale(db_session):
     """Test actualizar venta"""
     # Crear producto y venta
-    product = create_product(db_session, {"name": "Producto", "price": 50.00, "stock": 100}, user_id=1)
-    sale_data = {
-        "customer_name": "Cliente Original",
-        "status": "pending",
-        "items": [{"product_id": product.id, "quantity": 1, "unit_price": 50.00}],
-    }
-    created_sale = create_sale(db_session, sale_data, user_id=1)
+    product = create_product(db_session, ProductCreate(name="Producto", price=Decimal("50.00"), stock=100))
+    sale_schema = SaleCreate(
+        customer_name="Cliente Original",
+        status="pending",
+        items=[SaleItemCreate(product_id=product.id, quantity=1, unit_price=Decimal("50.00"))],
+    )
+    created_sale = create_sale(db_session, sale_schema, user_id=1)
     
     # Actualizar venta
-    update_data = {
-        "status": "completed",
-        "customer_name": "Cliente Actualizado",
-    }
-    updated_sale = update_sale(db_session, created_sale.id, update_data, user_id=1)
+    update_schema = SaleUpdate(
+        status="completed",
+        customer_name="Cliente Actualizado",
+    )
+    updated_sale = update_sale(db_session, created_sale.id, update_schema)
+    assert updated_sale is not None
     assert updated_sale.status == "completed"
     assert updated_sale.customer_name == "Cliente Actualizado"
 
@@ -102,19 +107,20 @@ async def test_update_sale(db_session):
 async def test_delete_sale(db_session):
     """Test eliminar venta"""
     # Crear producto y venta
-    product = create_product(db_session, {"name": "Producto", "price": 50.00, "stock": 100}, user_id=1)
-    sale_data = {
-        "customer_name": "Cliente",
-        "items": [{"product_id": product.id, "quantity": 1, "unit_price": 50.00}],
-    }
-    created_sale = create_sale(db_session, sale_data, user_id=1)
+    product = create_product(db_session, ProductCreate(name="Producto", price=Decimal("50.00"), stock=100))
+    sale_schema = SaleCreate(
+        customer_name="Cliente",
+        items=[SaleItemCreate(product_id=product.id, quantity=1, unit_price=Decimal("50.00"))],
+    )
+    created_sale = create_sale(db_session, sale_schema, user_id=1)
     sale_id = created_sale.id
     
     # Eliminar venta
-    delete_sale(db_session, sale_id, user_id=1)
+    result = delete_sale(db_session, sale_id)
+    assert result is True
     
     # Verificar que fue eliminada
-    sale = get_sale(db_session, sale_id, user_id=1)
+    sale = get_sale(db_session, sale_id)
     assert sale is None
 
 

@@ -3,30 +3,30 @@ Tests unitarios para el módulo de productos
 """
 import pytest
 from httpx import AsyncClient, ASGITransport
+from decimal import Decimal
 from app.main import app
-from app.models.product import Product
 from app.crud.product import create_product, get_product, get_products, update_product, delete_product
-from app.api.auth.deps import get_db_session
+from app.api.products.schemas import ProductCreate, ProductUpdate
 
 
 @pytest.mark.asyncio
 async def test_create_product(db_session):
     """Test crear producto"""
-    product_data = {
-        "name": "Producto Test",
-        "description": "Descripción del producto",
-        "sku": "SKU-001",
-        "price": 99.99,
-        "cost": 50.00,
-        "stock": 100,
-        "min_stock": 10,
-        "category": "Electrónica",
-        "is_active": True,
-    }
+    product_schema = ProductCreate(
+        name="Producto Test",
+        description="Descripción del producto",
+        sku="SKU-001",
+        price=Decimal("99.99"),
+        cost=Decimal("50.00"),
+        stock=100,
+        min_stock=10,
+        category="Electrónica",
+        is_active=True,
+    )
     
-    product = create_product(db_session, product_data, user_id=1)
+    product = create_product(db_session, product_schema)
     assert product.name == "Producto Test"
-    assert product.price == 99.99
+    assert product.price == Decimal("99.99")
     assert product.stock == 100
     assert product.is_active is True
 
@@ -35,15 +35,15 @@ async def test_create_product(db_session):
 async def test_get_product(db_session):
     """Test obtener producto por ID"""
     # Crear producto primero
-    product_data = {
-        "name": "Producto Test",
-        "price": 99.99,
-        "stock": 100,
-    }
-    created_product = create_product(db_session, product_data, user_id=1)
+    product_schema = ProductCreate(
+        name="Producto Test",
+        price=Decimal("99.99"),
+        stock=100,
+    )
+    created_product = create_product(db_session, product_schema)
     
     # Obtener producto
-    product = get_product(db_session, created_product.id, user_id=1)
+    product = get_product(db_session, created_product.id)
     assert product is not None
     assert product.name == "Producto Test"
     assert product.id == created_product.id
@@ -54,15 +54,15 @@ async def test_get_products(db_session):
     """Test obtener lista de productos"""
     # Crear varios productos
     for i in range(3):
-        product_data = {
-            "name": f"Producto {i+1}",
-            "price": 10.00 * (i + 1),
-            "stock": 10 * (i + 1),
-        }
-        create_product(db_session, product_data, user_id=1)
+        product_schema = ProductCreate(
+            name=f"Producto {i+1}",
+            price=Decimal(str(10.00 * (i + 1))),
+            stock=10 * (i + 1),
+        )
+        create_product(db_session, product_schema)
     
     # Obtener productos
-    products = get_products(db_session, user_id=1, skip=0, limit=10)
+    products = get_products(db_session, skip=0, limit=10)
     assert len(products) == 3
 
 
@@ -70,21 +70,22 @@ async def test_get_products(db_session):
 async def test_update_product(db_session):
     """Test actualizar producto"""
     # Crear producto
-    product_data = {
-        "name": "Producto Original",
-        "price": 50.00,
-        "stock": 50,
-    }
-    created_product = create_product(db_session, product_data, user_id=1)
+    product_schema = ProductCreate(
+        name="Producto Original",
+        price=Decimal("50.00"),
+        stock=50,
+    )
+    created_product = create_product(db_session, product_schema)
     
     # Actualizar producto
-    update_data = {
-        "name": "Producto Actualizado",
-        "price": 75.00,
-    }
-    updated_product = update_product(db_session, created_product.id, update_data, user_id=1)
+    update_schema = ProductUpdate(
+        name="Producto Actualizado",
+        price=Decimal("75.00"),
+    )
+    updated_product = update_product(db_session, created_product.id, update_schema)
+    assert updated_product is not None
     assert updated_product.name == "Producto Actualizado"
-    assert updated_product.price == 75.00
+    assert updated_product.price == Decimal("75.00")
     assert updated_product.stock == 50  # No cambió
 
 
@@ -92,19 +93,20 @@ async def test_update_product(db_session):
 async def test_delete_product(db_session):
     """Test eliminar producto"""
     # Crear producto
-    product_data = {
-        "name": "Producto a Eliminar",
-        "price": 25.00,
-        "stock": 25,
-    }
-    created_product = create_product(db_session, product_data, user_id=1)
+    product_schema = ProductCreate(
+        name="Producto a Eliminar",
+        price=Decimal("25.00"),
+        stock=25,
+    )
+    created_product = create_product(db_session, product_schema)
     product_id = created_product.id
     
     # Eliminar producto
-    delete_product(db_session, product_id, user_id=1)
+    result = delete_product(db_session, product_id)
+    assert result is True
     
     # Verificar que fue eliminado
-    product = get_product(db_session, product_id, user_id=1)
+    product = get_product(db_session, product_id)
     assert product is None
 
 
