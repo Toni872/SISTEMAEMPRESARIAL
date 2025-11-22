@@ -33,6 +33,10 @@ class ApiClient {
 
   constructor(baseUrl: string = API_URL) {
     this.baseUrl = baseUrl;
+    // Log en desarrollo para debug
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log('🔗 API Client inicializado con URL:', this.baseUrl);
+    }
   }
 
   /**
@@ -285,6 +289,15 @@ class ApiClient {
     } catch (error) {
       // Manejar errores de conexión específicamente
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        
+        if (isVercel) {
+          if (apiUrl.includes('localhost')) {
+            throw new Error('⚠️ El backend no está configurado en Vercel. Configura la variable NEXT_PUBLIC_API_URL en Settings → Environment Variables. Para desarrollo con backend local, usa ngrok.');
+          }
+          throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que esté desplegado y accesible.`);
+        }
         throw new Error('No se puede conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:8000');
       }
       if (error instanceof Error) {
