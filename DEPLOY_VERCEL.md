@@ -30,7 +30,11 @@ cd frontend-next
 
 ```bash
 # Primera vez (configuración inicial)
+# Te pedirá el nombre del proyecto, usa: sistema-empresarial-frontend
 vercel
+
+# O especifica el nombre directamente
+vercel --name sistema-empresarial-frontend
 
 # Despliegues posteriores
 vercel --prod
@@ -47,6 +51,8 @@ vercel --prod
 
 ### 2. Configurar el proyecto
 
+**Project Name:** `sistema-empresarial-frontend` (o el nombre que prefieras)
+
 **Root Directory:** `frontend-next`
 
 **Build Command:** `npm run build`
@@ -54,6 +60,8 @@ vercel --prod
 **Output Directory:** `.next`
 
 **Install Command:** `npm install`
+
+**Nota:** Si ya existe un proyecto con ese nombre, puedes cambiarlo desde la configuración del proyecto en Vercel (Settings → General → Project Name) o usar un nombre diferente durante la configuración inicial.
 
 ### 3. Variables de Entorno
 
