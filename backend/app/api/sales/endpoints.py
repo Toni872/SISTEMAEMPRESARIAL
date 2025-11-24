@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query
+from fastapi import APIRouter, Depends, status, HTTPException, Query, Path
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import date
@@ -15,20 +15,48 @@ from ...api.sales.schemas import SaleCreate, SaleUpdate, SaleOut
 from ...api.auth.deps import get_db_session, get_current_user
 from ...core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from ...core.logging_config import get_logger
+from ...core.rate_limit import limiter
 from ...models.user import User
 
 logger = get_logger(__name__)
 
-router = APIRouter(prefix="/api/sales", tags=["sales"])
+router = APIRouter(
+    prefix="/api/sales",
+    tags=["sales"],
+    responses={
+        401: {"description": "No autenticado"},
+        403: {"description": "No autorizado"},
+        404: {"description": "Recurso no encontrado"},
+        422: {"description": "Error de validación"},
+        400: {"description": "Error de lógica de negocio"}
+    }
+)
 
 
-@router.get("", response_model=List[SaleOut])
+@router.get(
+    "",
+    response_model=List[SaleOut],
+    summary="Listar ventas",
+    description="""
+    Obtiene una lista paginada de ventas del usuario actual con filtros opcionales.
+    
+    **Filtros disponibles:**
+    - `status`: Filtrar por estado (pending, completed, cancelled)
+    - `start_date`: Fecha de inicio para filtrar ventas
+    - `end_date`: Fecha de fin para filtrar ventas
+    
+    **Nota:** Solo se retornan las ventas del usuario autenticado.
+    """,
+    responses={
+        200: {"description": "Lista de ventas obtenida exitosamente"}
+    }
+)
 def list_sales(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=1000),
-    status: Optional[str] = None,
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    skip: int = Query(0, ge=0, description="Número de registros a saltar"),
+    limit: int = Query(100, ge=1, le=1000, description="Número máximo de registros"),
+    status: Optional[str] = Query(None, description="Filtrar por estado", example="completed"),
+    start_date: Optional[date] = Query(None, description="Fecha de inicio", example="2025-01-01"),
+    end_date: Optional[date] = Query(None, description="Fecha de fin", example="2025-12-31"),
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -45,10 +73,40 @@ def list_sales(
     return sales
 
 
-@router.get("/stats", response_model=dict)
+@router.get(
+    "/stats",
+    response_model=dict,
+    summary="Estadísticas de ventas",
+    description="""
+    Obtiene estadísticas agregadas de ventas del usuario.
+    
+    **Métricas incluidas:**
+    - `total_sales`: Número total de ventas completadas
+    - `total_revenue`: Ingresos totales
+    - `total_items_sold`: Cantidad total de items vendidos
+    
+    **Filtros opcionales:**
+    - `start_date`: Fecha de inicio del período
+    - `end_date`: Fecha de fin del período
+    """,
+    responses={
+        200: {
+            "description": "Estadísticas obtenidas exitosamente",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "total_sales": 150,
+                        "total_revenue": 45000.50,
+                        "total_items_sold": 320
+                    }
+                }
+            }
+        }
+    }
+)
 def get_stats(
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    start_date: Optional[date] = Query(None, description="Fecha de inicio", example="2025-01-01"),
+    end_date: Optional[date] = Query(None, description="Fecha de fin", example="2025-12-31"),
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -57,9 +115,19 @@ def get_stats(
     return stats
 
 
-@router.get("/{sale_id}", response_model=SaleOut)
+@router.get(
+    "/{sale_id}",
+    response_model=SaleOut,
+    summary="Obtener venta por ID",
+    description="Obtiene los detalles de una venta específica. Solo se puede acceder a ventas propias.",
+    responses={
+        200: {"description": "Venta encontrada"},
+        403: {"description": "No autorizado - la venta pertenece a otro usuario"},
+        404: {"description": "Venta no encontrada"}
+    }
+)
 def get_sale_by_id(
-    sale_id: int,
+    sale_id: int = Path(..., description="ID de la venta", example=1),
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -83,7 +151,30 @@ def get_sale_by_id(
     return sale
 
 
-@router.post("", response_model=SaleOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=SaleOut,
+    status_code=status.HTTP_201_CREATED,
+    summary="Crear nueva venta",
+    dependencies=[Depends(limiter.limit("30/minute"))],
+    description="""
+    Crea una nueva venta con sus items.
+    
+    **Validaciones:**
+    - Debe incluir al menos un item
+    - Los productos deben existir y tener stock suficiente
+    - El stock se reduce automáticamente al crear la venta
+    
+    **Cálculos automáticos:**
+    - Subtotal: Suma de (cantidad × precio_unitario) de todos los items
+    - IVA: 21% del subtotal
+    - Total: Subtotal + IVA
+    """,
+    responses={
+        201: {"description": "Venta creada exitosamente"},
+        400: {"description": "Error de validación o lógica de negocio (ej: stock insuficiente)"}
+    }
+)
 def create_new_sale(
     sale: SaleCreate,
     db: Session = Depends(get_db_session),
@@ -100,10 +191,20 @@ def create_new_sale(
         raise BusinessLogicError(str(e))
 
 
-@router.put("/{sale_id}", response_model=SaleOut)
+@router.put(
+    "/{sale_id}",
+    response_model=SaleOut,
+    summary="Actualizar venta",
+    description="Actualiza una venta existente. Solo se pueden actualizar ventas propias.",
+    responses={
+        200: {"description": "Venta actualizada exitosamente"},
+        403: {"description": "No autorizado"},
+        404: {"description": "Venta no encontrada"}
+    }
+)
 def update_sale_by_id(
-    sale_id: int,
-    sale_update: SaleUpdate,
+    sale_id: int = Path(..., description="ID de la venta", example=1),
+    sale_update: SaleUpdate = ...,
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -128,9 +229,23 @@ def update_sale_by_id(
     return updated_sale
 
 
-@router.delete("/{sale_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{sale_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Eliminar venta",
+    description="""
+    Elimina una venta. Si la venta estaba completada, el stock de los productos se restaura automáticamente.
+    
+    **Advertencia:** Esta acción es permanente.
+    """,
+    responses={
+        204: {"description": "Venta eliminada exitosamente"},
+        403: {"description": "No autorizado"},
+        404: {"description": "Venta no encontrada"}
+    }
+)
 def delete_sale_by_id(
-    sale_id: int,
+    sale_id: int = Path(..., description="ID de la venta a eliminar", example=1),
     db: Session = Depends(get_db_session),
     current_user: User = Depends(get_current_user)
 ):

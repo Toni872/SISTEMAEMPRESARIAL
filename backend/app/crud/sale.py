@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, and_
 from typing import List, Optional
 from datetime import datetime, date
@@ -23,7 +23,8 @@ def generate_sale_number(db: Session) -> str:
 
 
 def get_sale(db: Session, sale_id: int) -> Optional[Sale]:
-    return db.query(Sale).filter(Sale.id == sale_id).first()
+    """Obtiene una venta con sus items cargados (eager loading)"""
+    return db.query(Sale).options(joinedload(Sale.items)).filter(Sale.id == sale_id).first()
 
 
 def get_sales(
@@ -35,7 +36,8 @@ def get_sales(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None
 ) -> List[Sale]:
-    query = db.query(Sale)
+    """Obtiene lista de ventas con items cargados (eager loading para evitar N+1)"""
+    query = db.query(Sale).options(joinedload(Sale.items))
     
     if user_id:
         query = query.filter(Sale.user_id == user_id)

@@ -8,6 +8,7 @@ from ...api.auth.deps import get_db_session, get_current_user
 from ...models.user import User
 from ...core.exceptions import NotFoundError, ValidationError, BusinessLogicError
 from ...core.logging_config import get_logger
+from ...core.rate_limit import limiter
 
 logger = get_logger(__name__)
 from ...crud.supplier import (
@@ -55,7 +56,12 @@ def list_suppliers(
     return suppliers
 
 
-@router.post("/suppliers", response_model=SupplierOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/suppliers",
+    response_model=SupplierOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(limiter.limit("30/minute"))]
+)
 def create_supplier_endpoint(
     supplier: SupplierCreate,
     db: Session = Depends(get_db_session),
@@ -133,7 +139,12 @@ def list_purchases(
     return purchases
 
 
-@router.post("", response_model=PurchaseOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=PurchaseOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(limiter.limit("30/minute"))]
+)
 def create_purchase_endpoint(
     purchase: PurchaseCreate,
     db: Session = Depends(get_db_session),

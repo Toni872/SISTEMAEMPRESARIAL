@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from datetime import datetime
 from decimal import Decimal
@@ -16,16 +16,22 @@ def generate_purchase_number(db: Session, user_id: int) -> str:
 
 
 def get_purchase(db: Session, purchase_id: int, user_id: int) -> Optional[Purchase]:
-    """Obtiene una compra por ID"""
-    return db.query(Purchase).filter(
+    """Obtiene una compra por ID con supplier e items cargados (eager loading)"""
+    return db.query(Purchase).options(
+        joinedload(Purchase.supplier),
+        joinedload(Purchase.items)
+    ).filter(
         Purchase.id == purchase_id,
         Purchase.user_id == user_id
     ).first()
 
 
 def get_purchases(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[Purchase]:
-    """Lista las compras de un usuario"""
-    return db.query(Purchase).filter(
+    """Lista las compras de un usuario con supplier e items cargados (eager loading para evitar N+1)"""
+    return db.query(Purchase).options(
+        joinedload(Purchase.supplier),
+        joinedload(Purchase.items)
+    ).filter(
         Purchase.user_id == user_id
     ).order_by(Purchase.purchase_date.desc()).offset(skip).limit(limit).all()
 
