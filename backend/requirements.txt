@@ -42,3 +42,6 @@ requests>=2.31.0
 
 # Excel Export
 openpyxl
+
+# Error Tracking
+sentry-sdk[fastapi]>=2.0.0

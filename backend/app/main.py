@@ -12,6 +12,7 @@ from .api.auth import endpoints as auth_endpoints
 from .core.config import settings
 from .core.logging_config import setup_logging, get_logger
 from .core.exceptions import BaseAPIException
+from .core.sentry_config import init_sentry
 from .api.products import endpoints as products_endpoints
 from .api.sales import endpoints as sales_endpoints
 from .api.dashboard import endpoints as dashboard_endpoints
@@ -27,6 +28,11 @@ from .core.rate_limit import limiter
 # Configurar logging
 setup_logging(env=settings.ENV)
 logger = get_logger(__name__)
+
+# Inicializar Sentry si está configurado
+init_sentry()
+if settings.SENTRY_DSN:
+    logger.info("Sentry inicializado para error tracking")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -283,6 +289,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def general_exception_handler(request: Request, exc: Exception):
     """Maneja excepciones no controladas"""
     request_id = getattr(request.state, "request_id", "unknown")
+    
+    # Capturar en Sentry si está configurado
+    if settings.SENTRY_DSN:
+        import sentry_sdk
+        sentry_sdk.capture_exception(exc)
     
     logger.error(
         f"Unhandled Exception: {str(exc)}",
