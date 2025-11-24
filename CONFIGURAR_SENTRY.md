@@ -22,6 +22,7 @@ NEXT_PUBLIC_SENTRY_DSN=https://tu-dsn@sentry.io/tu-proyecto-id
 ### 3. Archivos de configuración
 
 Los archivos de configuración ya están creados:
+
 - `sentry.client.config.ts` - Cliente (browser)
 - `sentry.server.config.ts` - Servidor (API routes, SSR)
 - `sentry.edge.config.ts` - Edge Runtime (middleware)
@@ -53,7 +54,7 @@ Sentry se inicializa automáticamente en `main.py` si `SENTRY_DSN` está configu
 
 ## Obtener DSN de Sentry
 
-1. Crea una cuenta en https://sentry.io
+1. Crea una cuenta en <https://sentry.io>
 2. Crea un proyecto:
    - Para frontend: Selecciona "Next.js"
    - Para backend: Selecciona "Python" → "FastAPI"
@@ -108,4 +109,3 @@ raise Exception("Test Sentry error")
 ## Desactivar Sentry
 
 Para desactivar Sentry temporalmente, simplemente no configures las variables `SENTRY_DSN` o `NEXT_PUBLIC_SENTRY_DSN`. El código detectará automáticamente que Sentry no está disponible y continuará funcionando normalmente.
-

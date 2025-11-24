@@ -1,8 +1,45 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from .config import settings
+import urllib.parse
 
-engine = create_engine(str(settings.DATABASE_URL), pool_pre_ping=True)
+# Codificar correctamente la URL de la base de datos para evitar problemas de encoding
+def get_database_url():
+    """Obtiene la URL de la base de datos con encoding correcto"""
+    db_url = str(settings.DATABASE_URL)
+    try:
+        # Parsear la URL
+        parsed = urllib.parse.urlparse(db_url)
+        # Codificar correctamente la contraseña si existe
+        if parsed.password:
+            # Reconstruir con password codificado
+            encoded_password = urllib.parse.quote(parsed.password, safe='')
+            # Reconstruir la URL con la contraseña codificada
+            safe_url = urllib.parse.urlunparse((
+                parsed.scheme,
+                f"{parsed.username}:{encoded_password}@{parsed.hostname}:{parsed.port}",
+                parsed.path,
+                parsed.params,
+                parsed.query,
+                parsed.fragment
+            ))
+            return safe_url
+        return db_url
+    except Exception:
+        # Si hay error, retornar la URL original
+        return db_url
+
+# Crear engine con timeout para evitar cuelgues
+engine = create_engine(
+    get_database_url(),
+    pool_pre_ping=True,
+    pool_recycle=300,  # Reciclar conexiones cada 5 minutos
+    connect_args={
+        "connect_timeout": 10,  # Timeout de 10 segundos
+        "options": "-c statement_timeout=30000"  # Timeout de queries de 30 segundos
+    },
+    echo=False  # No mostrar queries SQL en logs
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
