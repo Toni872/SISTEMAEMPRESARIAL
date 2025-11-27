@@ -106,19 +106,36 @@ async def add_security_headers(request: Request, call_next):
     
     # Content Security Policy (CSP)
     # Permitir solo recursos de origen propio y APIs necesarias
-    csp_policy = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "  # unsafe-inline/eval para Swagger UI
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-        "font-src 'self' https://fonts.gstatic.com; "
-        "img-src 'self' data: https:; "
-        "connect-src 'self' https://api.github.com; "  # Para GitHub Actions badges si aplica
-        "frame-ancestors 'none'; "
-        "base-uri 'self'; "
-        "form-action 'self'; "
-        "object-src 'none'; "
-        "upgrade-insecure-requests"
-    )
+    # En producción, considerar políticas más estrictas
+    if settings.ENV == "production":
+        csp_policy = (
+            "default-src 'self'; "
+            "script-src 'self'; "  # Más estricto en producción
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self'; "
+            "object-src 'none'; "
+            "upgrade-insecure-requests"
+        )
+    else:
+        # En desarrollo, permitir unsafe-inline/eval para Swagger UI
+        csp_policy = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self' https://api.github.com; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self'; "
+            "object-src 'none'; "
+            "upgrade-insecure-requests"
+        )
     response.headers["Content-Security-Policy"] = csp_policy
     
     # Strict Transport Security (solo en producción)
@@ -134,15 +151,16 @@ async def log_requests(request: Request, call_next):
     start_time = time.time()
     request_id = getattr(request.state, "request_id", "unknown")
     
-    # Log de request entrante
+    # Log de request entrante (sin información sensible)
+    from .core.security_utils import sanitize_for_logging
     logger.info(
         f"{request.method} {request.url.path}",
-        extra={
+        extra=sanitize_for_logging({
             "request_id": request_id,
             "method": request.method,
             "endpoint": request.url.path,
             "client_ip": request.client.host if request.client else None,
-        }
+        })
     )
     
     try:
@@ -165,16 +183,17 @@ async def log_requests(request: Request, call_next):
         return response
     except Exception as e:
         process_time = time.time() - start_time
+        from .core.security_utils import sanitize_for_logging
         logger.error(
             f"Error en {request.method} {request.url.path}",
-            extra={
+            extra=sanitize_for_logging({
                 "request_id": request_id,
                 "method": request.method,
                 "endpoint": request.url.path,
                 "error": str(e),
                 "traceback": traceback.format_exc(),
                 "process_time": process_time,
-            },
+            }),
             exc_info=True
         )
         raise
@@ -182,7 +201,7 @@ async def log_requests(request: Request, call_next):
 # CORS middleware - Configuración más segura
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept", "X-Requested-With"],
@@ -197,6 +216,10 @@ app.include_router(sales_endpoints.router)
 app.include_router(dashboard_endpoints.router)
 app.include_router(recurring_invoices_endpoints.router)
 app.include_router(invoice_templates_endpoints.router)
+
+# Invoices endpoints
+from .api.invoices import router as invoices_endpoints
+app.include_router(invoices_endpoints)
 app.include_router(tax_endpoints.router)
 app.include_router(verifactu_endpoints.router)
 app.include_router(verifactu_certificates.router)

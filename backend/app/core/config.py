@@ -3,8 +3,9 @@ from typing import List, Union, Optional
 
 try:
     from pydantic_settings import BaseSettings, SettingsConfigDict
+    from pydantic import field_validator
 except ImportError:
-    from pydantic import BaseSettings
+    from pydantic import BaseSettings, validator as field_validator
 
     SettingsConfigDict = None
 from pydantic import PostgresDsn
@@ -22,6 +23,19 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    
+    @property
+    def secret_key_validated(self) -> str:
+        """Valida que SECRET_KEY tenga longitud mínima"""
+        from .security_utils import validate_secret_key
+        if not validate_secret_key(self.SECRET_KEY):
+            import warnings
+            warnings.warn(
+                "SECRET_KEY debe tener al menos 32 caracteres para seguridad adecuada. "
+                "Usa: python -c 'import secrets; print(secrets.token_urlsafe(32))' para generar una.",
+                UserWarning
+            )
+        return self.SECRET_KEY
 
     # ──────── SECURITY ───────
     PASSWORD_HASH_ALGORITHM: str = "bcrypt"
@@ -48,6 +62,7 @@ class Settings(BaseSettings):
     # ──────── RATE LIMITING ───────
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_PER_MINUTE: int = 60
+    E2E_MODE: bool = False  # Modo E2E: deshabilita rate limiting para tests
 
     # ──────── SENTRY ───────
     SENTRY_DSN: Optional[str] = None
@@ -62,14 +77,22 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # ──────── CORS ───────
-    BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:3001",
-        "http://localhost:3000",
-        "http://127.0.0.1:3001",
-        "http://127.0.0.1:3000",
-        "https://frontend-next-silk-inky.vercel.app",  # Producción Vercel
-        "https://frontend-next-silk-inky-*.vercel.app",  # Preview deployments
-    ]
+    # Acepta string separado por comas o JSON array
+    BACKEND_CORS_ORIGINS: str = "http://localhost:3001,http://localhost:3000,http://127.0.0.1:3001,http://127.0.0.1:3000"
+    
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Convierte BACKEND_CORS_ORIGINS a lista"""
+        import json
+        # Intentar parsear como JSON primero (para compatibilidad)
+        try:
+            parsed = json.loads(self.BACKEND_CORS_ORIGINS)
+            if isinstance(parsed, list):
+                return parsed
+        except (json.JSONDecodeError, ValueError):
+            pass
+        # Si no es JSON válido, tratar como string separado por comas
+        return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
 
     if SettingsConfigDict:
         model_config = SettingsConfigDict(
