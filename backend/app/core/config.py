@@ -84,15 +84,20 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         """Convierte BACKEND_CORS_ORIGINS a lista"""
         import json
+        # Manejar caso especial de "*" para permitir todos los orígenes
+        cors_value = self.BACKEND_CORS_ORIGINS.strip()
+        if cors_value == "*":
+            return ["*"]
+        
         # Intentar parsear como JSON primero (para compatibilidad)
         try:
-            parsed = json.loads(self.BACKEND_CORS_ORIGINS)
+            parsed = json.loads(cors_value)
             if isinstance(parsed, list):
                 return parsed
         except (json.JSONDecodeError, ValueError):
             pass
         # Si no es JSON válido, tratar como string separado por comas
-        return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
+        return [origin.strip() for origin in cors_value.split(",") if origin.strip()]
 
     if SettingsConfigDict:
         model_config = SettingsConfigDict(

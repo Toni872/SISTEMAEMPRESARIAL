@@ -200,10 +200,14 @@ async def log_requests(request: Request, call_next):
         raise
 
 # CORS middleware - Configuración más segura
+# IMPORTANTE: Si allow_origins=["*"], NO se puede usar allow_credentials=True
+cors_origins = settings.cors_origins_list
+allow_all_origins = cors_origins == ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=True,
+    allow_origins=cors_origins,
+    allow_credentials=not allow_all_origins,  # Deshabilitar credentials si es "*"
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept", "X-Requested-With"],
     expose_headers=["X-Total-Count", "X-Page-Count"],
