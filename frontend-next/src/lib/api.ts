@@ -4,7 +4,14 @@
 
 import { logger } from './logger';
 
+// En Next.js, las variables NEXT_PUBLIC_* están disponibles en tiempo de build
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Log para debugging (solo en desarrollo)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('🔍 API_URL configurada:', API_URL);
+  console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+}
 
 interface LoginResponse {
   access_token: string;
