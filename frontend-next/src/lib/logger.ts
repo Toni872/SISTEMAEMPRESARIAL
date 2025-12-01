@@ -46,10 +46,8 @@ class Logger {
                 break;
             case 'error':
                 console.error(logMessage, data || '');
-                // En producción, podrías enviar esto a un servicio de logging
-                if (!this.isDevelopment) {
-                    // TODO: Integrar con servicio de logging (Sentry, LogRocket, etc.)
-                }
+                // En producción, los errores se envían automáticamente a Sentry
+                // si está configurado (ver sentry.client.config.ts)
                 break;
         }
     }

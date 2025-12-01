@@ -38,13 +38,31 @@ docker-compose.override.yml
 *.sqlite
 *.db
 
-# Environment
+# Environment - CRITICAL: Nunca subir archivos .env
 .env
 .env.local
 .env.*.local
+.env.production
+.env.staging
+.env.development
 # Pero mantener el ejemplo
 !.env.example
 !env.example
+!backend/env.example
+
+# Secrets y certificados
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+certificates/
+secrets/
+*.secret
+
+# Credentials
+credentials.json
+service-account*.json
 
 # Build
 dist/
@@ -82,8 +100,8 @@ logs/
 backend/logs/
 frontend-next/.next/
 
-# Vercel
-.vercel/
+# Vercel (eliminado - ahora usamos Railway)
+# .vercel/
 
 # Specific to this project
 frontend/dist/

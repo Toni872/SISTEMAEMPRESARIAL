@@ -15,7 +15,7 @@ from ...api.sales.schemas import SaleCreate, SaleUpdate, SaleOut
 from ...api.auth.deps import get_db_session, get_current_user
 from ...core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from ...core.logging_config import get_logger
-from ...core.rate_limit import limiter
+from ...core.rate_limit import limiter, get_rate_limit_dependency
 from ...models.user import User
 
 logger = get_logger(__name__)
@@ -156,7 +156,7 @@ def get_sale_by_id(
     response_model=SaleOut,
     status_code=status.HTTP_201_CREATED,
     summary="Crear nueva venta",
-    dependencies=[Depends(limiter.limit("30/minute"))],
+    dependencies=get_rate_limit_dependency("30/minute"),
     description="""
     Crea una nueva venta con sus items.
     

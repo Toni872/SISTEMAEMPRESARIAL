@@ -209,12 +209,20 @@ class ApiClient {
           throw new Error('La solicitud tardó demasiado. Por favor, intenta nuevamente.');
         }
         // Mejorar mensaje de error para conexión fallida
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError') || error.message.includes('Network request failed')) {
           const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
           if (isVercel) {
             throw new Error('El backend no está disponible. Para desarrollo, configura NEXT_PUBLIC_API_URL en Vercel o usa ngrok para conectar tu backend local.');
           }
-          throw new Error('No se puede conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:8000');
+          // Evitar mensajes genéricos del navegador sobre VPN/internet
+          if (error.message.includes('VPN') || error.message.includes('internet connection')) {
+            throw new Error('Error de conexión con el backend. Verifica que el servidor esté corriendo en http://localhost:8000');
+          }
+          throw new Error('⚠️ Backend no disponible. Para iniciar el backend:\n\n1. Opción Docker: docker-compose -f docker-compose.backend.yml up -d\n2. Opción Manual: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\n\nVer SOLUCION_ERROR_BACKEND.md para más detalles.');
+        }
+        // Filtrar mensajes genéricos sobre VPN/internet
+        if (error.message.includes('VPN') || error.message.includes('internet connection')) {
+          throw new Error('Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible.');
         }
         throw error;
       }
@@ -259,13 +267,21 @@ class ApiClient {
       formData.append('password', password);
 
       const url = `${this.baseUrl}/api/auth/login`;
+      
+      // Agregar timeout a la request (30 segundos)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData.toString(),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         let errorMessage = `Error ${response.status}: ${response.statusText}`;
@@ -275,6 +291,14 @@ class ApiClient {
         } catch (e) {
           logger.error('Error parsing response', e);
         }
+        
+        // Mensajes más específicos para errores comunes
+        if (response.status === 500) {
+          errorMessage = 'Error interno del servidor. Revisa los logs del backend o contacta al administrador.';
+        } else if (response.status === 401) {
+          errorMessage = errorMessage || 'Email o contraseña incorrectos';
+        }
+        
         logger.error(`API Error [${response.status}]`, { message: errorMessage, url });
         throw new Error(errorMessage);
       }
@@ -286,8 +310,13 @@ class ApiClient {
       }
       return data;
     } catch (error) {
+      // Manejar errores de timeout/abort
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('La solicitud tardó demasiado. Verifica que el backend esté corriendo en http://localhost:8000');
+      }
+      
       // Manejar errores de conexión específicamente
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      if (error instanceof TypeError && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError') || error.message.includes('Network request failed'))) {
         const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -297,9 +326,17 @@ class ApiClient {
           }
           throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que esté desplegado y accesible.`);
         }
-        throw new Error('No se puede conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:8000');
+        
+        // Mensaje más específico para desarrollo local
+        throw new Error('No se puede conectar con el backend. Verifica que: 1) El backend esté corriendo en http://localhost:8000, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.');
       }
+      
+      // Si el error ya tiene un mensaje útil, propagarlo
       if (error instanceof Error) {
+        // Evitar mensajes genéricos del navegador sobre VPN/internet
+        if (error.message.includes('VPN') || error.message.includes('internet connection')) {
+          throw new Error('Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible en http://localhost:8000');
+        }
         throw error;
       }
       throw new Error('Error desconocido al intentar iniciar sesión');
@@ -875,6 +912,50 @@ class ApiClient {
   /**
    * Obtener XML Facturae de una factura registrada
    */
+  /**
+   * Obtener facturas (lista paginada)
+   */
+  async getInvoices(skip: number = 0, limit: number = 100, status?: string, hasRegistry?: boolean): Promise<{
+    invoices: any[];
+    total: number;
+    skip: number;
+    limit: number;
+  }> {
+    const params = new URLSearchParams();
+    params.append('skip', skip.toString());
+    params.append('limit', limit.toString());
+    if (status) params.append('status', status);
+    if (hasRegistry !== undefined) params.append('has_registry', hasRegistry.toString());
+
+    const queryString = params.toString();
+    return this.request<{
+      invoices: any[];
+      total: number;
+      skip: number;
+      limit: number;
+    }>(`/api/invoices?${queryString}`);
+  }
+
+  /**
+   * Obtener una factura por ID
+   */
+  async getInvoice(id: number): Promise<any> {
+    return this.request<any>(`/api/invoices/${id}`);
+  }
+
+  /**
+   * Crear factura desde venta
+   */
+  async createInvoice(saleId: number, registerInVerifactu: boolean = true): Promise<any> {
+    return this.request<any>('/api/invoices', {
+      method: 'POST',
+      body: JSON.stringify({
+        sale_id: saleId,
+        register_in_verifactu: registerInVerifactu,
+      }),
+    });
+  }
+
   async getVerifactuXML(saleId: number): Promise<Blob> {
     const response = await fetch(`${this.baseUrl}/api/verifactu/sales/${saleId}/xml`, {
       headers: {

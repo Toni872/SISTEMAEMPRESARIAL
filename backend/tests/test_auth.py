@@ -14,7 +14,7 @@ async def test_register_and_login():
             json={
                 "email": "john.doe@example.com",
                 "name": "John",
-                "password": "supersecret",
+                "password": "SuperSecret123!",
             },
         )
         assert r.status_code == 201
@@ -28,7 +28,7 @@ async def test_register_and_login():
             "/api/auth/login",
             data={
                 "username": "john.doe@example.com",
-                "password": "supersecret",
+                "password": "SuperSecret123!",
             },
         )
         assert r.status_code == 200
@@ -47,7 +47,7 @@ async def test_register_duplicate_email():
             json={
                 "email": "duplicate@example.com",
                 "name": "First User",
-                "password": "password123",
+                "password": "Password123!",
             },
         )
         assert r.status_code == 201
@@ -58,11 +58,11 @@ async def test_register_duplicate_email():
             json={
                 "email": "duplicate@example.com",
                 "name": "Second User",
-                "password": "password456",
+                "password": "Password456!",
             },
         )
         assert r.status_code == 409
-        assert "already registered" in r.json()["detail"].lower()
+        assert "ya está registrado" in r.json()["detail"].lower() or "already registered" in r.json()["detail"].lower()
 
 
 @pytest.mark.asyncio
@@ -75,7 +75,7 @@ async def test_login_invalid_credentials():
             json={
                 "email": "test@example.com",
                 "name": "Test User",
-                "password": "correctpassword",
+                "password": "CorrectPass123!",
             },
         )
         assert r.status_code == 201
@@ -85,7 +85,7 @@ async def test_login_invalid_credentials():
             "/api/auth/login",
             data={
                 "username": "test@example.com",
-                "password": "wrongpassword",
+                "password": "WrongPass123!",
             },
         )
         assert r.status_code == 401
@@ -96,7 +96,7 @@ async def test_login_invalid_credentials():
             "/api/auth/login",
             data={
                 "username": "nonexistent@example.com",
-                "password": "anypassword",
+                "password": "AnyPass123!",
             },
         )
         assert r.status_code == 401

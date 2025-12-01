@@ -18,6 +18,7 @@ from .api.sales import endpoints as sales_endpoints
 from .api.dashboard import endpoints as dashboard_endpoints
 from .api.recurring_invoices import endpoints as recurring_invoices_endpoints
 from .api.invoice_templates import endpoints as invoice_templates_endpoints
+from .api.invoices import router as invoices_endpoints
 from .api.tax import endpoints as tax_endpoints
 from .api.verifactu import endpoints as verifactu_endpoints
 from .api.verifactu import certificates as verifactu_certificates
@@ -216,9 +217,6 @@ app.include_router(sales_endpoints.router)
 app.include_router(dashboard_endpoints.router)
 app.include_router(recurring_invoices_endpoints.router)
 app.include_router(invoice_templates_endpoints.router)
-
-# Invoices endpoints
-from .api.invoices import router as invoices_endpoints
 app.include_router(invoices_endpoints)
 app.include_router(tax_endpoints.router)
 app.include_router(verifactu_endpoints.router)

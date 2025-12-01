@@ -1,19 +1,51 @@
 """
 Utilidades para exportar compras a PDF y Excel
 """
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+    REPORTLAB_AVAILABLE = True
+except ImportError:
+    REPORTLAB_AVAILABLE = False
+    # Dummy values para evitar errores de importación
+    A4 = None
+    colors = None
+    cm = None
+    SimpleDocTemplate = None
+    Table = None
+    TableStyle = None
+    Paragraph = None
+    Spacer = None
+    PageBreak = None
+    getSampleStyleSheet = None
+    ParagraphStyle = None
+    TA_CENTER = None
+    TA_RIGHT = None
+    TA_LEFT = None
+
 from datetime import datetime
 from decimal import Decimal
 from typing import List, Dict, Any
 import io
-from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from openpyxl.utils import get_column_letter
+
+try:
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+    from openpyxl.utils import get_column_letter
+    OPENPYXL_AVAILABLE = True
+except ImportError:
+    OPENPYXL_AVAILABLE = False
+    Workbook = None
+    Font = None
+    Alignment = None
+    PatternFill = None
+    Border = None
+    Side = None
+    get_column_letter = None
 
 
 def format_decimal(value) -> str:
@@ -42,7 +74,13 @@ def generate_purchase_pdf(purchase_data: Dict[str, Any], output_path: str = None
     
     Returns:
         bytes: Contenido del PDF
+    
+    Raises:
+        ImportError: Si reportlab no está instalado
     """
+    if not REPORTLAB_AVAILABLE:
+        raise ImportError("reportlab no está instalado. Instálalo con: pip install reportlab")
+    
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(output_path or buffer, pagesize=A4)
     story = []
@@ -187,7 +225,13 @@ def generate_purchases_list_pdf(purchases: List[Dict[str, Any]], output_path: st
     
     Returns:
         bytes: Contenido del PDF
+    
+    Raises:
+        ImportError: Si reportlab no está instalado
     """
+    if not REPORTLAB_AVAILABLE:
+        raise ImportError("reportlab no está instalado. Instálalo con: pip install reportlab")
+    
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(output_path or buffer, pagesize=A4, topMargin=2*cm)
     story = []
@@ -276,7 +320,13 @@ def generate_purchases_excel(purchases: List[Dict[str, Any]], output_path: str =
     
     Returns:
         bytes: Contenido del Excel
+    
+    Raises:
+        ImportError: Si openpyxl no está instalado
     """
+    if not OPENPYXL_AVAILABLE:
+        raise ImportError("openpyxl no está instalado. Instálalo con: pip install openpyxl")
+    
     wb = Workbook()
     ws = wb.active
     ws.title = "Compras"

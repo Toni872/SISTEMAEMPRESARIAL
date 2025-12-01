@@ -26,3 +26,15 @@ Sentry.init({
   enabled: process.env.NODE_ENV === 'production' || !!process.env.SENTRY_DSN,
 });
 
+
+
+
+
+
+
+
+
+
+
+
+

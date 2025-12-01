@@ -198,8 +198,8 @@ export default function LoginPage() {
                   Credenciales de prueba:
                 </p>
                 <div className="space-y-1 text-xs text-blue-700 dark:text-blue-400 font-mono">
-                  <p>Admin: admin@example.com / admin1234</p>
-                  <p>User: user@example.com / user1234</p>
+                  <p>Email: test@example.com</p>
+                  <p>Password: testpassword123</p>
                 </div>
               </div>
             </CardContent>

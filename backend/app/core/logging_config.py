@@ -41,9 +41,11 @@ class JSONFormatter(logging.Formatter):
         if record.exc_info:
             log_data["exception"] = self.formatException(record.exc_info)
         
-        # Agregar campos extra
+        # Agregar campos extra (sanitizados)
         if hasattr(record, "extra_data"):
-            log_data.update(record.extra_data)
+            from .security_utils import sanitize_dict_for_logging
+            sanitized_extra = sanitize_dict_for_logging(record.extra_data)
+            log_data.update(sanitized_extra)
         
         return json.dumps(log_data, ensure_ascii=False)
 

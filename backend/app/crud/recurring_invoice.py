@@ -271,7 +271,9 @@ def process_due_recurring_invoices(db: Session) -> dict:
             else:
                 stats["errors"] += 1
         except Exception as e:
-            print(f"Error generando factura recurrente {recurring.id}: {e}")
+            from ...core.logging_config import get_logger
+            logger = get_logger(__name__)
+            logger.error(f"Error generando factura recurrente {recurring.id}: {e}", exc_info=True)
             stats["errors"] += 1
     
     db.commit()

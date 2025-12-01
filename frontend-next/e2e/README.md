@@ -80,3 +80,15 @@ Los tests se ejecutan automáticamente en GitHub Actions. Ver `.github/workflows
 - Playwright automáticamente inicia el servidor si no está corriendo (ver `playwright.config.ts`)
 - Los screenshots y videos se guardan en `test-results/` cuando fallan los tests
 
+
+
+
+
+
+
+
+
+
+
+
+

@@ -23,7 +23,9 @@ async def send_verification_email(email: str, token: str, name: str | None = Non
     """Envía email de verificación"""
     if not settings.MAIL_USERNAME or not settings.MAIL_PASSWORD:
         # En desarrollo, solo loguear
-        print(f"[EMAIL] Verification token for {email}: {token}")
+        from .logging_config import get_logger
+        logger = get_logger(__name__)
+        logger.debug(f"Verification token generated for {email}")
         return
     
     verification_url = f"http://localhost:3001/verify-email?token={token}"
@@ -51,14 +53,18 @@ async def send_verification_email(email: str, token: str, name: str | None = Non
     try:
         await fastmail.send_message(message)
     except Exception as e:
-        print(f"Error sending email: {e}")
+        from .logging_config import get_logger
+        logger = get_logger(__name__)
+        logger.error(f"Error sending email: {e}", exc_info=True)
         # En desarrollo, no fallar si el email no está configurado
 
 
 async def send_password_reset_email(email: str, token: str, name: str | None = None):
     """Envía email de recuperación de contraseña"""
     if not settings.MAIL_USERNAME or not settings.MAIL_PASSWORD:
-        print(f"[EMAIL] Password reset token for {email}: {token}")
+        from .logging_config import get_logger
+        logger = get_logger(__name__)
+        logger.debug(f"Password reset token generated for {email}")
         return
     
     reset_url = f"http://localhost:3001/reset-password?token={token}"
@@ -86,5 +92,7 @@ async def send_password_reset_email(email: str, token: str, name: str | None = N
     try:
         await fastmail.send_message(message)
     except Exception as e:
-        print(f"Error sending email: {e}")
+        from .logging_config import get_logger
+        logger = get_logger(__name__)
+        logger.error(f"Error sending email: {e}", exc_info=True)
 

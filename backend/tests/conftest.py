@@ -2,27 +2,34 @@
 Configuración global para tests
 """
 import os
+import tempfile
 import pytest
+from unittest.mock import patch
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Configurar variables de entorno para tests ANTES de importar la app
-# Usar una URL de PostgreSQL válida pero que será sobrescrita en el engine
-os.environ["DATABASE_URL"] = "postgresql://test:test@localhost/test"
-os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only"
-os.environ["ENV"] = "test"
-
-from app.core.database import Base
-from app.api.auth.deps import get_db_session
-
-# Base de datos de prueba - usar archivo temporal para que todas las conexiones compartan la misma BD
-import tempfile
-import os
-
-# Crear archivo temporal para SQLite
+# Crear archivo temporal para SQLite ANTES de importar la app
 temp_db = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
 temp_db.close()
 TEST_DB_URL = f"sqlite:///{temp_db.name}"
+
+# Configurar variables de entorno para tests ANTES de importar la app
+# Usar SQLite para tests (más rápido y no requiere PostgreSQL)
+os.environ["DATABASE_URL"] = TEST_DB_URL
+os.environ["SECRET_KEY"] = "test-secret-key-for-testing-only"
+os.environ["ENV"] = "test"
+os.environ["RATE_LIMIT_ENABLED"] = "false"  # Deshabilitar rate limiting en tests
+os.environ["RATE_LIMIT_ENABLED"] = "false"  # Deshabilitar rate limiting en tests
+
+# Mock get_remote_address para tests antes de importar la app
+def mock_get_remote_address(request):
+    """Mock de get_remote_address para tests"""
+    return "127.0.0.1"
+
+# Aplicar el mock antes de importar módulos que usen slowapi
+with patch('slowapi.util.get_remote_address', side_effect=mock_get_remote_address):
+    from app.core.database import Base
+    from app.api.auth.deps import get_db_session
 
 engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -65,6 +72,20 @@ def db_session():
 
 def pytest_sessionfinish(session, exitstatus):
     """Limpiar archivo temporal al finalizar todos los tests"""
+    import time
     if os.path.exists(temp_db.name):
-        os.unlink(temp_db.name)
+        # En Windows, puede haber un delay antes de que el archivo se libere
+        # Intentar varias veces con delay
+        for _ in range(5):
+            try:
+                os.unlink(temp_db.name)
+                break
+            except (PermissionError, OSError):
+                time.sleep(0.1)
+        else:
+            # Si no se puede eliminar, intentar al menos cerrar conexiones
+            try:
+                engine.dispose()
+            except:
+                pass
 

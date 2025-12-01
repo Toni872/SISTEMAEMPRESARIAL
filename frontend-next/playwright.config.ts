@@ -13,7 +13,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Limitar workers para evitar problemas de rate limiting en login
+  // Con 2-3 workers tenemos buen paralelismo sin exceder límites
+  workers: process.env.CI ? 2 : 3,
   reporter: [
     ['html'],
     ['list'],
@@ -57,4 +59,11 @@ export default defineConfig({
     timeout: 120 * 1000,
   },
 });
+
+
+
+
+
+
+
 

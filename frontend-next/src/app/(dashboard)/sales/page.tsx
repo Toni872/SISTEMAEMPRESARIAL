@@ -278,6 +278,28 @@ export default function SalesPage() {
     setFormOpen(true);
   };
 
+  const handleCreateInvoice = async (sale: any) => {
+    try {
+      setFormLoading(true);
+      await apiClient.createInvoice(sale.id, true);
+      await fetchSales();
+      toast({
+        title: "Factura creada",
+        description: "La factura se ha creado y registrado en Verifactu exitosamente.",
+        variant: "success",
+      });
+    } catch (err: any) {
+      logger.error('Error creating invoice', err);
+      toast({
+        title: "Error",
+        description: err.message || 'Error al crear factura',
+        variant: "destructive",
+      });
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
@@ -629,6 +651,22 @@ export default function SalesPage() {
                                 </Badge>
                               </div>
                               <div className="flex items-center gap-2">
+                                {sale.status === 'completed' && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleCreateInvoice(sale);
+                                    }}
+                                    disabled={formLoading}
+                                    type="button"
+                                    title="Crear factura"
+                                  >
+                                    <FileText className="w-4 h-4" />
+                                  </Button>
+                                )}
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 

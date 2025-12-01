@@ -30,14 +30,24 @@ def get_database_url():
         return db_url
 
 # Crear engine con timeout para evitar cuelgues
-engine = create_engine(
-    get_database_url(),
-    pool_pre_ping=True,
-    pool_recycle=300,  # Reciclar conexiones cada 5 minutos
-    connect_args={
+db_url = get_database_url()
+connect_args = {}
+
+# Solo agregar connect_timeout y options para PostgreSQL, no para SQLite
+if db_url.startswith("postgresql"):
+    connect_args = {
         "connect_timeout": 10,  # Timeout de 10 segundos
         "options": "-c statement_timeout=30000"  # Timeout de queries de 30 segundos
-    },
+    }
+elif db_url.startswith("sqlite"):
+    # SQLite solo necesita check_same_thread=False para tests
+    connect_args = {"check_same_thread": False}
+
+engine = create_engine(
+    db_url,
+    pool_pre_ping=True,
+    pool_recycle=300,  # Reciclar conexiones cada 5 minutos
+    connect_args=connect_args,
     echo=False  # No mostrar queries SQL en logs
 )
 

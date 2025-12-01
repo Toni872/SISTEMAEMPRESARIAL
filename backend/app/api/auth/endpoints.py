@@ -16,7 +16,7 @@ from ...core.security import (
     generate_verification_token
 )
 from ...core.email import send_verification_email
-from ...core.rate_limit import limiter
+from ...core.rate_limit import limiter, conditional_rate_limit
 from ...core.exceptions import (
     AuthenticationError,
     AuthorizationError,
@@ -35,7 +35,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-@limiter.limit("10/minute")
+@conditional_rate_limit("10/minute")
 async def register(
     user_in: UserCreate,
     request: Request,
@@ -105,7 +105,7 @@ async def register(
     ```
     """
 )
-@limiter.limit("5/minute")
+@conditional_rate_limit("5/minute")
 async def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),

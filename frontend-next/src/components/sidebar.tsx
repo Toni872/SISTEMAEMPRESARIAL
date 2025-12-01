@@ -75,6 +75,7 @@ const menuCategories: MenuCategory[] = [
     icon: ShoppingCart,
     items: [
       { text: 'Ventas', icon: ShoppingCart, path: '/sales' },
+      { text: 'Facturas', icon: Receipt, path: '/invoices' },
       { text: 'Facturas Recurrentes', icon: Repeat, path: '/recurring-invoices' },
       { text: 'Plantillas de Factura', icon: FileText, path: '/invoice-templates' },
     ],
