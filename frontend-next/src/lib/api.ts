@@ -5,12 +5,20 @@
 import { logger } from './logger';
 
 // En Next.js, las variables NEXT_PUBLIC_* están disponibles en tiempo de build
+// IMPORTANTE: En producción, NEXT_PUBLIC_API_URL DEBE estar configurada
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// Log para debugging (solo en desarrollo)
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+// Log para debugging (SIEMPRE en producción también para diagnosticar)
+if (typeof window !== 'undefined') {
   console.log('🔍 API_URL configurada:', API_URL);
   console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+  
+  // Advertencia si está usando localhost en producción
+  if (API_URL.includes('localhost') && typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+    console.error('⚠️ ERROR: API_URL está usando localhost pero estamos en producción!');
+    console.error('⚠️ Configura NEXT_PUBLIC_API_URL en Railway → Frontend → Variables');
+  }
 }
 
 interface LoginResponse {
@@ -223,7 +231,7 @@ class ApiClient {
           }
           // Evitar mensajes genéricos del navegador sobre VPN/internet
           if (error.message.includes('VPN') || error.message.includes('internet connection')) {
-            throw new Error('Error de conexión con el backend. Verifica que el servidor esté corriendo en http://localhost:8000');
+            throw new Error(`Error de conexión con el backend. Verifica que el servidor esté corriendo en ${this.baseUrl}`);
           }
           throw new Error('⚠️ Backend no disponible. Para iniciar el backend:\n\n1. Opción Docker: docker-compose -f docker-compose.backend.yml up -d\n2. Opción Manual: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload\n\nVer SOLUCION_ERROR_BACKEND.md para más detalles.');
         }
@@ -319,7 +327,7 @@ class ApiClient {
     } catch (error) {
       // Manejar errores de timeout/abort
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('La solicitud tardó demasiado. Verifica que el backend esté corriendo en http://localhost:8000');
+        throw new Error(`La solicitud tardó demasiado. Verifica que el backend esté corriendo en ${this.baseUrl}`);
       }
       
       // Manejar errores de conexión específicamente
@@ -335,14 +343,14 @@ class ApiClient {
         }
         
         // Mensaje más específico para desarrollo local
-        throw new Error('No se puede conectar con el backend. Verifica que: 1) El backend esté corriendo en http://localhost:8000, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.');
+        throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que: 1) El backend esté corriendo y accesible, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.`);
       }
       
       // Si el error ya tiene un mensaje útil, propagarlo
       if (error instanceof Error) {
         // Evitar mensajes genéricos del navegador sobre VPN/internet
         if (error.message.includes('VPN') || error.message.includes('internet connection')) {
-          throw new Error('Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible en http://localhost:8000');
+          throw new Error(`Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible en ${apiUrl}`);
         }
         throw error;
       }
