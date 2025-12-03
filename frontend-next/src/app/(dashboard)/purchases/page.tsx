@@ -86,8 +86,8 @@ interface Purchase {
 interface Supplier {
   id: number;
   name: string;
-  email: string | null;
-  phone: string | null;
+  email?: string | null;
+  phone?: string | null;
   is_active?: boolean;
   totalAmount?: number;
   totalOrders?: number;
