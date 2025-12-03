@@ -25,9 +25,17 @@ from .api.verifactu import certificates as verifactu_certificates
 from .api.verifactu import aeat_integration as verifactu_aeat
 from .api.purchases import endpoints as purchases_endpoints
 from .core.rate_limit import limiter
+import os
 
 # Configurar logging
-setup_logging(env=settings.ENV)
+# Workaround para asegurar que ENV esté disponible si Pydantic Settings falla
+try:
+    env_setting = settings.ENV
+except AttributeError:
+    env_setting = os.environ.get("ENV", "development")
+    print(f"⚠️ settings.ENV no disponible, usando os.environ.get('ENV'): {env_setting}")
+
+setup_logging(env=env_setting)
 logger = get_logger(__name__)
 
 # Inicializar Sentry si está configurado
