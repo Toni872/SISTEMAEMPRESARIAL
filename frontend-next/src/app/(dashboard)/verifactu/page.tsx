@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { apiClient } from '@/lib/api';
+import { apiClient, VerifactuRegistry } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import {
   Shield,
@@ -30,22 +30,10 @@ import { formatDate, formatCurrency } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 
-interface RegistryEntry {
-  id: number;
-  sale_id: number;
-  sale_number: string | null;
-  hash: string;
-  previous_hash: string | null;
-  timestamp: string;
-  sent_to_aeat: boolean;
-  sent_at: string | null;
-  qr_code: string | null;
-}
-
 export default function VerifactuPage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [registries, setRegistries] = useState<RegistryEntry[]>([]);
+  const [registries, setRegistries] = useState<VerifactuRegistry[]>([]);
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     registry: true,
     integrity: false,
@@ -281,7 +269,7 @@ export default function VerifactuPage() {
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
                                   <span className="font-semibold">
-                                    Factura #{registry.sale_number || registry.sale_id}
+                                    Factura #{registry.invoice_id}
                                   </span>
                                   {registry.sent_to_aeat ? (
                                     <Badge className="bg-green-100 text-green-800">
@@ -298,17 +286,11 @@ export default function VerifactuPage() {
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                   <div>
                                     <p className="text-muted-foreground">Hash</p>
-                                    <p className="font-mono text-xs truncate">{registry.hash}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-muted-foreground">Hash Anterior</p>
-                                    <p className="font-mono text-xs truncate">
-                                      {registry.previous_hash || 'N/A'}
-                                    </p>
+                                    <p className="font-mono text-xs truncate">{registry.invoice_hash}</p>
                                   </div>
                                   <div>
                                     <p className="text-muted-foreground">Fecha</p>
-                                    <p>{formatDate(registry.timestamp)}</p>
+                                    <p>{formatDate(registry.created_at)}</p>
                                   </div>
                                   {registry.sent_at && (
                                     <div>
@@ -322,7 +304,7 @@ export default function VerifactuPage() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => handleDownloadXML(registry.sale_id)}
+                                  onClick={() => handleDownloadXML(registry.invoice_id)}
                                 >
                                   <Download className="w-4 h-4" />
                                 </Button>
@@ -460,7 +442,7 @@ export default function VerifactuPage() {
 }
 
 // Componente para Validación de Integridad
-function IntegrityValidationSection({ registries }: { registries: RegistryEntry[] }) {
+function IntegrityValidationSection({ registries }: { registries: VerifactuRegistry[] }) {
   const { toast } = useToast();
   const [validating, setValidating] = useState(false);
   const [validationResult, setValidationResult] = useState<any>(null);
@@ -541,13 +523,8 @@ function IntegrityValidationSection({ registries }: { registries: RegistryEntry[
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <Hash className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-mono text-xs">{registry.hash.substring(0, 16)}...</span>
+                  <span className="font-mono text-xs">{registry.invoice_hash.substring(0, 16)}...</span>
                 </div>
-                {registry.previous_hash && (
-                  <div className="text-xs text-muted-foreground ml-6">
-                    ← {registry.previous_hash.substring(0, 16)}...
-                  </div>
-                )}
               </div>
               <Badge variant="outline">#{idx + 1}</Badge>
             </div>
@@ -563,7 +540,7 @@ function AEATIntegrationSection({
   registries,
   onRefresh,
 }: {
-  registries: RegistryEntry[];
+  registries: VerifactuRegistry[];
   onRefresh: () => void;
 }) {
   const { toast } = useToast();
@@ -670,8 +647,8 @@ function AEATIntegrationSection({
               .map((registry) => (
                 <div key={registry.id} className="flex items-center justify-between p-3 border rounded">
                   <div>
-                    <span className="font-medium">Factura #{registry.sale_number || registry.sale_id}</span>
-                    <p className="text-xs text-muted-foreground">{formatDate(registry.timestamp)}</p>
+                    <span className="font-medium">Factura #{registry.invoice_id}</span>
+                    <p className="text-xs text-muted-foreground">{formatDate(registry.created_at)}</p>
                   </div>
                   <Button
                     size="sm"
