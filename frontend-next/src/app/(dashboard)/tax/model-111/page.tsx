@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { apiClient } from '@/lib/api';
+import { apiClient, Withholding } from '@/lib/api';
 
 interface Model111WithholdingDetail {
   nif?: string;
@@ -96,10 +96,19 @@ export default function Model111Page() {
 
     setCalculating(true);
     try {
+      // Convertir Model111WithholdingDetail[] a Withholding[]
+      const withholdingsForApi: Withholding[] = withholdings.map(w => ({
+        nif: w.nif || '',
+        name: w.name || '',
+        base: w.base_amount,
+        percentage: w.withholding_rate,
+        amount: w.withholding_amount || (w.base_amount * w.withholding_rate) / 100,
+      }));
+      
       const result = await apiClient.calculateModel111(
         formData.quarter,
         formData.year,
-        withholdings
+        withholdingsForApi
       );
       setCalculationResult(result);
       toast({
@@ -130,10 +139,19 @@ export default function Model111Page() {
 
     setLoading(true);
     try {
+      // Convertir Model111WithholdingDetail[] a Withholding[]
+      const withholdingsForApi: Withholding[] = withholdings.map(w => ({
+        nif: w.nif || '',
+        name: w.name || '',
+        base: w.base_amount,
+        percentage: w.withholding_rate,
+        amount: w.withholding_amount || (w.base_amount * w.withholding_rate) / 100,
+      }));
+      
       const declaration = await apiClient.generateModel111(
         formData.quarter,
         formData.year,
-        withholdings,
+        withholdingsForApi,
         formData.notes || undefined
       );
       
