@@ -53,9 +53,10 @@ interface Invoice {
   id: number;
   sale_id: number;
   sale_number: string;
-  customer_name: string | null;
-  customer_email: string | null;
-  customer_phone: string | null;
+  // Alineamos con el tipo del cliente de API (`customer_name?: string | null;`)
+  customer_name?: string | null;
+  customer_email?: string | null;
+  customer_phone?: string | null;
   subtotal: number;
   tax: number;
   total: number;
@@ -69,9 +70,9 @@ interface Invoice {
     unit_price: number;
     subtotal: number;
   }>;
-  invoice_registry_id: number | null;
-  invoice_hash: string | null;
-  qr_code: string | null;
+  invoice_registry_id?: number | null;
+  invoice_hash?: string | null;
+  qr_code?: string | null;
   sent_to_aeat: boolean;
 }
 
