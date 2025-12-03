@@ -278,18 +278,26 @@ export default function TaxPage() {
                         <>
                           <div>
                             <p className="text-muted-foreground">IVA Repercutido</p>
-                            <p className="font-medium">{formatCurrency(result.total_sales_tax || 0)}</p>
+                            <p className="font-medium">{formatCurrency(
+                              typeof result.total_sales_tax === 'number' ? result.total_sales_tax : 0
+                            )}</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">IVA Soportado</p>
-                            <p className="font-medium">{formatCurrency(result.total_purchases_tax || 0)}</p>
+                            <p className="font-medium">{formatCurrency(
+                              typeof result.total_purchases_tax === 'number' ? result.total_purchases_tax : 0
+                            )}</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Resultado</p>
-                            <p className={`font-medium ${(result?.result_to_pay || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                              {result?.result_to_pay > 0
+                            <p className={`font-medium ${
+                              (typeof result.result_to_pay === 'number' && result.result_to_pay > 0) 
+                                ? 'text-red-600' 
+                                : 'text-green-600'
+                            }`}>
+                              {typeof result.result_to_pay === 'number' && result.result_to_pay > 0
                                 ? `A ingresar: ${formatCurrency(result.result_to_pay)}`
-                                : result?.result_to_refund > 0
+                                : typeof result.result_to_refund === 'number' && result.result_to_refund > 0
                                 ? `A devolver: ${formatCurrency(result.result_to_refund)}`
                                 : formatCurrency(0)}
                             </p>
