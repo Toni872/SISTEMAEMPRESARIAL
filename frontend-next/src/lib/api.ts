@@ -14,10 +14,14 @@ if (typeof window !== 'undefined') {
   console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
   console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
 
-  // Advertencia si está usando localhost en producción
-  if (API_URL.includes('localhost') && typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+  // Advertencia si está usando localhost en producción (solo en producción real, no en desarrollo)
+  const isProduction = process.env.NODE_ENV === 'production' || 
+                       (!window.location.hostname.includes('localhost') && 
+                        !window.location.hostname.includes('127.0.0.1'));
+  
+  if (API_URL.includes('localhost') && isProduction) {
     console.error('⚠️ ERROR: API_URL está usando localhost pero estamos en producción!');
-    console.error('⚠️ Configura NEXT_PUBLIC_API_URL en Railway → Frontend → Variables');
+    console.error('⚠️ Configura NEXT_PUBLIC_API_URL en Vercel → Settings → Environment Variables');
   }
 }
 
