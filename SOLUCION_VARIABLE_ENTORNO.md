@@ -124,3 +124,4 @@ Una vez que funcione:
 2. Verifica que no haya errores de CORS
 3. Si todo funciona, puedes cambiar `BACKEND_CORS_ORIGINS` de `*` a la URL específica del frontend
 
+

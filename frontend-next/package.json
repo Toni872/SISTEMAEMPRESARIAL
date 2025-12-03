@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack -p 3001",
     "build": "next build --webpack",
-    "start": "next start",
+    "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

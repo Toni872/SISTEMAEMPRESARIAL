@@ -45,3 +45,6 @@ openpyxl
 
 # Error Tracking
 sentry-sdk[fastapi]>=2.0.0
+
+# Vercel Serverless Adapter
+mangum>=0.17.0

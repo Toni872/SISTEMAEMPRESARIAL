@@ -114,3 +114,4 @@ Comparte:
 2. El error exacto que ves en el navegador (DevTools → Console)
 3. Los headers de la petición (DevTools → Network → Headers)
 
+

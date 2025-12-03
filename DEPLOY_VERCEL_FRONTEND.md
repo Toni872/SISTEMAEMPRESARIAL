@@ -110,3 +110,4 @@ Si necesitas más variables en el futuro, añádelas en Vercel → Settings → 
 
 ¡Listo! Vercel es mucho más simple para Next.js que Railway.
 
+

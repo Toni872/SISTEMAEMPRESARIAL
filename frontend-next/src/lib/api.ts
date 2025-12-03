@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
   console.log('🔍 API_URL configurada:', API_URL);
   console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
   console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
-  
+
   // Advertencia si está usando localhost en producción
   if (API_URL.includes('localhost') && typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
     console.error('⚠️ ERROR: API_URL está usando localhost pero estamos en producción!');
@@ -282,7 +282,7 @@ class ApiClient {
       formData.append('password', password);
 
       const url = `${this.baseUrl}/api/auth/login`;
-      
+
       // Agregar timeout a la request (30 segundos)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -306,14 +306,14 @@ class ApiClient {
         } catch (e) {
           logger.error('Error parsing response', e);
         }
-        
+
         // Mensajes más específicos para errores comunes
         if (response.status === 500) {
           errorMessage = 'Error interno del servidor. Revisa los logs del backend o contacta al administrador.';
         } else if (response.status === 401) {
           errorMessage = errorMessage || 'Email o contraseña incorrectos';
         }
-        
+
         logger.error(`API Error [${response.status}]`, { message: errorMessage, url });
         throw new Error(errorMessage);
       }
@@ -329,7 +329,7 @@ class ApiClient {
       if (error instanceof Error && error.name === 'AbortError') {
         throw new Error(`La solicitud tardó demasiado. Verifica que el backend esté corriendo en ${this.baseUrl}`);
       }
-      
+
       // Manejar errores de conexión específicamente
       if (error instanceof TypeError && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError') || error.message.includes('Network request failed'))) {
         const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
@@ -341,16 +341,16 @@ class ApiClient {
           }
           throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que esté desplegado y accesible.`);
         }
-        
+
         // Mensaje más específico para desarrollo local
         throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que: 1) El backend esté corriendo y accesible, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.`);
       }
-      
+
       // Si el error ya tiene un mensaje útil, propagarlo
       if (error instanceof Error) {
         // Evitar mensajes genéricos del navegador sobre VPN/internet
         if (error.message.includes('VPN') || error.message.includes('internet connection')) {
-          throw new Error(`Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible en ${apiUrl}`);
+          throw new Error(`Error de conexión con el backend. Verifica que el servidor esté corriendo y accesible en ${this.baseUrl}`);
         }
         throw error;
       }
@@ -417,7 +417,7 @@ class ApiClient {
   /**
    * Obtener ventas recientes (alias para compatibilidad)
    */
-  async getSales(skip: number = 0, limit: number = 10, status?: string, startDate?: string, endDate?: string): Promise<any[]> {
+  async getSales(skip: number = 0, limit: number = 10, status?: string, startDate?: string, endDate?: string): Promise<Sale[]> {
     return this.getSalesWithFilters(skip, limit, status, startDate, endDate);
   }
 
@@ -436,14 +436,14 @@ class ApiClient {
   /**
    * Obtener productos con stock bajo
    */
-  async getLowStockProducts(): Promise<any[]> {
-    return this.request<any[]>(`/api/products/low-stock`);
+  async getLowStockProducts(): Promise<Product[]> {
+    return this.request<Product[]>(`/api/products/low-stock`);
   }
 
   /**
    * Obtener productos recientes
    */
-  async getProducts(skip: number = 0, limit: number = 10, search?: string, category?: string): Promise<any[]> {
+  async getProducts(skip: number = 0, limit: number = 10, search?: string, category?: string): Promise<Product[]> {
     const params = new URLSearchParams();
     params.append('skip', skip.toString());
     params.append('limit', limit.toString());
@@ -451,14 +451,14 @@ class ApiClient {
     if (category) params.append('category', category);
 
     const queryString = params.toString();
-    return this.request<any[]>(`/api/products?${queryString}`);
+    return this.request<Product[]>(`/api/products?${queryString}`);
   }
 
   /**
    * Obtener un producto por ID
    */
-  async getProduct(id: number): Promise<any> {
-    return this.request<any>(`/api/products/${id}`);
+  async getProduct(id: number): Promise<Product> {
+    return this.request<Product>(`/api/products/${id}`);
   }
 
   /**
@@ -474,8 +474,8 @@ class ApiClient {
     min_stock?: number;
     category?: string;
     is_active?: boolean;
-  }): Promise<any> {
-    return this.request<any>('/api/products', {
+  }): Promise<Product> {
+    return this.request<Product>('/api/products', {
       method: 'POST',
       body: JSON.stringify(product),
     });
@@ -494,8 +494,8 @@ class ApiClient {
     min_stock?: number;
     category?: string;
     is_active?: boolean;
-  }): Promise<any> {
-    return this.request<any>(`/api/products/${id}`, {
+  }): Promise<Product> {
+    return this.request<Product>(`/api/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(product),
     });
@@ -513,7 +513,7 @@ class ApiClient {
   /**
    * Obtener ventas (versión completa con filtros)
    */
-  async getSalesWithFilters(skip: number = 0, limit: number = 100, status?: string, startDate?: string, endDate?: string): Promise<any[]> {
+  async getSalesWithFilters(skip: number = 0, limit: number = 100, status?: string, startDate?: string, endDate?: string): Promise<Sale[]> {
     const params = new URLSearchParams();
     params.append('skip', skip.toString());
     params.append('limit', limit.toString());
@@ -522,14 +522,14 @@ class ApiClient {
     if (endDate) params.append('end_date', endDate);
 
     const queryString = params.toString();
-    return this.request<any[]>(`/api/sales?${queryString}`);
+    return this.request<Sale[]>(`/api/sales?${queryString}`);
   }
 
   /**
    * Obtener una venta por ID
    */
-  async getSale(id: number): Promise<any> {
-    return this.request<any>(`/api/sales/${id}`);
+  async getSale(id: number): Promise<Sale> {
+    return this.request<Sale>(`/api/sales/${id}`);
   }
 
   /**
@@ -546,8 +546,8 @@ class ApiClient {
       quantity: number;
       unit_price: number;
     }>;
-  }): Promise<any> {
-    return this.request<any>('/api/sales', {
+  }): Promise<Sale> {
+    return this.request<Sale>('/api/sales', {
       method: 'POST',
       body: JSON.stringify(sale),
     });
@@ -562,8 +562,8 @@ class ApiClient {
     customer_phone?: string;
     notes?: string;
     status?: string;
-  }): Promise<any> {
-    return this.request<any>(`/api/sales/${id}`, {
+  }): Promise<Sale> {
+    return this.request<Sale>(`/api/sales/${id}`, {
       method: 'PUT',
       body: JSON.stringify(sale),
     });
@@ -803,8 +803,8 @@ class ApiClient {
   /**
    * Generar factura manualmente desde factura recurrente
    */
-  async generateInvoiceFromRecurring(id: number, force: boolean = false): Promise<{ sale: any; next_run_date: string }> {
-    return this.request(`/api/recurring-invoices/${id}/generate${force ? '?force=true' : ''}`, {
+  async generateInvoiceFromRecurring(id: number, force: boolean = false): Promise<{ sale: Sale; next_run_date: string }> {
+    return this.request<{ sale: Sale; next_run_date: string }>(`/api/recurring-invoices/${id}/generate${force ? '?force=true' : ''}`, {
       method: 'POST',
     });
   }
@@ -918,8 +918,8 @@ class ApiClient {
   /**
    * Registrar factura en Verifactu
    */
-  async registerInvoiceInVerifactu(saleId: number): Promise<any> {
-    return this.request(`/api/verifactu/sales/${saleId}/register`, {
+  async registerInvoiceInVerifactu(saleId: number): Promise<Invoice> {
+    return this.request<Invoice>(`/api/verifactu/sales/${saleId}/register`, {
       method: 'POST',
     });
   }
@@ -931,7 +931,7 @@ class ApiClient {
    * Obtener facturas (lista paginada)
    */
   async getInvoices(skip: number = 0, limit: number = 100, status?: string, hasRegistry?: boolean): Promise<{
-    invoices: any[];
+    invoices: Invoice[];
     total: number;
     skip: number;
     limit: number;
@@ -944,7 +944,7 @@ class ApiClient {
 
     const queryString = params.toString();
     return this.request<{
-      invoices: any[];
+      invoices: Invoice[];
       total: number;
       skip: number;
       limit: number;
@@ -954,15 +954,15 @@ class ApiClient {
   /**
    * Obtener una factura por ID
    */
-  async getInvoice(id: number): Promise<any> {
-    return this.request<any>(`/api/invoices/${id}`);
+  async getInvoice(id: number): Promise<Invoice> {
+    return this.request<Invoice>(`/api/invoices/${id}`);
   }
 
   /**
    * Crear factura desde venta
    */
-  async createInvoice(saleId: number, registerInVerifactu: boolean = true): Promise<any> {
-    return this.request<any>('/api/invoices', {
+  async createInvoice(saleId: number, registerInVerifactu: boolean = true): Promise<Invoice> {
+    return this.request<Invoice>('/api/invoices', {
       method: 'POST',
       body: JSON.stringify({
         sale_id: saleId,
@@ -988,15 +988,15 @@ class ApiClient {
   /**
    * Obtener registro Verifactu
    */
-  async getVerifactuRegistry(skip: number = 0, limit: number = 100): Promise<any[]> {
-    return this.request(`/api/verifactu/registry?skip=${skip}&limit=${limit}`);
+  async getVerifactuRegistry(skip: number = 0, limit: number = 100): Promise<VerifactuRegistry[]> {
+    return this.request<VerifactuRegistry[]>(`/api/verifactu/registry?skip=${skip}&limit=${limit}`);
   }
 
   /**
    * Marcar registro como enviado a AEAT
    */
-  async markVerifactuRegistryAsSent(registryId: number): Promise<any> {
-    return this.request(`/api/verifactu/registry/${registryId}/mark-sent`, {
+  async markVerifactuRegistryAsSent(registryId: number): Promise<VerifactuRegistry> {
+    return this.request<VerifactuRegistry>(`/api/verifactu/registry/${registryId}/mark-sent`, {
       method: 'POST',
     });
   }
@@ -1013,14 +1013,14 @@ class ApiClient {
   /**
    * Obtener certificados electrónicos
    */
-  async getElectronicCertificates(): Promise<any[]> {
-    return this.request('/api/verifactu/certificates');
+  async getElectronicCertificates(): Promise<ElectronicCertificate[]> {
+    return this.request<ElectronicCertificate[]>('/api/verifactu/certificates');
   }
 
   /**
    * Subir certificado electrónico
    */
-  async uploadElectronicCertificate(name: string, certificateType: string, file: File): Promise<any> {
+  async uploadElectronicCertificate(name: string, certificateType: string, file: File): Promise<ElectronicCertificate> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('name', name);
@@ -1038,21 +1038,21 @@ class ApiClient {
       throw new Error(`Error subiendo certificado: ${response.statusText}`);
     }
 
-    return response.json();
+    return response.json() as Promise<ElectronicCertificate>;
   }
 
   /**
    * Obtener estado de integración AEAT
    */
-  async getAEATIntegrationStatus(): Promise<any> {
-    return this.request('/api/verifactu/aeat/status');
+  async getAEATIntegrationStatus(): Promise<{ status: string; last_sync?: string;[key: string]: unknown }> {
+    return this.request<{ status: string; last_sync?: string;[key: string]: unknown }>('/api/verifactu/aeat/status');
   }
 
   /**
    * Enviar todos los registros pendientes a AEAT
    */
-  async sendAllPendingToAEAT(): Promise<any> {
-    return this.request('/api/verifactu/aeat/send-all-pending', {
+  async sendAllPendingToAEAT(): Promise<{ sent: number; failed: number;[key: string]: unknown }> {
+    return this.request<{ sent: number; failed: number;[key: string]: unknown }>('/api/verifactu/aeat/send-all-pending', {
       method: 'POST',
     });
   }
@@ -1062,22 +1062,22 @@ class ApiClient {
   /**
    * Obtener proveedores
    */
-  async getSuppliers(skip: number = 0, limit: number = 100): Promise<any[]> {
-    return this.request(`/api/purchases/suppliers?skip=${skip}&limit=${limit}`);
+  async getSuppliers(skip: number = 0, limit: number = 100): Promise<Supplier[]> {
+    return this.request<Supplier[]>(`/api/purchases/suppliers?skip=${skip}&limit=${limit}`);
   }
 
   /**
    * Obtener un proveedor
    */
-  async getSupplier(supplierId: number): Promise<any> {
-    return this.request(`/api/purchases/suppliers/${supplierId}`);
+  async getSupplier(supplierId: number): Promise<Supplier> {
+    return this.request<Supplier>(`/api/purchases/suppliers/${supplierId}`);
   }
 
   /**
    * Crear proveedor
    */
-  async createSupplier(supplier: any): Promise<any> {
-    return this.request('/api/purchases/suppliers', {
+  async createSupplier(supplier: Omit<Supplier, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Supplier> {
+    return this.request<Supplier>('/api/purchases/suppliers', {
       method: 'POST',
       body: JSON.stringify(supplier),
     });
@@ -1086,8 +1086,8 @@ class ApiClient {
   /**
    * Actualizar proveedor
    */
-  async updateSupplier(supplierId: number, supplier: any): Promise<any> {
-    return this.request(`/api/purchases/suppliers/${supplierId}`, {
+  async updateSupplier(supplierId: number, supplier: Partial<Omit<Supplier, 'id' | 'user_id' | 'created_at' | 'updated_at'>>): Promise<Supplier> {
+    return this.request<Supplier>(`/api/purchases/suppliers/${supplierId}`, {
       method: 'PUT',
       body: JSON.stringify(supplier),
     });
@@ -1105,22 +1105,39 @@ class ApiClient {
   /**
    * Obtener compras
    */
-  async getPurchases(skip: number = 0, limit: number = 100): Promise<any[]> {
-    return this.request(`/api/purchases?skip=${skip}&limit=${limit}`);
+  async getPurchases(skip: number = 0, limit: number = 100): Promise<Purchase[]> {
+    return this.request<Purchase[]>(`/api/purchases?skip=${skip}&limit=${limit}`);
   }
 
   /**
    * Obtener una compra
    */
-  async getPurchase(purchaseId: number): Promise<any> {
-    return this.request(`/api/purchases/${purchaseId}`);
+  async getPurchase(purchaseId: number): Promise<Purchase> {
+    return this.request<Purchase>(`/api/purchases/${purchaseId}`);
   }
 
   /**
    * Crear compra
    */
-  async createPurchase(purchase: any): Promise<any> {
-    return this.request('/api/purchases', {
+  async createPurchase(purchase: {
+    supplier_id: number;
+    purchase_date: string;
+    subtotal: number;
+    tax: number;
+    total: number;
+    status?: string;
+    notes?: string;
+    reference_number?: string;
+    items: Array<{
+      product_id?: number;
+      description: string;
+      quantity: number;
+      unit_price: number;
+      tax_rate?: number;
+      subtotal: number;
+    }>;
+  }): Promise<Purchase> {
+    return this.request<Purchase>('/api/purchases', {
       method: 'POST',
       body: JSON.stringify(purchase),
     });
@@ -1129,8 +1146,22 @@ class ApiClient {
   /**
    * Actualizar compra
    */
-  async updatePurchase(purchaseId: number, purchase: any): Promise<any> {
-    return this.request(`/api/purchases/${purchaseId}`, {
+  async updatePurchase(purchaseId: number, purchase: {
+    supplier_id?: number;
+    purchase_date?: string;
+    status?: string;
+    notes?: string;
+    reference_number?: string;
+    items?: Array<{
+      product_id?: number;
+      description: string;
+      quantity: number;
+      unit_price: number;
+      tax_rate?: number;
+      subtotal: number;
+    }>;
+  }): Promise<Purchase> {
+    return this.request<Purchase>(`/api/purchases/${purchaseId}`, {
       method: 'PUT',
       body: JSON.stringify(purchase),
     });
@@ -1270,8 +1301,8 @@ class ApiClient {
   /**
    * Calcular Modelo 111 sin generar declaración
    */
-  async calculateModel111(quarter: number, year: number, withholdings: any[]): Promise<any> {
-    return this.request<any>('/api/tax/model-111/calculate', {
+  async calculateModel111(quarter: number, year: number, withholdings: Withholding[]): Promise<Model303CalculationResult> {
+    return this.request<Model303CalculationResult>('/api/tax/model-111/calculate', {
       method: 'POST',
       body: JSON.stringify({ quarter, year, withholdings }),
     });
@@ -1280,7 +1311,7 @@ class ApiClient {
   /**
    * Generar declaración Modelo 111
    */
-  async generateModel111(quarter: number, year: number, withholdings: any[], notes?: string): Promise<TaxDeclaration> {
+  async generateModel111(quarter: number, year: number, withholdings: Withholding[], notes?: string): Promise<TaxDeclaration> {
     return this.request<TaxDeclaration>('/api/tax/model-111/generate', {
       method: 'POST',
       body: JSON.stringify({ quarter, year, withholdings, notes }),
@@ -1289,6 +1320,148 @@ class ApiClient {
 }
 
 // ========== TIPOS E INTERFACES ==========
+
+export interface Product {
+  id: number;
+  name: string;
+  description?: string | null;
+  sku?: string | null;
+  price: number;
+  cost?: number | null;
+  stock: number;
+  min_stock: number;
+  category?: string | null;
+  is_active: boolean;
+}
+
+export interface SaleItem {
+  id: number;
+  product_id: number;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+}
+
+export interface Sale {
+  id: number;
+  sale_number: string;
+  customer_name?: string | null;
+  customer_email?: string | null;
+  customer_phone?: string | null;
+  notes?: string | null;
+  status: 'pending' | 'completed' | 'cancelled';
+  subtotal: number;
+  tax: number;
+  total: number;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
+  items: SaleItem[];
+}
+
+export interface InvoiceItem {
+  id: number;
+  product_id: number;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+}
+
+export interface Invoice {
+  id: number;
+  sale_id: number;
+  sale_number: string;
+  customer_name?: string | null;
+  customer_email?: string | null;
+  customer_phone?: string | null;
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: string;
+  created_at: string;
+  items: InvoiceItem[];
+  invoice_registry_id?: number | null;
+  invoice_hash?: string | null;
+  qr_code?: string | null;
+  sent_to_aeat: boolean;
+}
+
+export interface Supplier {
+  id: number;
+  name: string;
+  tax_id?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
+  country: string;
+  contact_person?: string | null;
+  website?: string | null;
+  notes?: string | null;
+  is_active: boolean;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PurchaseItem {
+  id: number;
+  purchase_id: number;
+  product_id?: number | null;
+  description: string;
+  quantity: number;
+  unit_price: number;
+  tax_rate: number;
+  subtotal: number;
+  created_at: string;
+}
+
+export interface Purchase {
+  id: number;
+  purchase_number: string;
+  supplier_id: number;
+  purchase_date: string;
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: string;
+  notes?: string | null;
+  reference_number?: string | null;
+  user_id: number;
+  supplier: Supplier;
+  items: PurchaseItem[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VerifactuRegistry {
+  id: number;
+  invoice_id: number;
+  invoice_hash: string;
+  qr_code?: string | null;
+  sent_to_aeat: boolean;
+  sent_at?: string | null;
+  created_at: string;
+}
+
+export interface ElectronicCertificate {
+  id: number;
+  name: string;
+  certificate_type: string;
+  file_path: string;
+  expires_at?: string | null;
+  created_at: string;
+}
+
+export interface Withholding {
+  nif: string;
+  name: string;
+  base: number;
+  percentage: number;
+  amount: number;
+}
 
 export interface RecurringInvoice {
   id: number;
@@ -1373,9 +1546,9 @@ export interface TaxDeclaration {
   period_start_date: string;
   period_end_date: string;
   status: 'draft' | 'calculated' | 'generated' | 'submitted' | 'accepted' | 'rejected';
-  declaration_data?: any;
+  declaration_data?: Record<string, unknown>;
   submitted_at?: string;
-  response_data?: any;
+  response_data?: Record<string, unknown>;
   reference_number?: string;
   pdf_path?: string;
   xml_path?: string;
