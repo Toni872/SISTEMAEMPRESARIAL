@@ -168,7 +168,9 @@ export default function TaxPage() {
             <div className="text-2xl font-bold">
               {formatCurrency(
                 declarations.reduce((sum, d) => {
-                  const result = d.declaration_data?.result_to_pay || 0;
+                  const result = typeof d.declaration_data?.result_to_pay === 'number' 
+                    ? d.declaration_data.result_to_pay 
+                    : 0;
                   return sum + result;
                 }, 0)
               )}
