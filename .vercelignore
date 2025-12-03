@@ -13,6 +13,4 @@ htmlcov
 .DS_Store
 *.md
 !README.md
-backend
-api
 
