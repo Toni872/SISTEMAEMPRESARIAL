@@ -5,8 +5,25 @@
 import { logger } from './logger';
 
 // En Next.js, las variables NEXT_PUBLIC_* están disponibles en tiempo de build
-// IMPORTANTE: En producción, NEXT_PUBLIC_API_URL DEBE estar configurada
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Si NEXT_PUBLIC_API_URL no está configurada, usar ruta relativa (mismo dominio)
+// Esto funciona cuando frontend y backend están en el mismo proyecto de Vercel
+const getApiUrl = (): string => {
+  // Si está configurada explícitamente, usarla
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  
+  // En desarrollo, usar localhost
+  if (typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8000';
+  }
+  
+  // En producción (mismo proyecto Vercel), usar ruta relativa
+  return '';
+};
+
+const API_URL = getApiUrl();
 
 // Log para debugging (SIEMPRE en producción también para diagnosticar)
 if (typeof window !== 'undefined') {
@@ -14,14 +31,18 @@ if (typeof window !== 'undefined') {
   console.log('🔍 NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
   console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
 
-  // Advertencia si está usando localhost en producción (solo en producción real, no en desarrollo)
-  const isProduction = process.env.NODE_ENV === 'production' || 
-                       (!window.location.hostname.includes('localhost') && 
-                        !window.location.hostname.includes('127.0.0.1'));
-  
-  if (API_URL.includes('localhost') && isProduction) {
-    console.error('⚠️ ERROR: API_URL está usando localhost pero estamos en producción!');
-    console.error('⚠️ Configura NEXT_PUBLIC_API_URL en Vercel → Settings → Environment Variables');
+  // Log informativo sobre la configuración
+  if (!API_URL) {
+    console.log('✅ Usando rutas relativas (frontend y backend en el mismo proyecto Vercel)');
+  } else if (API_URL.includes('localhost')) {
+    const isProduction = process.env.NODE_ENV === 'production' || 
+                         (!window.location.hostname.includes('localhost') && 
+                          !window.location.hostname.includes('127.0.0.1'));
+    
+    if (isProduction) {
+      console.warn('⚠️ ADVERTENCIA: API_URL está usando localhost en producción');
+      console.warn('⚠️ Si frontend y backend están en el mismo proyecto Vercel, deja NEXT_PUBLIC_API_URL vacía para usar rutas relativas');
+    }
   }
 }
 
@@ -337,17 +358,22 @@ class ApiClient {
       // Manejar errores de conexión específicamente
       if (error instanceof TypeError && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError') || error.message.includes('Network request failed'))) {
         const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const apiUrl = this.baseUrl || 'http://localhost:8000';
+        const isRelativeUrl = !this.baseUrl || this.baseUrl === '';
 
         if (isVercel) {
+          if (isRelativeUrl) {
+            throw new Error('⚠️ No se puede conectar con el backend. Verifica que las rutas /api/* estén correctamente configuradas en vercel.json y que el backend esté desplegado.');
+          }
           if (apiUrl.includes('localhost')) {
-            throw new Error('⚠️ El backend no está configurado en Vercel. Configura la variable NEXT_PUBLIC_API_URL en Settings → Environment Variables. Para desarrollo con backend local, usa ngrok.');
+            throw new Error('⚠️ El backend no está configurado en Vercel. Si frontend y backend están en el mismo proyecto, deja NEXT_PUBLIC_API_URL vacía. Si están en proyectos separados, configura NEXT_PUBLIC_API_URL con la URL del backend.');
           }
           throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que esté desplegado y accesible.`);
         }
 
         // Mensaje más específico para desarrollo local
-        throw new Error(`No se puede conectar con el backend en ${apiUrl}. Verifica que: 1) El backend esté corriendo y accesible, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.`);
+        const displayUrl = isRelativeUrl ? 'rutas relativas (/api/*)' : apiUrl;
+        throw new Error(`No se puede conectar con el backend en ${displayUrl}. Verifica que: 1) El backend esté corriendo y accesible, 2) No haya problemas de firewall o antivirus bloqueando la conexión, 3) La variable NEXT_PUBLIC_API_URL esté configurada correctamente.`);
       }
 
       // Si el error ya tiene un mensaje útil, propagarlo
