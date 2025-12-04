@@ -99,6 +99,9 @@ logs/
 *.log
 backend/logs/
 frontend-next/.next/
+frontend-next/playwright-report/
+frontend-next/test-results/
+test-results/
 
 # Vercel (eliminado - ahora usamos Railway)
 # .vercel/

@@ -13,27 +13,9 @@ import {
   Package,
   ShoppingCart,
   Truck,
-  Users,
   FileText,
   Settings,
-  Brain,
-  Box,
-  Building2,
-  Zap,
-  Smartphone,
-  Layers,
-  Cloud,
-  UserCircle,
-  Store,
-  DollarSign,
-  TrendingUp,
-  Archive,
   Shield,
-  Sliders,
-  MessageSquare,
-  BookOpen,
-  Server,
-  Beaker,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -41,7 +23,6 @@ import {
   Repeat,
   Receipt,
   Calculator,
-  FolderTree,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Collapsible } from '@/components/ui/collapsible';
@@ -121,12 +102,15 @@ interface SidebarProps {
   className?: string;
 }
 
-export function Sidebar({ className }: SidebarProps) {
-  const pathname = usePathname();
-  const { user } = useAuthStore();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface SidebarContentProps {
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  setMobileOpen: (open: boolean) => void;
+  pathname: string;
+  user: { name: string | null; email: string; role?: string } | null;
+}
 
+function SidebarContent({ collapsed, setCollapsed, setMobileOpen, pathname, user }: SidebarContentProps) {
   const canAccessMenuItem = (item: MenuItem): boolean => {
     if (!item.roles) return true;
     if (!user?.role) return false;
@@ -146,7 +130,7 @@ export function Sidebar({ className }: SidebarProps) {
     }
   };
 
-  const SidebarContent = () => (
+  return (
     <div className="flex flex-col h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-800">
@@ -358,6 +342,13 @@ export function Sidebar({ className }: SidebarProps) {
       )}
     </div>
   );
+}
+
+export function Sidebar({ className }: SidebarProps) {
+  const pathname = usePathname();
+  const { user } = useAuthStore();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <>
@@ -384,7 +375,13 @@ export function Sidebar({ className }: SidebarProps) {
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             className="fixed left-0 top-0 bottom-0 w-72 z-50 md:hidden"
           >
-            <SidebarContent />
+            <SidebarContent 
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              setMobileOpen={setMobileOpen}
+              pathname={pathname}
+              user={user}
+            />
           </motion.aside>
         )}
       </AnimatePresence>
@@ -397,7 +394,13 @@ export function Sidebar({ className }: SidebarProps) {
           className
         )}
       >
-        <SidebarContent />
+        <SidebarContent 
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          setMobileOpen={setMobileOpen}
+          pathname={pathname}
+          user={user}
+        />
       </aside>
 
       {/* Mobile Toggle Button */}

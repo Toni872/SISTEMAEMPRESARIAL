@@ -72,12 +72,12 @@ export const useAuthStore = create<AuthState>()(
           });
           
           return true;
-        } catch (error: any) {
+        } catch (error: unknown) {
           logger.error('Register error', error);
           set({ isLoading: false });
           
           // Manejar error específico de email duplicado
-          if (error.message?.includes('already registered')) {
+          if (error instanceof Error && error.message?.includes('already registered')) {
             throw new Error('Este email ya está registrado');
           }
           
@@ -113,15 +113,16 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
           logger.error('Load user error', error);
           
           // Verificar si el error es por sesión expirada o token inválido
+          const errorMessage = error instanceof Error ? error.message : String(error);
           const isSessionExpired = 
-            error?.message?.includes('Sesión expirada') || 
-            error?.message?.includes('expired') ||
-            error?.message?.includes('Could not validate credentials') ||
-            error?.message?.includes('Unauthorized');
+            errorMessage?.includes('Sesión expirada') || 
+            errorMessage?.includes('expired') ||
+            errorMessage?.includes('Could not validate credentials') ||
+            errorMessage?.includes('Unauthorized');
           
           if (isSessionExpired) {
             // Si hay refresh token, el refresh automático debería haberlo manejado
