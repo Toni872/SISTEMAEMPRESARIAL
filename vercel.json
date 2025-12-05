@@ -4,16 +4,10 @@
   "outputDirectory": "frontend-next/.next",
   "installCommand": "cd frontend-next && npm install",
   "framework": "nextjs",
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "source": "/api/:path*",
+      "destination": "/api/index.py"
     }
   ]
 }

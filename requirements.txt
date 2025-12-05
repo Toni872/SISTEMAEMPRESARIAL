@@ -1,0 +1,50 @@
+# FastAPI
+fastapi
+uvicorn[standard]
+
+# Database
+psycopg2-binary
+SQLAlchemy
+alembic
+
+# Pydantic
+pydantic
+pydantic-settings
+email-validator
+python-multipart
+
+# Authentication & Security
+python-jose[cryptography]
+bcrypt
+
+# Rate Limiting
+slowapi
+
+# Email
+fastapi-mail
+
+# Testing
+pytest
+httpx
+pytest-asyncio
+
+# Development
+python-dotenv
+
+# PDF Generation
+reportlab
+
+# Certificate Management
+cryptography
+
+# HTTP Client (for AEAT integration)
+requests>=2.31.0
+
+# Excel Export
+openpyxl
+
+# Error Tracking
+sentry-sdk[fastapi]>=2.0.0
+
+# Vercel Serverless Adapter
+mangum>=0.17.0
