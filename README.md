@@ -1,58 +1,48 @@
 # 🏢 Sistema ERP Empresarial
 
-Sistema ERP completo desarrollado con **FastAPI** (Backend) y **Next.js 16** (Frontend) para la gestión integral de empresas españolas.
+<div align="center">
 
-🔗 **Demo en vivo:** https://frontend-next-fexvo2996-toni872s-projects.vercel.app
+![ERP Logo](https://img.shields.io/badge/ERP-Sistema%20Empresarial-blue?style=for-the-badge)
 
-[![CI/CD](https://github.com/tuusuario/sistemaempresarial/actions/workflows/ci.yml/badge.svg)](https://github.com/tuusuario/sistemaempresarial/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-16.0-black)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green.svg)](https://fastapi.tiangolo.com/)
+**Sistema ERP completo full-stack para gestión integral de empresas españolas**
 
-> **Nota para recruiters:** Este proyecto demuestra competencia end-to-end en desarrollo full-stack, desde diseño de base de datos hasta implementación de UI moderna con Next.js 16, integrando funcionalidades fiscales españolas (Modelo 303, Modelo 111, Verifactu), gestión completa de ventas/compras, y las mejores prácticas de la industria.
+[Características](#-características) • [Tecnologías](#-tecnologías) • [Instalación](#-instalación) • [Configuración](#-configuración) • [Uso](#-uso)
 
----
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue?style=flat-square&logo=python)](https://www.python.org/)
 
-## 📋 Tabla de Contenidos
-
-- [Descripción del Proyecto](#-descripción-del-proyecto)
-- [Características](#-características)
-- [Tecnologías](#-tecnologías)
-- [Instalación](#-instalación)
-- [Configuración](#-configuración)
-- [Uso](#-uso)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [API Documentation](#-api-documentation)
-- [Seguridad](#-seguridad)
-- [Logging y Manejo de Errores](#-logging-y-manejo-de-errores)
-- [CI/CD](#-cicd)
-- [Roadmap](#-roadmap)
-- [Contribución](#-contribución)
-- [Licencia](#-licencia)
+</div>
 
 ---
 
-## 🎯 Descripción del Proyecto
+## 📖 Acerca del Proyecto
 
-Sistema ERP completo diseñado para empresas españolas que necesitan centralizar y automatizar sus operaciones. Construido con arquitectura escalable y tecnologías modernas, el sistema integra gestión de ventas, compras, inventario, usuarios, modelos fiscales españoles (Modelo 303, Modelo 111) y cumplimiento con normativa AEAT (Verifactu).
+**Sistema ERP Empresarial** es una plataforma completa diseñada para empresas españolas que necesitan centralizar y automatizar sus operaciones empresariales. El proyecto aborda un problema real del sector: la necesidad de sistemas de gestión accesibles pero potentes que cumplan con la normativa fiscal española, ofreciendo funcionalidades enterprise con integración fiscal completa.
 
-**Problema que resuelve:** Las empresas pequeñas y medianas españolas necesitan sistemas de gestión accesibles pero potentes que cumplan con la normativa fiscal española. Este ERP ofrece funcionalidades enterprise con integración fiscal completa, análisis en tiempo real y automatización inteligente de procesos.
+### 🎯 Objetivo
+
+Proporcionar a las empresas pequeñas y medianas españolas un sistema ERP completo que integre gestión de ventas, compras, inventario, usuarios, modelos fiscales españoles (Modelo 303, Modelo 111) y cumplimiento con normativa AEAT (Verifactu), todo en una plataforma moderna, escalable y fácil de usar.
 
 ---
 
 ## ✨ Características
 
 ### 📊 Gestión de Ventas
-- ✅ Gestión completa de productos con SKU y categorías
+- ✅ CRUD completo de productos con SKU y categorías
 - ✅ Creación y seguimiento de ventas
 - ✅ Facturación automática
 - ✅ Plantillas de factura personalizables
 - ✅ Facturas recurrentes programadas
 - ✅ Exportación a PDF y Excel
 - ✅ Estadísticas y métricas en tiempo real
+- ✅ Filtros avanzados y búsqueda
 
 ### 💰 Gestión de Compras
-- ✅ Gestión completa de proveedores
+- ✅ CRUD completo de proveedores
 - ✅ Órdenes de compra con múltiples items
 - ✅ Estados de compra (PENDING, APPROVED, RECEIVED, CANCELLED)
 - ✅ Exportación a PDF y Excel
@@ -83,21 +73,23 @@ Sistema ERP completo diseñado para empresas españolas que necesitan centraliza
 - ✅ Integración con servicios AEAT (preparado para producción)
 - ✅ Marca de envío a AEAT
 
-### 📈 Dashboard
+### 📈 Dashboard y Analytics
 - ✅ Métricas en tiempo real
 - ✅ Gráficos y visualizaciones interactivas
 - ✅ Resumen de ventas y compras
 - ✅ Indicadores clave de negocio (KPI)
 - ✅ Estadísticas por período
+- ✅ Exportación de reportes
 
 ### 🔐 Autenticación y Seguridad
 - ✅ Autenticación JWT con refresh tokens
 - ✅ Verificación de email
-- ✅ Roles y permisos (ADMIN, MANAGER, USER, READONLY)
+- ✅ Sistema de roles (ADMIN, MANAGER, USER, READONLY)
 - ✅ Rate limiting por IP
 - ✅ Security headers (XSS, Clickjacking, etc.)
 - ✅ Logging estructurado con request ID
 - ✅ Manejo global de errores
+- ✅ Validación de inputs con Pydantic
 
 ### 🎨 Frontend Moderno
 - ✅ Diseño profesional con Tailwind CSS
@@ -106,40 +98,52 @@ Sistema ERP completo diseñado para empresas españolas que necesitan centraliza
 - ✅ Interfaz responsive y optimizada
 - ✅ Sidebar con categorías y menús desplegables
 - ✅ Gestión de estado eficiente
+- ✅ Dark mode (preparado)
+
+### 📄 Gestión Documental
+- ✅ Plantillas de factura personalizables
+- ✅ Generación de PDFs profesionales
+- ✅ Exportación a Excel
+- ✅ Historial completo de documentos
 
 ---
 
 ## 🛠️ Tecnologías
 
+### Frontend
+- **Next.js 15** - Framework React con App Router
+- **React 19** - Biblioteca UI
+- **TypeScript 5** - Tipado estático
+- **Tailwind CSS 4** - Estilos utility-first
+- **Radix UI** - Componentes UI accesibles
+- **Framer Motion** - Animaciones fluidas
+- **Recharts** - Gráficos y visualizaciones
+- **Lucide Icons** - Iconos modernos
+- **Zustand** - Gestión de estado
+- **TanStack Query** - Gestión de estado del servidor
+
 ### Backend
 - **FastAPI** - Framework web moderno y rápido
+- **Python 3.12** - Lenguaje de programación
 - **PostgreSQL** - Base de datos relacional
 - **SQLAlchemy** - ORM para Python
 - **Alembic** - Migraciones de base de datos
 - **Pydantic** - Validación de datos
 - **JWT** - Autenticación segura con python-jose
 - **bcrypt** - Hash de contraseñas
+
+### Utilidades
 - **ReportLab** - Generación de PDFs
 - **OpenPyXL** - Exportación a Excel
 - **Cryptography** - Gestión de certificados electrónicos
 - **Requests** - Cliente HTTP para integraciones
 - **SlowAPI** - Rate limiting
+- **Sentry** - Error tracking
 
-### Frontend
-- **Next.js 16** - Framework React con App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Estilos utilitarios
-- **Framer Motion** - Animaciones fluidas
-- **Radix UI** - Componentes accesibles
-- **Recharts** - Gráficos y visualizaciones
-- **Lucide Icons** - Iconos modernos
-
-### DevOps
-- **Docker** - Containerización
-- **Docker Compose** - Orquestación de servicios
-- **GitHub Actions** - CI/CD
-- **PostgreSQL** - Base de datos
-- **Trivy** - Security scanning
+### Deployment
+- **Vercel** - Hosting y CI/CD
+- **Neon.tech** - PostgreSQL serverless
+- **Mangum** - Adaptador serverless para FastAPI
 
 ---
 
@@ -147,44 +151,80 @@ Sistema ERP completo diseñado para empresas españolas que necesitan centraliza
 
 ### Prerrequisitos
 
-- **Python 3.11+**
 - **Node.js 20+**
-- **PostgreSQL 15+**
-- **Docker** (opcional, recomendado)
+- **Python 3.12+**
+- **PostgreSQL 15+** (o cuenta de Neon.tech)
+- **npm** o **yarn**
+- **Git**
 
-### Instalación Rápida
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
 
 ```bash
-# Clonar el repositorio
 git clone https://github.com/Toni872/SISTEMAEMPRESARIAL.git
 cd SISTEMAEMPRESARIAL
-
-# Instalar dependencias del frontend
-cd frontend-next
-npm install
-
-# Instalar dependencias del backend
-cd ../backend
-pip install -r requirements.txt
-
-# Configurar variables de entorno
-cp env.example .env
-# Editar .env con tus configuraciones
 ```
 
-### Con Docker
+2. **Instalar dependencias del frontend**
 
 ```bash
-# Iniciar servicios (PostgreSQL)
-docker-compose up -d
+cd frontend-next
+npm install
+```
 
-# Iniciar backend
+3. **Instalar dependencias del backend**
+
+```bash
+cd ../backend
+pip install -r requirements.txt
+```
+
+4. **Configurar variables de entorno**
+
+```bash
+# Backend
+cd ../backend
+cp env.example .env
+# Editar .env con tus configuraciones
+
+# Frontend (opcional, para desarrollo local)
+cd ../frontend-next
+# Crear .env.local si es necesario
+```
+
+5. **Configurar la base de datos**
+
+```bash
+# Crear base de datos
+createdb erp_db
+
+# Ejecutar migraciones
+cd backend
+alembic upgrade head
+
+# Crear usuario administrador (opcional)
+python scripts/create_admin_production.py
+```
+
+6. **Ejecutar en desarrollo**
+
+```bash
+# Terminal 1: Backend (puerto 8000)
 cd backend
 uvicorn app.main:app --reload
 
-# Iniciar frontend (en otra terminal)
+# Terminal 2: Frontend (puerto 3001)
 cd frontend-next
 npm run dev
+```
+
+7. **Abrir en el navegador**
+
+```
+Frontend: http://localhost:3001
+Backend API: http://localhost:8000
+Swagger UI: http://localhost:8000/docs
 ```
 
 ---
@@ -193,7 +233,7 @@ npm run dev
 
 ### Variables de Entorno
 
-Copia `backend/env.example` a `backend/.env` y configura:
+Crea un archivo `.env` en `backend/` con las siguientes variables:
 
 ```env
 # Base de datos
@@ -210,11 +250,29 @@ BACKEND_CORS_ORIGINS=http://localhost:3001,http://localhost:3000
 
 # Entorno
 ENV=development
+NODE_ENV=development
+
+# Email (opcional)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu-email@gmail.com
+SMTP_PASSWORD=tu-password
+SMTP_FROM=noreply@erp.com
 ```
 
-Ver `backend/env.example` para todas las opciones disponibles.
+### Generar SECRET_KEY
 
-### Base de Datos
+```bash
+# Python
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# OpenSSL
+openssl rand -base64 32
+```
+
+### Configurar Base de Datos
+
+#### Opción 1: PostgreSQL Local
 
 ```bash
 # Crear base de datos
@@ -223,39 +281,17 @@ createdb erp_db
 # Ejecutar migraciones
 cd backend
 alembic upgrade head
-
-# Crear usuario de prueba (opcional)
-python scripts/create_test_user.py
 ```
 
----
+#### Opción 2: Neon.tech (Recomendado para producción)
 
-## 💻 Uso
+1. Crear cuenta en [Neon.tech](https://neon.tech/)
+2. Crear nuevo proyecto
+3. Copiar la `DATABASE_URL` de conexión
+4. Añadir a `.env`:
 
-### Desarrollo
-
-```bash
-# Backend (puerto 8000)
-cd backend
-uvicorn app.main:app --reload
-
-# Frontend (puerto 3001)
-cd frontend-next
-npm run dev
-```
-
-### Acceso
-
-- **Frontend:** http://localhost:3001
-- **Backend API:** http://localhost:8000
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
-
-### Usuario de Prueba
-
-```
-Email: test@example.com
-Contraseña: testpassword123
+```env
+DATABASE_URL=postgresql://usuario:password@ep-xxxxx.us-east-1.aws.neon.tech/neondb?sslmode=require
 ```
 
 ---
@@ -263,7 +299,7 @@ Contraseña: testpassword123
 ## 📁 Estructura del Proyecto
 
 ```
-sistemaempresarial/
+SISTEMAEMPRESARIAL/
 ├── backend/                 # Backend FastAPI
 │   ├── app/
 │   │   ├── api/            # Endpoints de la API
@@ -287,7 +323,6 @@ sistemaempresarial/
 │   │   └── utils/          # Utilidades (PDF, Verifactu, etc.)
 │   ├── alembic/            # Migraciones
 │   ├── scripts/            # Scripts de utilidad
-│   ├── logs/               # Logs de la aplicación
 │   └── requirements.txt    # Dependencias Python
 │
 ├── frontend-next/          # Frontend Next.js
@@ -309,26 +344,61 @@ sistemaempresarial/
 │   │   └── lib/            # Utilidades y API client
 │   └── package.json        # Dependencias Node.js
 │
-├── .github/
-│   └── workflows/          # GitHub Actions CI/CD
+├── api/                    # Vercel serverless functions
+│   └── index.py           # Handler de FastAPI para Vercel
 │
+├── vercel.json             # Configuración de Vercel
 └── README.md               # Este archivo
 ```
 
 ---
 
-## 📚 API Documentation
+## 🎮 Scripts Disponibles
 
-### Endpoints Principales
+### Frontend
 
-#### Autenticación
+```bash
+# Desarrollo
+npm run dev          # Inicia servidor de desarrollo (puerto 3001)
+
+# Producción
+npm run build        # Construye la aplicación
+npm start           # Inicia servidor de producción
+
+# Calidad de código
+npm run lint        # Ejecuta ESLint
+```
+
+### Backend
+
+```bash
+# Desarrollo
+uvicorn app.main:app --reload    # Inicia servidor con hot reload
+
+# Producción
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Migraciones
+alembic upgrade head              # Aplicar migraciones
+alembic revision --autogenerate  # Crear nueva migración
+
+# Scripts
+python scripts/create_tables.py              # Crear tablas
+python scripts/create_admin_production.py    # Crear usuario admin
+```
+
+---
+
+## 📡 API Endpoints
+
+### Autenticación
 - `POST /api/auth/register` - Registro de usuario
 - `POST /api/auth/login` - Inicio de sesión
 - `POST /api/auth/refresh` - Renovar token
 - `GET /api/auth/me` - Información del usuario actual
 - `POST /api/auth/logout` - Cerrar sesión
 
-#### Productos
+### Productos
 - `GET /api/products` - Listar productos (con filtros)
 - `POST /api/products` - Crear producto
 - `GET /api/products/{id}` - Obtener producto
@@ -336,7 +406,7 @@ sistemaempresarial/
 - `DELETE /api/products/{id}` - Eliminar producto
 - `GET /api/products/low-stock` - Productos con stock bajo
 
-#### Ventas
+### Ventas
 - `GET /api/sales` - Listar ventas (con filtros)
 - `POST /api/sales` - Crear venta
 - `GET /api/sales/{id}` - Obtener venta
@@ -344,7 +414,7 @@ sistemaempresarial/
 - `DELETE /api/sales/{id}` - Eliminar venta
 - `GET /api/sales/stats` - Estadísticas de ventas
 
-#### Compras
+### Compras
 - `GET /api/purchases` - Listar compras (con filtros)
 - `POST /api/purchases` - Crear compra
 - `GET /api/purchases/{id}` - Obtener compra
@@ -354,14 +424,14 @@ sistemaempresarial/
 - `GET /api/purchases/export/pdf` - Exportar lista a PDF
 - `GET /api/purchases/export/excel` - Exportar lista a Excel
 
-#### Proveedores
+### Proveedores
 - `GET /api/purchases/suppliers` - Listar proveedores
 - `POST /api/purchases/suppliers` - Crear proveedor
 - `GET /api/purchases/suppliers/{id}` - Obtener proveedor
 - `PUT /api/purchases/suppliers/{id}` - Actualizar proveedor
 - `DELETE /api/purchases/suppliers/{id}` - Eliminar proveedor
 
-#### Fiscalidad
+### Fiscalidad
 - `POST /api/tax/model-303/calculate` - Calcular Modelo 303
 - `POST /api/tax/model-303/generate` - Generar declaración Modelo 303
 - `POST /api/tax/model-111/calculate` - Calcular Modelo 111
@@ -370,7 +440,7 @@ sistemaempresarial/
 - `GET /api/tax/declarations/{id}` - Obtener declaración
 - `GET /api/tax/declarations/{id}/pdf` - Descargar PDF
 
-#### Verifactu
+### Verifactu
 - `POST /api/verifactu/sales/{id}/register` - Registrar factura en Verifactu
 - `GET /api/verifactu/sales/{id}/xml` - Obtener XML de factura
 - `GET /api/verifactu/registry` - Listar registros
@@ -382,78 +452,40 @@ sistemaempresarial/
 - `POST /api/verifactu/certificates` - Subir certificado
 - `DELETE /api/verifactu/certificates/{id}` - Eliminar certificado
 
-**Documentación completa:** http://localhost:8000/docs
+**Documentación completa:** http://localhost:8000/docs (Swagger UI)
 
 ---
 
-## 🔒 Seguridad
+## 🚢 Deployment
 
-### Implementado
+### Vercel (Recomendado)
 
-- ✅ **Autenticación JWT** con refresh tokens
-- ✅ **Hash de contraseñas** con bcrypt
-- ✅ **Rate Limiting** para prevenir abuso (slowapi)
-- ✅ **CORS** configurado de forma segura
-- ✅ **Security Headers** (XSS, Clickjacking, etc.)
-- ✅ **Validación de inputs** con Pydantic
-- ✅ **Roles y permisos** (ADMIN, MANAGER, USER, READONLY)
-- ✅ **Timeout en requests** (30 segundos)
-- ✅ **Request ID** único para tracking
-- ✅ **Logging estructurado** para auditoría
+1. **Conectar repositorio a Vercel**
+   - Ir a [Vercel](https://vercel.com/)
+   - Importar proyecto desde GitHub
+   - Configurar root directory: `.` (raíz del proyecto)
 
-### Headers de Seguridad
+2. **Configurar variables de entorno**
+   - Añadir todas las variables de `.env` en el dashboard de Vercel:
+     - `DATABASE_URL`
+     - `SECRET_KEY`
+     - `ENV=production`
+     - `NODE_ENV=production`
+     - `BACKEND_CORS_ORIGINS` (URL de producción)
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Strict-Transport-Security` (en producción)
-- `X-Request-ID` (tracking único)
+3. **Configurar dominio personalizado** (opcional)
+   - Añadir dominio en settings
+   - Configurar DNS según instrucciones
 
----
+4. **Deploy automático**
+   - Cada push a `master` desplegará automáticamente
 
-## 📊 Logging y Manejo de Errores
+### Configuración de Vercel
 
-### Sistema de Logging Estructurado
-
-- ✅ **Logging en JSON** para producción
-- ✅ **Logging con colores** para desarrollo
-- ✅ **Archivos separados** por día y nivel
-- ✅ **Request ID** único por request
-- ✅ **Información contextual** rica (user_id, endpoint, IP)
-
-### Manejo Global de Errores
-
-- ✅ **Excepciones personalizadas** con códigos de error consistentes
-- ✅ **Handlers globales** para todas las excepciones
-- ✅ **Respuestas de error** estandarizadas con request ID
-- ✅ **Logging automático** de todos los errores
-
-### Tipos de Excepciones
-
-- `NotFoundError` (404) - Recurso no encontrado
-- `ValidationError` (422) - Error de validación
-- `AuthenticationError` (401) - Error de autenticación
-- `AuthorizationError` (403) - Error de autorización
-- `BusinessLogicError` (400) - Error de lógica de negocio
-- `ConflictError` (409) - Conflicto, recurso ya existe
-- `DatabaseError` (500) - Error de base de datos
-- `ExternalServiceError` (502) - Error en servicio externo
-
----
-
-## 🔄 CI/CD
-
-El proyecto incluye **GitHub Actions** para:
-
-- ✅ Build automático del frontend
-- ✅ Tests del backend
-- ✅ Linting y validación de código
-- ✅ Security scanning con Trivy
-- ✅ Dependency checking
-- ✅ Verificación de builds
-
-Ver `.github/workflows/ci.yml` para más detalles.
+El proyecto incluye `vercel.json` que configura:
+- Build del frontend Next.js
+- Serverless functions para el backend FastAPI
+- Routing: `/api/*` → Backend, resto → Frontend
 
 ---
 
@@ -472,135 +504,35 @@ npm run build
 
 ---
 
-## 🚧 Roadmap
+## 🔒 Seguridad
 
-### ✅ Completado
+### Implementado
 
-- ✅ Arquitectura base con FastAPI y Next.js 16
-- ✅ Sistema de autenticación JWT completo
-- ✅ CRUD completo para todos los módulos
-- ✅ Dashboard con métricas en tiempo real
-- ✅ Diseño responsive con Tailwind CSS
-- ✅ Dockerización completa
-- ✅ Modelos fiscales españoles (303 y 111)
-- ✅ Sistema Verifactu completo
-- ✅ Exportación PDF/Excel
-- ✅ Logging estructurado
-- ✅ Manejo global de errores
-- ✅ Deploy en Vercel
-
-### 🔄 En Progreso
-
-- ⏳ Tests unitarios y E2E
-- ⏳ Documentación de API completa con Swagger
-- ⏳ Integración completa frontend-backend
-
-### 📋 Próximas Features
-
-- ⏳ Integración bancaria para conciliación automática
-- ⏳ OCR de gastos para automatizar registro de compras
-- ⏳ Sistema de notificaciones push
-- ⏳ Integración con servicios de pago (Stripe)
-- ⏳ App móvil (React Native)
-- ⏳ Multi-idioma (i18n)
-- ⏳ Reportes personalizados con builder
-- ⏳ Integración con WhatsApp Business API
+- ✅ **Autenticación JWT** con refresh tokens
+- ✅ **Hash de contraseñas** con bcrypt
+- ✅ **Rate Limiting** para prevenir abuso
+- ✅ **CORS** configurado de forma segura
+- ✅ **Security Headers** (XSS, Clickjacking, etc.)
+- ✅ **Validación de inputs** con Pydantic
+- ✅ **Roles y permisos** (ADMIN, MANAGER, USER, READONLY)
+- ✅ **Request ID** único para tracking
+- ✅ **Logging estructurado** para auditoría
 
 ---
 
-## 📖 Documentación Adicional
+## 📚 Documentación Adicional
 
-- [Análisis Completo del Proyecto](./ANALISIS_COMPLETO_PROYECTO.md)
-- [Resumen de Correcciones](./RESUMEN_CORRECCIONES_APLICADAS.md)
-- [Mejoras de Logging y Errores](./MEJORAS_LOGGING_ERRORES.md)
-- [Resumen de Mejoras Implementadas](./RESUMEN_MEJORAS_IMPLEMENTADAS.md)
-- [Guía de Prueba - Compras](./SWAGGER_TEST_COMPRAS.md)
-- [Configuración Verifactu](./VERIFACTU_PRODUCCION.md)
-- [Roadmap](./ROADMAP_SIGUIENTE_PASO.md)
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
 ---
 
-## 🎓 Decisiones Técnicas
+## 🤝 Contribuciones
 
-### ¿Por qué FastAPI?
-
-- **Performance:** Uno de los frameworks más rápidos de Python
-- **Type Safety:** Validación automática con Pydantic
-- **Documentación:** Swagger/OpenAPI automático
-- **Moderno:** Basado en estándares modernos (async/await)
-- **Fácil:** Sintaxis simple y clara
-
-### ¿Por qué Next.js 16?
-
-- **SSR/SSG:** Mejor SEO y performance inicial
-- **App Router:** Arquitectura moderna y escalable
-- **Server Components:** Menor bundle size y mejor UX
-- **Optimizaciones:** Image optimization, code splitting automático
-- **Vercel:** Deploy sin configuración adicional
-
-### ¿Por qué SQLAlchemy?
-
-- **Flexibilidad:** Control total sobre queries
-- **Mature:** Biblioteca estable y probada
-- **Type Safety:** Soporte completo para type hints
-- **Migraciones:** Alembic para gestión de esquemas
-- **Performance:** Optimizaciones avanzadas disponibles
-
-### ¿Por qué PostgreSQL?
-
-- **Robustez:** Base de datos enterprise-grade
-- **Features:** JSON, arrays, full-text search
-- **Open Source:** Sin costos de licencia
-- **Ecosystem:** Excelente soporte y herramientas
-- **Escalabilidad:** Maneja grandes volúmenes de datos
-
----
-
-## 🐛 Troubleshooting
-
-### Error: Puerto ya en uso
-
-```bash
-# Cambiar puertos en docker-compose.yml o en los comandos
-# Backend: uvicorn app.main:app --port 8001
-# Frontend: npm run dev -- -p 3002
-```
-
-### Error: Base de datos no conecta
-
-```bash
-# Verificar que PostgreSQL está corriendo
-docker ps
-
-# Ver logs de PostgreSQL
-docker logs <container_name>
-
-# Reiniciar servicios
-docker-compose restart
-```
-
-### Error: JWT inválido
-
-```bash
-# Verificar que JWT_SECRET en .env coincide
-# Limpiar localStorage del navegador
-# Usar el botón "Cerrar sesión" y volver a iniciar
-```
-
-### Frontend en blanco después de deploy
-
-```bash
-# Limpiar caché del navegador (Ctrl + Shift + R)
-# Verificar que el build fue exitoso
-npm run build
-```
-
----
-
-## 🤝 Contribución
+Las contribuciones son bienvenidas. Por favor:
 
 1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/AmazingFeature`)
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
@@ -609,73 +541,45 @@ npm run build
 
 ## 📝 Licencia
 
-Este proyecto es parte de mi portfolio profesional. El código está disponible para revisión y evaluación, pero no para uso comercial sin autorización.
+Este proyecto es privado y está bajo una licencia ISC.
 
 ---
 
-## 👨‍💻 Desarrollador
+## 👤 Autor
 
-**Antonio Lloret Sánchez**
+**Antonio Lloret**
 
-Full Stack Developer | React • Next.js • FastAPI • Python • TypeScript
-
-🌐 **Portfolio:** Sistema ERP Empresarial  
-💼 **LinkedIn:** [linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-sánchez-080166156)  
-💻 **GitHub:** [@Toni872](https://github.com/Toni872)  
-📧 **Email:** antohachi@gmail.com
-
----
-
-## 🙏 Agradecimientos
-
-Construido con ❤️ utilizando las mejores herramientas open-source:
-
-- **FastAPI Team** por el excelente framework
-- **Next.js Team** por SSR y optimizaciones
-- **React Team** por la increíble biblioteca
-- **PostgreSQL** por ser la BD más confiable
-- **shadcn** por los componentes hermosos
-- **La comunidad open source** por su apoyo constante
+- 📧 Email: [antohachi@gmail.com](mailto:antohachi@gmail.com)
+- 📱 WhatsApp: [+34 687 723 287](https://wa.me/34687723287)
+- 💻 GitHub: [@Toni872](https://github.com/Toni872)
+- 🔗 Proyecto: [SISTEMAEMPRESARIAL](https://github.com/Toni872/SISTEMAEMPRESARIAL)
 
 ---
 
 ## 📞 Contacto
 
-¿Preguntas sobre el proyecto? ¿Interesado en colaborar?
+¿Tienes alguna pregunta, sugerencia o te interesa colaborar en el proyecto?
 
-¡Contáctame! Estoy abierto a oportunidades de trabajo remoto full-stack.
-
-📧 **Email:** antohachi@gmail.com  
-💼 **LinkedIn:** [www.linkedin.com/in/antonio-lloret-sánchez-080166156](https://www.linkedin.com/in/antonio-lloret-sánchez-080166156)  
-💻 **GitHub:** [github.com/Toni872](https://github.com/Toni872)
+- 📧 **Email**: [antohachi@gmail.com](mailto:antohachi@gmail.com)
+- 📱 **WhatsApp**: [+34 687 723 287](https://wa.me/34687723287)
+- 💬 **GitHub Issues**: [Abrir un issue](https://github.com/Toni872/SISTEMAEMPRESARIAL/issues)
 
 ---
 
-## 📊 Estado del Proyecto
+## 🙏 Agradecimientos
 
-**Versión:** 1.0.0  
-**Estado:** 🟢 En Desarrollo Activo  
-**Última Actualización:** Diciembre 2024
-
-### Funcionalidades Completadas
-
-- ✅ Sistema de autenticación completo
-- ✅ Gestión de productos y ventas
-- ✅ Gestión de compras y proveedores
-- ✅ Modelos fiscales (303 y 111)
-- ✅ Verifactu completo
-- ✅ Exportación PDF/Excel
-- ✅ Logging estructurado
-- ✅ Manejo global de errores
-- ✅ Documentación completa
-
-### Próximas Funcionalidades
-
-- ⏳ Integración bancaria
-- ⏳ OCR de gastos
-- ⏳ Tests unitarios completos
-- ⏳ Métricas y monitoreo
+- FastAPI Team
+- Next.js Team
+- React Team
+- PostgreSQL Team
+- Todos los mantenedores de las librerías open source utilizadas
 
 ---
 
-**⭐ Si este proyecto te resulta útil, considera darle una estrella en GitHub**
+<div align="center">
+
+**⭐ Si este proyecto te ha sido útil, considera darle una estrella ⭐**
+
+Desarrollado con ❤️ usando Next.js, FastAPI y TypeScript
+
+</div>
