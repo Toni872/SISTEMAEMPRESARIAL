@@ -582,9 +582,12 @@ function AEATIntegrationSection({
     setSending(true);
     try {
       const result = await apiClient.sendAllPendingToAEAT();
+      const message = result.message && typeof result.message === 'string' 
+        ? result.message 
+        : `${pending.length} registros enviados a AEAT`;
       toast({
         title: 'Enviados',
-        description: result.message || `${pending.length} registros enviados a AEAT`,
+        description: message,
         variant: 'success',
       });
       onRefresh();
