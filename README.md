@@ -545,23 +545,16 @@ Este proyecto es privado y está bajo una licencia ISC.
 
 ---
 
-## 👤 Autor
+## 📞 Contacto
 
 **Antonio Lloret**
-
-- 📧 Email: [antohachi@gmail.com](mailto:antohachi@gmail.com)
-- 📱 WhatsApp: [+34 687 723 287](https://wa.me/34687723287)
-- 💻 GitHub: [@Toni872](https://github.com/Toni872)
-- 🔗 Proyecto: [SISTEMAEMPRESARIAL](https://github.com/Toni872/SISTEMAEMPRESARIAL)
-
----
-
-## 📞 Contacto
 
 ¿Tienes alguna pregunta, sugerencia o te interesa colaborar en el proyecto?
 
 - 📧 **Email**: [antohachi@gmail.com](mailto:antohachi@gmail.com)
 - 📱 **WhatsApp**: [+34 687 723 287](https://wa.me/34687723287)
+- 💻 **GitHub**: [@Toni872](https://github.com/Toni872)
+- 🔗 **Proyecto**: [SISTEMAEMPRESARIAL](https://github.com/Toni872/SISTEMAEMPRESARIAL)
 - 💬 **GitHub Issues**: [Abrir un issue](https://github.com/Toni872/SISTEMAEMPRESARIAL/issues)
 
 ---
