@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/lib/auth-store';
-import { ArrowRight, BarChart3, Loader2 } from 'lucide-react';
+import { ArrowRight, BarChart3, Loader2, User } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -43,6 +43,12 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAutoFillAdmin = () => {
+    setEmail('admin@example.com');
+    setPassword('Admin1234!');
+    setError('');
   };
 
   return (
@@ -169,6 +175,17 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAutoFillAdmin}
+                  disabled={loading}
+                  className="w-full h-11 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Autocompletar como Administrador
+                </Button>
+
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-neutral-200 dark:border-neutral-800"></div>
@@ -191,16 +208,6 @@ export default function LoginPage() {
                     Volver al inicio
                   </Button>
                 </Link>
-              </div>
-
-              <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                <p className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
-                  Credenciales de prueba:
-                </p>
-                <div className="space-y-1 text-xs text-blue-700 dark:text-blue-400 font-mono">
-                  <p>Email: test@example.com</p>
-                  <p>Password: testpassword123</p>
-                </div>
               </div>
             </CardContent>
           </Card>
