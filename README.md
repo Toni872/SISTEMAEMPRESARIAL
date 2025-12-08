@@ -3,8 +3,14 @@
 <div align="center">
 
 ![ERP Logo](https://img.shields.io/badge/ERP-Sistema%20Empresarial-blue?style=for-the-badge)
+![Portfolio](https://img.shields.io/badge/Portfolio-Demo%20Project-purple?style=for-the-badge)
+![View Only](https://img.shields.io/badge/View%20Only-Code%20Showcase-green?style=for-the-badge)
 
 **Sistema ERP completo full-stack para gestión integral de empresas españolas**
+
+> ⚠️ **Proyecto de Demostración/Portafolio**  
+> Este proyecto está disponible para **visualización del frontend** y **estudio del código**.  
+> El código fuente está abierto para fines educativos y de portafolio profesional.
 
 [Características](#-características) • [Tecnologías](#-tecnologías) • [Instalación](#-instalación) • [Configuración](#-configuración) • [Uso](#-uso)
 
@@ -19,13 +25,42 @@
 
 ---
 
+<div align="center">
+
+### 🎨 Proyecto de Demostración y Portafolio
+
+**Este repositorio está disponible para visualización del frontend y estudio del código fuente.**
+
+El proyecto muestra una implementación completa de un sistema ERP full-stack con tecnologías modernas.  
+Todo el código está abierto para fines educativos y de portafolio profesional.
+
+</div>
+
+---
+
 ## 📖 Acerca del Proyecto
 
-**Sistema ERP Empresarial** es una plataforma completa diseñada para empresas españolas que necesitan centralizar y automatizar sus operaciones empresariales. El proyecto aborda un problema real del sector: la necesidad de sistemas de gestión accesibles pero potentes que cumplan con la normativa fiscal española, ofreciendo funcionalidades enterprise con integración fiscal completa.
+**Sistema ERP Empresarial** es una plataforma completa full-stack diseñada como proyecto de demostración y portafolio profesional. Este proyecto muestra un sistema ERP completo para gestión integral de empresas españolas, implementando funcionalidades enterprise con integración fiscal completa.
 
-### 🎯 Objetivo
+### 🎯 Propósito del Proyecto
 
-Proporcionar a las empresas pequeñas y medianas españolas un sistema ERP completo que integre gestión de ventas, compras, inventario, usuarios, modelos fiscales españoles (Modelo 303, Modelo 111) y cumplimiento con normativa AEAT (Verifactu), todo en una plataforma moderna, escalable y fácil de usar.
+Este proyecto está disponible para:
+- **Visualización del frontend**: Explorar la interfaz de usuario y experiencia de usuario implementada
+- **Estudio del código**: Analizar la arquitectura, patrones de diseño y mejores prácticas utilizadas
+- **Portafolio profesional**: Demostrar habilidades en desarrollo full-stack con tecnologías modernas
+- **Aprendizaje**: Servir como referencia para otros desarrolladores
+
+### 🏗️ Arquitectura
+
+El proyecto implementa un sistema ERP completo que integra:
+- Gestión de ventas, compras e inventario
+- Modelos fiscales españoles (Modelo 303, Modelo 111)
+- Cumplimiento con normativa AEAT (Verifactu)
+- Dashboard con métricas en tiempo real
+- Sistema de autenticación y roles
+- Generación de documentos (PDF, Excel)
+
+**Nota**: Este es un proyecto de demostración. El código está disponible para visualización y estudio, pero no está destinado para uso en producción sin las configuraciones y validaciones apropiadas.
 
 ---
 
@@ -527,21 +562,39 @@ npm run build
 
 ---
 
+## 🌐 Acceso al Proyecto
+
+Este proyecto está disponible para visualización:
+
+- **Frontend en vivo**: [Ver aplicación desplegada](https://sistemaempresarial.vercel.app) (si está disponible)
+- **Código fuente**: Todo el código está disponible en este repositorio para estudio y análisis
+- **Documentación**: Consulta las secciones de [Instalación](#-instalación) y [Configuración](#-configuración) para ejecutar localmente
+
+### 📋 Notas Importantes
+
+- Este es un **proyecto de demostración/portafolio**
+- El código está disponible para **visualización y estudio**
+- Las credenciales y configuraciones sensibles **no están incluidas** en el repositorio
+- Para ejecutar localmente, necesitarás configurar tu propio entorno de desarrollo
+
+---
+
 ## 🤝 Contribuciones
 
-Las contribuciones son bienvenidas. Por favor:
+Este proyecto está principalmente orientado a demostración y portafolio. Si deseas contribuir o hacer sugerencias:
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Abre un [Issue](https://github.com/Toni872/SISTEMAEMPRESARIAL/issues) para discutir cambios
+2. Fork el proyecto si deseas experimentar
+3. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+4. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+5. Push a la rama (`git push origin feature/AmazingFeature`)
+6. Abre un Pull Request
 
 ---
 
 ## 📝 Licencia
 
-Este proyecto es privado y está bajo una licencia ISC.
+Este proyecto es de demostración/portafolio y está disponible para visualización y estudio del código. El código fuente está abierto para fines educativos y de portafolio profesional.
 
 ---
 
