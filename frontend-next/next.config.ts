@@ -1,16 +1,6 @@
 import type { NextConfig } from "next";
 import path from "path";
 
-// Validar que NEXT_PUBLIC_API_URL esté configurada en producción
-if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_API_URL) {
-  console.warn('⚠️ ADVERTENCIA: NEXT_PUBLIC_API_URL no está configurada en producción!');
-  console.warn('⚠️ El frontend usará localhost:8000 como fallback (NO funcionará)');
-  console.warn('⚠️ Configura NEXT_PUBLIC_API_URL en Vercel → Settings → Environment Variables');
-}
-
-// Log de la variable para debugging
-console.log('🔍 NEXT_PUBLIC_API_URL en build:', process.env.NEXT_PUBLIC_API_URL || 'NO CONFIGURADA (usará localhost:8000)');
-
 const nextConfig: NextConfig = {
   // Optimizaciones de rendimiento
   reactStrictMode: true,
