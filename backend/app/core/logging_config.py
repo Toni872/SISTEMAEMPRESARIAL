@@ -8,9 +8,15 @@ from datetime import datetime
 from typing import Any, Dict
 import json
 
-# Crear directorio de logs si no existe
+# Crear directorio de logs si no existe (solo si no estamos en Vercel/serverless)
 LOG_DIR = Path("logs")
-LOG_DIR.mkdir(exist_ok=True)
+# En Vercel/serverless, el sistema de archivos es de solo lectura
+# Intentar crear el directorio y capturar el error si falla
+try:
+    LOG_DIR.mkdir(exist_ok=True)
+except (OSError, PermissionError):
+    # Estamos en un entorno serverless (Vercel), no crear directorio
+    LOG_DIR = None
 
 
 class JSONFormatter(logging.Formatter):
@@ -110,24 +116,30 @@ def setup_logging(env: str = "development"):
     
     root_logger.addHandler(console_handler)
     
-    # Handler para archivo (solo en producción)
-    if env == "production":
-        file_handler = logging.FileHandler(
-            LOG_DIR / f"app_{datetime.now().strftime('%Y%m%d')}.log",
-            encoding='utf-8'
-        )
-        file_handler.setLevel(logging.INFO)
-        file_handler.setFormatter(JSONFormatter())
-        root_logger.addHandler(file_handler)
-        
-        # Handler para errores críticos
-        error_handler = logging.FileHandler(
-            LOG_DIR / f"errors_{datetime.now().strftime('%Y%m%d')}.log",
-            encoding='utf-8'
-        )
-        error_handler.setLevel(logging.ERROR)
-        error_handler.setFormatter(JSONFormatter())
-        root_logger.addHandler(error_handler)
+    # Handler para archivo (solo en producción y si no estamos en serverless)
+    # En Vercel/serverless, el sistema de archivos es de solo lectura
+    if env == "production" and LOG_DIR is not None:
+        try:
+            file_handler = logging.FileHandler(
+                LOG_DIR / f"app_{datetime.now().strftime('%Y%m%d')}.log",
+                encoding='utf-8'
+            )
+            file_handler.setLevel(logging.INFO)
+            file_handler.setFormatter(JSONFormatter())
+            root_logger.addHandler(file_handler)
+            
+            # Handler para errores críticos
+            error_handler = logging.FileHandler(
+                LOG_DIR / f"errors_{datetime.now().strftime('%Y%m%d')}.log",
+                encoding='utf-8'
+            )
+            error_handler.setLevel(logging.ERROR)
+            error_handler.setFormatter(JSONFormatter())
+            root_logger.addHandler(error_handler)
+        except (OSError, PermissionError):
+            # No podemos escribir archivos en este entorno (serverless)
+            # Usar solo logging a stdout/stderr (que Vercel captura automáticamente)
+            pass
     
     # Configurar loggers de terceros
     logging.getLogger("uvicorn").setLevel(logging.INFO)
