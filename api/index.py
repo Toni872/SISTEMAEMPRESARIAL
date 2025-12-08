@@ -54,7 +54,41 @@ def handler(event, context):
     Convierte el request de Vercel al formato ASGI de FastAPI
     """
     try:
-        return handler_instance(event, context)
+        response = handler_instance(event, context)
+        
+        # Asegurar que la respuesta siempre tenga Content-Type: application/json
+        # Mangum puede devolver respuestas con diferentes content-types
+        if isinstance(response, dict):
+            # Si es una respuesta de Mangum (dict con statusCode, headers, body)
+            if "headers" in response:
+                # Asegurar que siempre sea JSON
+                response["headers"]["Content-Type"] = "application/json"
+                # Si el body no es JSON válido, convertirlo
+                if "body" in response and isinstance(response["body"], str):
+                    try:
+                        # Intentar parsear para verificar que es JSON válido
+                        json.loads(response["body"])
+                    except (json.JSONDecodeError, TypeError):
+                        # Si no es JSON, envolver en un objeto JSON de error
+                        response["body"] = json.dumps({
+                            "error": True,
+                            "error_code": "INVALID_RESPONSE",
+                            "detail": "La respuesta del servidor no es JSON válido",
+                            "message": "Error interno del servidor. Revisa los logs del backend o contacta al administrador."
+                        })
+            return response
+        else:
+            # Si no es un dict, convertir a JSON
+            return {
+                "statusCode": 500,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({
+                    "error": True,
+                    "error_code": "INVALID_RESPONSE_TYPE",
+                    "detail": f"Tipo de respuesta inesperado: {type(response)}",
+                    "message": "Error interno del servidor. Revisa los logs del backend o contacta al administrador."
+                })
+            }
     except Exception as e:
         print(f"❌ Error en handler de Vercel: {e}", file=sys.stderr)
         print(traceback.format_exc(), file=sys.stderr)
